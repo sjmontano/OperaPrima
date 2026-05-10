@@ -1,0 +1,1441 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --width-landing: 1740px;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-poppins);
+  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-poppins);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar: var(--sidebar);
+  --color-chart-5: var(--chart-5);
+  --color-chart-4: var(--chart-4);
+  --color-chart-3: var(--chart-3);
+  --color-chart-2: var(--chart-2);
+  --color-chart-1: var(--chart-1);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --radius: 0.625rem;
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+}
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.87 0 0);
+  --chart-2: oklch(0.556 0 0);
+  --chart-3: oklch(0.439 0 0);
+  --chart-4: oklch(0.371 0 0);
+  --chart-5: oklch(0.269 0 0);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  html {
+    @apply font-sans;
+  }
+}
+
+/* Logo Cloud / Partners marquee */
+@keyframes partners-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(calc(-25% - 5px));
+  }
+}
+
+.ticker-track {
+  display: flex;
+  width: max-content;
+  animation: partners-scroll 40s linear infinite;
+}
+
+.ticker-item {
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (hover: hover) {
+  .ticker-wrap:hover .ticker-track {
+    animation-play-state: paused;
+  }
+}
+
+/* Testimonial Wall */
+@keyframes testimonials-scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes testimonials-scroll-right {
+  0% {
+    transform: translateX(-50%);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.testimonial-wall {
+  width: 100%;
+  background-color: transparent;
+  padding: 0;
+  overflow: hidden;
+}
+
+.testimonial-scroll-group {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.scroll-row {
+  display: flex;
+  width: max-content;
+  position: relative;
+  padding: 1.5rem 0;
+  margin-top: -1.5rem;
+  margin-bottom: -1.5rem;
+  transition: z-index 0s;
+  z-index: 0;
+}
+
+.scroll-row:hover {
+  z-index: 1;
+}
+
+.scroll-content {
+  display: flex;
+  gap: 1.5rem;
+  padding-right: 1.5rem;
+}
+
+.scroll-left {
+  animation: testimonials-scroll-left linear infinite;
+}
+
+.scroll-right {
+  animation: testimonials-scroll-right linear infinite;
+}
+
+.testimonial-card {
+  position: relative;
+  min-width: 320px;
+  width: 320px;
+  background-color: #ffffff;
+  border-radius: 0;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  border: 2px solid #e4e4e7;
+  box-shadow: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, box-shadow;
+  text-align: left;
+}
+
+.testimonial-card:hover {
+  transform: translate(-3px, -3px);
+  border-color: #f65b7f;
+  box-shadow: 5px 5px 0 #f65b7f;
+}
+
+.testimonial-card:hover .avatar {
+  border-color: #f65b7f;
+}
+
+.mentor-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  border: 2px solid #e4e4e7;
+  background: rgba(17, 17, 17, 0.16);
+  box-shadow: none;
+  border-radius: 0;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease;
+  will-change: transform, box-shadow;
+}
+
+.mentor-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 280px;
+  border: 2px solid #e4e4e7;
+  background: rgba(17, 17, 17, 0.16);
+  box-shadow: none;
+  border-radius: 0;
+  transition:
+    transform 0.2s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease,
+    border-color 0.2s ease,
+    flex 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, box-shadow, flex, height;
+}
+
+.mentor-card:hover,
+.mentor-card.mentor-card--expanded {
+  transform: translate(-3px, -3px);
+  border-color: #f65b7f;
+  box-shadow: 5px 5px 0 #111111;
+}
+
+.mentor-gallery-wrapper:hover .mentor-card {
+  flex: 0.5;
+}
+
+.mentor-gallery-wrapper .mentor-card:hover {
+  flex: 3;
+}
+
+.mentor-gallery-wrapper.has-expanded .mentor-card:not(.mentor-card--expanded) {
+  flex: 0.5;
+}
+
+.mentor-card__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  display: block;
+  transition: transform 0.8s ease-out;
+}
+
+.mentor-card__overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(17, 17, 17, 0) 0%,
+    rgba(17, 17, 17, 0.72) 40%,
+    rgba(17, 17, 17, 0.96) 100%
+  );
+  padding: 1.75rem 1.25rem 1.25rem;
+  transform: translateY(100%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.8s cubic-bezier(0.4, 0, 0.2, 1),
+    opacity 0.8s ease;
+}
+
+.mentor-card:hover .mentor-card__overlay,
+.mentor-card.mentor-card--expanded .mentor-card__overlay {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.mentor-card__label {
+  display: inline-block;
+  padding: 0.35rem 0.85rem;
+  border: 2px solid #f65b7f;
+  color: #f65b7f;
+  font-size: 0.625rem;
+  font-weight: 700;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+}
+
+.mentor-card__name {
+  margin: 1rem 0 0;
+  font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 800;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  color: #ffffff;
+}
+
+.mentor-card__role {
+  margin: 0.75rem 0 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #f3f3f3;
+  line-height: 1.5;
+}
+
+.mentor-card__location {
+  margin: 0.85rem 0 0;
+  font-size: 0.92rem;
+  color: #d7d7d7;
+  font-weight: 500;
+}
+
+.mentor-card__focus {
+  margin: 1rem 0 0;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: #e8e8e8;
+}
+
+.mentor-card__notes {
+  margin: 1.25rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.75rem;
+}
+
+.mentor-card__note {
+  position: relative;
+  padding-left: 1.2rem;
+  color: #f1f1f1;
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+
+.mentor-card__note::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.7rem;
+  width: 0.4rem;
+  height: 0.4rem;
+  background: #f65b7f;
+}
+
+.mentor-card-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.mentor-card-modal__backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(8px);
+}
+
+.mentor-card-modal__content {
+  position: relative;
+  width: 100%;
+  max-width: 72rem;
+  overflow: hidden;
+  border: 2px solid rgba(255, 255, 255, 0.1);
+  background: #0f0f0f;
+  box-shadow: 8px 8px 0 #111111;
+}
+
+.mentor-card-modal__content img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.author-meta {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+}
+
+.author-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0;
+}
+
+.author-handle {
+  font-size: 0.8rem;
+  color: #f65b7f;
+  margin: 0.15rem 0 0;
+}
+
+.testimonial-text {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #222222;
+  margin: 0;
+  opacity: 0.95;
+  text-align: left;
+}
+
+@media (max-width: 640px) {
+  .testimonial-card {
+    min-width: 280px;
+    width: 280px;
+    padding: 1.25rem;
+  }
+}
+
+/* ── Auth flip card ───────────────────────────────────────────────── */
+
+.flip-auth-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+  width: 100%;
+  max-width: 360px;
+}
+
+/* Toggle bar */
+.flip-auth-toggle {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.flip-auth-tab {
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.45 0 0);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.flip-auth-tab.active {
+  color: oklch(0.12 0 0);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: #f65b7f;
+  text-decoration-thickness: 2px;
+}
+
+/* Brutalist toggle pill */
+.flip-auth-pill-label {
+  cursor: pointer;
+  position: relative;
+  display: inline-block;
+  width: 46px;
+  height: 24px;
+}
+
+.flip-auth-checkbox {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.flip-auth-pill-track {
+  position: absolute;
+  inset: 0;
+  background: oklch(0.97 0.004 340);
+  border: 2px solid oklch(0.12 0 0);
+  box-shadow: 3px 3px 0 oklch(0.12 0 0);
+  transition: background 0.25s ease;
+  display: flex;
+  align-items: center;
+}
+
+.flip-auth-checkbox:checked ~ .flip-auth-pill-track {
+  background: #f65b7f;
+  border-color: oklch(0.12 0 0);
+}
+
+.flip-auth-pill-thumb {
+  position: absolute;
+  left: 2px;
+  width: 16px;
+  height: 16px;
+  background: oklch(0.12 0 0);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.flip-auth-checkbox:checked ~ .flip-auth-pill-track .flip-auth-pill-thumb {
+  transform: translateX(22px);
+  background: #ffffff;
+}
+
+/* Flip card container */
+.flip-auth-card {
+  width: 340px;
+  height: 500px;
+  position: relative;
+  perspective: 1200px;
+  transition:
+    height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease;
+}
+
+.flip-auth-card.flipped .flip-auth-face {
+  transform-style: preserve-3d;
+}
+
+.flip-auth-card.flipped .flip-auth-front {
+  transform: rotateY(-180deg);
+  box-shadow: none;
+}
+
+.flip-auth-card.flipped .flip-auth-back {
+  transform: rotateY(0deg);
+  box-shadow: 5px 5px 0 oklch(0.12 0 0);
+}
+
+/* Card faces */
+.flip-auth-face {
+  position: absolute;
+  inset: 0;
+  padding: 1.75rem 2rem 1.5rem;
+  background: oklch(0.985 0.004 340);
+  border-top: 3px solid #f65b7f;
+  border-right: 2px solid oklch(0.12 0 0);
+  border-bottom: 2px solid oklch(0.12 0 0);
+  border-left: 2px solid oklch(0.12 0 0);
+  box-shadow: 5px 5px 0 oklch(0.12 0 0);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  transition:
+    transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  overflow: hidden;
+}
+
+.flip-auth-front {
+  transform: rotateY(0deg);
+}
+
+.flip-auth-back {
+  transform: rotateY(180deg);
+  box-shadow: none;
+}
+
+/* Face internals */
+.flip-auth-eyebrow {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: #f65b7f;
+  margin: 0;
+}
+
+.flip-auth-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  color: oklch(0.12 0 0);
+  margin: 0 0 1rem;
+}
+
+.flip-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.flip-auth-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.flip-auth-label {
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: oklch(0.45 0 0);
+}
+
+.flip-auth-input {
+  width: 100%;
+  height: 42px;
+  border: 2px solid oklch(0.82 0 0);
+  background: #ffffff;
+  padding: 0 0.875rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: oklch(0.12 0 0);
+  box-shadow: 3px 3px 0 oklch(0.82 0 0);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+  outline: none;
+  border-radius: 0;
+  font-family: inherit;
+}
+
+.flip-auth-input::placeholder {
+  color: oklch(0.65 0 0);
+  font-weight: 400;
+}
+
+.flip-auth-input:focus {
+  border-color: #f65b7f;
+  box-shadow: 3px 3px 0 #f65b7f;
+}
+
+/* -- Toggle visibilidad contraseña -- */
+.flip-auth-pw-wrapper {
+  position: relative;
+}
+
+.flip-auth-pw-wrapper .flip-auth-input {
+  padding-right: 2.5rem;
+}
+
+.flip-auth-pw-eye {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: oklch(0.6 0 0);
+  transition: color 0.15s ease;
+  font-family: inherit;
+}
+
+.flip-auth-pw-eye:hover {
+  color: oklch(0.12 0 0);
+}
+
+/* -- Indicador de fortaleza -- */
+.flip-auth-strength-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.flip-auth-strength-bars {
+  display: flex;
+  gap: 3px;
+  flex: 1;
+}
+
+.flip-auth-strength-bar {
+  flex: 1;
+  height: 4px;
+  background: oklch(0.88 0.002 340);
+  transition: background 0.3s ease;
+}
+
+.flip-auth-strength-bar.s1 {
+  background: oklch(0.55 0.2 25);
+}
+
+.flip-auth-strength-bar.s2 {
+  background: oklch(0.62 0.17 50);
+}
+
+.flip-auth-strength-bar.s3 {
+  background: oklch(0.72 0.14 85);
+}
+
+.flip-auth-strength-bar.s4 {
+  background: oklch(0.6 0.13 145);
+}
+
+.flip-auth-strength-bar.s5 {
+  background: oklch(0.45 0.1 158);
+}
+
+.flip-auth-strength-label {
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: oklch(0.5 0 0);
+  white-space: nowrap;
+  min-width: 90px;
+  text-align: right;
+}
+
+/* -- Requisitos de contraseña -- */
+.flip-auth-requirements {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.2rem 0.5rem;
+  margin-top: 0.4rem;
+  list-style: none;
+  padding: 0;
+}
+
+.flip-auth-req-item {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.58rem;
+  font-weight: 500;
+  color: oklch(0.6 0 0);
+  transition: color 0.2s ease;
+}
+
+.flip-auth-req-item.met {
+  color: oklch(0.45 0.1 158);
+}
+
+.flip-auth-req-icon {
+  font-size: 0.65rem;
+  font-weight: 700;
+  width: 12px;
+  flex-shrink: 0;
+  text-align: center;
+}
+
+.flip-auth-req-item.met .flip-auth-req-icon {
+  color: oklch(0.45 0.1 158);
+}
+
+.flip-auth-forgot {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: oklch(0.55 0 0);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  align-self: flex-start;
+  transition: color 0.15s ease;
+  margin-top: -0.25rem;
+}
+
+.flip-auth-forgot:hover {
+  color: #f65b7f;
+}
+
+/* -- Feedback messages (error / success) -- */
+.flip-auth-feedback {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: 0.35rem 0.5rem;
+  margin-top: 0.25rem;
+  border: 1px solid currentColor;
+}
+
+.flip-auth-feedback.error {
+  color: oklch(0.48 0.2 25);
+  background: oklch(0.97 0.015 25);
+}
+
+.flip-auth-feedback.success {
+  color: oklch(0.4 0.12 158);
+  background: oklch(0.97 0.015 158);
+}
+
+/* Botón primario deshabilitado durante carga */
+.flip-auth-btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Botón social deshabilitado */
+.flip-auth-social-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.flip-auth-btn-primary {
+  margin-top: auto;
+  width: 100%;
+  height: 46px;
+  background: #f65b7f;
+  border: 2px solid oklch(0.12 0 0);
+  color: #ffffff;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 oklch(0.12 0 0);
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
+  font-family: inherit;
+  border-radius: 0;
+}
+
+.flip-auth-btn-primary:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 5px 5px 0 oklch(0.12 0 0);
+}
+
+.flip-auth-btn-primary:active {
+  transform: translate(2px, 2px);
+  box-shadow: 1px 1px 0 oklch(0.12 0 0);
+}
+
+/* Marca al pie */
+.flip-auth-brand {
+  font-size: 0.65rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: oklch(0.55 0.004 340);
+}
+
+.flip-auth-brand-link {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.flip-auth-brand-link:hover {
+  color: #f65b7f;
+}
+
+@media (max-width: 400px) {
+  .flip-auth-card {
+    width: calc(100vw - 2rem);
+    height: 520px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .flip-auth-face {
+    transition: none;
+  }
+
+  .flip-auth-pill-thumb {
+    transition: none;
+  }
+}
+
+/* -- Encabezado de cara: eyebrow + boton cerrar -- */
+.flip-auth-face-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+
+/* -- Botón cerrar (dentro del face-header) -- */
+.flip-auth-close {
+  width: 26px;
+  height: 26px;
+  flex-shrink: 0;
+  border: 2px solid oklch(0.78 0 0);
+  background: transparent;
+  font-size: 0.65rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    border-color 0.1s ease;
+  font-family: inherit;
+  border-radius: 0;
+  color: oklch(0.45 0 0);
+}
+
+.flip-auth-close:hover {
+  border-color: oklch(0.12 0 0);
+  box-shadow: 2px 2px 0 oklch(0.12 0 0);
+  transform: translate(-1px, -1px);
+  color: oklch(0.12 0 0);
+}
+
+.flip-auth-close:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+/* -- Social login -- */
+.flip-auth-social {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  width: 340px;
+}
+
+.flip-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.flip-auth-divider-line {
+  flex: 1;
+  height: 1px;
+  background: oklch(0.82 0 0);
+}
+
+.flip-auth-divider-text {
+  font-size: 0.6rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.6 0 0);
+  white-space: nowrap;
+}
+
+.flip-auth-social-btns {
+  display: flex;
+  flex-direction: row;
+  gap: 0.5rem;
+}
+
+.flip-auth-social-btn {
+  flex: 1;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: #ffffff;
+  border: 2px solid oklch(0.82 0 0);
+  box-shadow: none;
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: oklch(0.25 0 0);
+  cursor: pointer;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease,
+    border-color 0.1s ease;
+  font-family: inherit;
+  border-radius: 0;
+}
+
+.flip-auth-social-btn:hover {
+  border-color: oklch(0.12 0 0);
+  box-shadow: 3px 3px 0 oklch(0.12 0 0);
+  transform: translate(-1px, -1px);
+}
+
+.flip-auth-social-btn:active {
+  transform: translate(1px, 1px);
+  box-shadow: none;
+}
+
+@media (max-width: 400px) {
+  .flip-auth-social {
+    width: calc(100vw - 2rem);
+  }
+}
+
+/* ── Register: taller card heights ───────────────────────────────── */
+.flip-auth-card.reg-active {
+  height: 540px;
+}
+
+.flip-auth-card.reg-step2 {
+  height: 640px;
+}
+
+@media (max-width: 400px) {
+  .flip-auth-card.reg-step2 {
+    height: 680px;
+  }
+}
+
+/* ── Step content wrapper ────────────────────────────────────────── */
+.flip-auth-step-content {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
+/* Step 2: form scrolls if validation errors overflow */
+.flip-auth-back.step2-active {
+  overflow: visible;
+}
+
+.flip-auth-form-step2 {
+  gap: 0.55rem;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-width: thin;
+  scrollbar-color: oklch(0.78 0 0) transparent;
+  padding-right: 2px;
+}
+
+.flip-auth-form-step2::-webkit-scrollbar {
+  width: 4px;
+}
+
+.flip-auth-form-step2::-webkit-scrollbar-thumb {
+  background: oklch(0.78 0 0);
+}
+
+/* ── Step transition animations ──────────────────────────────────── */
+@keyframes stepEnterRight {
+  from {
+    opacity: 0;
+    transform: translateX(18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes stepEnterLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-18px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.step-enter-right {
+  animation: stepEnterRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.step-enter-left {
+  animation: stepEnterLeft 0.28s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* ── Back link (paso 2 → paso 1) ─────────────────────────────────── */
+.flip-auth-back-link {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.5 0 0);
+  padding: 0;
+  font-family: inherit;
+  transition: color 0.15s ease;
+  white-space: nowrap;
+}
+
+.flip-auth-back-link:hover {
+  color: #f65b7f;
+}
+
+/* ── Step indicator dots ─────────────────────────────────────────── */
+.flip-auth-steps {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.flip-auth-step-dot {
+  width: 7px;
+  height: 7px;
+  background: oklch(0.88 0 0);
+  border: 1px solid oklch(0.72 0 0);
+  flex-shrink: 0;
+}
+
+.flip-auth-step-dot.active {
+  background: #f65b7f;
+  border-color: #f65b7f;
+}
+
+.flip-auth-step-dot.done {
+  background: oklch(0.12 0 0);
+  border-color: oklch(0.12 0 0);
+}
+
+.flip-auth-step-label {
+  font-size: 0.56rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: oklch(0.55 0 0);
+  white-space: nowrap;
+  margin-left: 0.15rem;
+}
+
+/* ── Two-column grid for name / doc rows ─────────────────────────── */
+.flip-auth-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* ── Phone row ───────────────────────────────────────────────────── */
+.flip-auth-phone-row {
+  display: grid;
+  grid-template-columns: 90px 1fr;
+  gap: 0.5rem;
+  align-items: start;
+}
+
+/* ── Country code picker button ──────────────────────────────────── */
+.flip-auth-country-btn {
+  height: 42px;
+  width: 100%;
+  border: 2px solid oklch(0.82 0 0);
+  background: #ffffff;
+  box-shadow: 3px 3px 0 oklch(0.82 0 0);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: oklch(0.12 0 0);
+  cursor: pointer;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  font-family: inherit;
+  padding: 0 6px;
+  white-space: nowrap;
+}
+
+.flip-auth-country-btn:hover,
+.flip-auth-country-btn:focus-visible {
+  border-color: #f65b7f;
+  box-shadow: 3px 3px 0 #f65b7f;
+  outline: none;
+}
+
+.flip-auth-country-btn.has-error {
+  border-color: oklch(0.55 0.18 25);
+  box-shadow: 3px 3px 0 oklch(0.55 0.18 25);
+}
+
+.flip-auth-country-caret {
+  font-size: 0.55rem;
+  color: oklch(0.6 0 0);
+  margin-left: 1px;
+}
+
+/* ── Country dropdown panel ──────────────────────────────────────── */
+.flip-auth-country-dropdown {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  width: 240px;
+  background: oklch(0.985 0.004 340);
+  border: 2px solid oklch(0.12 0 0);
+  box-shadow: 4px 4px 0 oklch(0.12 0 0);
+  z-index: 200;
+  overflow: hidden;
+}
+
+.flip-auth-country-search {
+  display: block;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid oklch(0.88 0 0);
+  background: transparent;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.75rem;
+  font-family: inherit;
+  outline: none;
+  color: oklch(0.12 0 0);
+}
+
+.flip-auth-country-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 170px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+.flip-auth-country-group {
+  padding: 0.3rem 0.7rem 0.15rem;
+  font-size: 0.52rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #f65b7f;
+  background: oklch(0.97 0.005 340);
+  position: sticky;
+  top: 0;
+}
+
+.flip-auth-country-item {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  width: 100%;
+  padding: 0.38rem 0.7rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-family: inherit;
+  color: oklch(0.2 0 0);
+  text-align: left;
+  transition: background 0.1s;
+}
+
+.flip-auth-country-item:hover {
+  background: oklch(0.94 0.006 340);
+}
+
+.flip-auth-country-item.selected {
+  background: oklch(0.94 0.006 340);
+  font-weight: 700;
+}
+
+.flip-auth-country-code {
+  margin-left: auto;
+  font-size: 0.68rem;
+  color: oklch(0.55 0 0);
+  font-weight: 600;
+}
+
+.flip-auth-country-empty {
+  padding: 0.75rem;
+  font-size: 0.76rem;
+  color: oklch(0.55 0 0);
+  text-align: center;
+}
+
+/* ── Select (document type / gender) ────────────────────────────── */
+.flip-auth-select {
+  width: 100%;
+  height: 42px;
+  border: 2px solid oklch(0.82 0 0);
+  background: #ffffff;
+  padding: 0 2rem 0 0.875rem;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: oklch(0.12 0 0);
+  box-shadow: 3px 3px 0 oklch(0.82 0 0);
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+  outline: none;
+  border-radius: 0;
+  font-family: inherit;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='7' viewBox='0 0 10 7'%3E%3Cpath fill='%23555' d='M5 7L0 0h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+}
+
+.flip-auth-select:focus {
+  border-color: #f65b7f;
+  box-shadow: 3px 3px 0 #f65b7f;
+}
+
+.flip-auth-select.has-error {
+  border-color: oklch(0.55 0.18 25);
+  box-shadow: 3px 3px 0 oklch(0.55 0.18 25);
+}
+
+/* ── Input error state ───────────────────────────────────────────── */
+.flip-auth-input.has-error {
+  border-color: oklch(0.55 0.18 25);
+  box-shadow: 3px 3px 0 oklch(0.55 0.18 25);
+}
+
+/* ── Per-field error text ────────────────────────────────────────── */
+.flip-auth-field-error {
+  font-size: 0.58rem;
+  font-weight: 700;
+  color: oklch(0.5 0.18 25);
+  letter-spacing: 0.02em;
+  margin: 0;
+  line-height: 1.3;
+}
+
+/* ── Checkbox rows ───────────────────────────────────────────────── */
+.flip-auth-check-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.55rem;
+  cursor: pointer;
+}
+
+.flip-auth-checkbox-input {
+  width: 15px;
+  height: 15px;
+  margin-top: 1px;
+  border: 2px solid oklch(0.6 0 0);
+  border-radius: 0;
+  accent-color: #f65b7f;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.flip-auth-check-label {
+  font-size: 0.62rem;
+  line-height: 1.5;
+  color: oklch(0.42 0 0);
+}
+
+.flip-auth-check-label a {
+  color: #f65b7f;
+  text-decoration: underline;
+  text-underline-offset: 1px;
+}
+
+/* ── Success state ───────────────────────────────────────────────── */
+.flip-auth-success-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  flex: 1;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.flip-auth-success-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: #ffffff;
+  background: oklch(0.45 0.1 158);
+  border: 2px solid oklch(0.12 0 0);
+  box-shadow: 3px 3px 0 oklch(0.12 0 0);
+  flex-shrink: 0;
+}
+
+.flip-auth-success-title {
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: oklch(0.12 0 0);
+  margin: 0;
+}
+
+.flip-auth-success-msg,
+.flip-auth-success-body {
+  font-size: 0.82rem;
+  color: oklch(0.4 0 0);
+  line-height: 1.55;
+  margin: 0;
+  max-width: 230px;
+}

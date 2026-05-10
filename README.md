@@ -2,7 +2,7 @@
 
 Plataforma web de acompañamiento profesional para artistas emergentes colombianos. El proyecto nació de una necesidad concreta: conectar creadores con los recursos que la academia no da. Mentorías 1:1, talleres, convocatorias y comunidad, todo en un solo lugar.
 
-**Sitio en producción:** [opera-prima.vercel.app](https://opera-prima.vercel.app)  
+**Sitio en producción:** [opera-prima.vercel.app](https://operaprima.vercel.app)  
 **Repositorio:** [github.com/sjmontano/OperaPrima](https://github.com/sjmontano/OperaPrima)
 
 ---

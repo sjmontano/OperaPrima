@@ -57,7 +57,7 @@ const HOW_IT_WORKS = [
   },
 ]
 
-const MENTORS = [
+export const MENTORS = [
   {
     id: 'ana-restrepo',
     file: 'AN-R',

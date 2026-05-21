@@ -27,10 +27,13 @@ export interface Testimonial {
 export interface TestimonialsWallProps {
   className?: string
   headline?: string
+  testimonialEyebrow?: string
   testimonials?: Testimonial[]
   animationDuration?: string
   cardWidth?: number
   cardGap?: string
+  rows?: 1 | 2
+  fadeColor?: string
 }
 
 const DEFAULT_TESTIMONIALS: Testimonial[] = [
@@ -63,10 +66,13 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
 export function TestimonialsWall({
   className = '',
   headline = 'Esto dicen los artistas de nuestra comunidad',
+  testimonialEyebrow = '02 — Comunidad Opera Prima',
   testimonials = DEFAULT_TESTIMONIALS,
   animationDuration = TESTIMONIAL_WALL_CONFIG.animationDuration,
   cardWidth = TESTIMONIAL_WALL_CONFIG.cardWidth,
   cardGap = TESTIMONIAL_WALL_CONFIG.cardGap,
+  rows = 2,
+  fadeColor = 'var(--background)',
 }: TestimonialsWallProps) {
   const [isCardHovered, setIsCardHovered] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
@@ -85,7 +91,7 @@ export function TestimonialsWall({
             timelineRef={sectionRef}
             className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
           >
-            02 — Comunidad Opera Prima
+            {testimonialEyebrow}
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"
@@ -103,8 +109,7 @@ export function TestimonialsWall({
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 left-0 z-10"
             style={{
-              background:
-                'linear-gradient(to right, var(--background) 0%, transparent 25%, transparent 75%, var(--background) 100%)',
+              background: `linear-gradient(to right, ${fadeColor} 0%, transparent 25%, transparent 75%, ${fadeColor} 100%)`,
             }}
           />
           <div className="testimonial-scroll-group">
@@ -127,24 +132,26 @@ export function TestimonialsWall({
               </div>
             </div>
 
-            <div
-              className="scroll-row scroll-right"
-              style={{
-                animationDuration,
-                animationPlayState: isCardHovered ? 'paused' : 'running',
-              }}
-            >
-              <div className="scroll-content" style={{ gap: cardGap }}>
-                {duplicated.map((testimonial, index) => (
-                  <TestimonialCard
-                    key={`right-${index}`}
-                    testimonial={testimonial}
-                    width={cardWidth}
-                    onHoverChange={setIsCardHovered}
-                  />
-                ))}
+            {rows === 2 && (
+              <div
+                className="scroll-row scroll-right"
+                style={{
+                  animationDuration,
+                  animationPlayState: isCardHovered ? 'paused' : 'running',
+                }}
+              >
+                <div className="scroll-content" style={{ gap: cardGap }}>
+                  {duplicated.map((testimonial, index) => (
+                    <TestimonialCard
+                      key={`right-${index}`}
+                      testimonial={testimonial}
+                      width={cardWidth}
+                      onHoverChange={setIsCardHovered}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

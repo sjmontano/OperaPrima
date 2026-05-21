@@ -197,9 +197,9 @@
   display: flex;
   width: max-content;
   position: relative;
-  padding: 1.5rem 0;
-  margin-top: -1.5rem;
-  margin-bottom: -1.5rem;
+  padding: 1.75rem 0;
+  margin-top: -1.75rem;
+  margin-bottom: -1.75rem;
   transition: z-index 0s;
   z-index: 0;
 }
@@ -241,6 +241,7 @@
 .testimonial-card:hover {
   transform: translate(-3px, -3px);
   border-color: #f65b7f;
+  border-top-width: 3px;
   box-shadow: 5px 5px 0 #f65b7f;
 }
 

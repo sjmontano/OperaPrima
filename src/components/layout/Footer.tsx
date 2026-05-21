@@ -14,7 +14,7 @@ const FOOTER_CONFIG = {
 }
 
 const NAV_LINKS = [
-  { label: 'Sobre ÓP', href: '/sobre-op' },
+  { label: 'Sobre ÓP', href: '/sobre' },
   { label: 'Mentorías', href: '/mentorias' },
   { label: 'Talleres y Eventos', href: '/eventos' },
   { label: 'Comunidad', href: '/comunidad' },

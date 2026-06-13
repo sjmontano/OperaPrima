@@ -65,7 +65,7 @@ export function ComunidadCTA() {
       />
 
       {/* Pink accent strip — top border */}
-      <div className="absolute top-0 right-0 left-0 h-[3px] bg-[#F65B7F]" />
+      <div className="absolute top-0 right-0 left-0 h-[3px] bg-[#8ECAE6]" />
 
       <div className="relative z-10 mx-auto max-w-420 border-white/10 px-8 py-28 sm:border-x lg:py-36">
         <div className="grid items-center gap-16 lg:grid-cols-[1fr_auto] lg:gap-24">
@@ -75,7 +75,7 @@ export function ComunidadCTA() {
               as="p"
               animationNum={0}
               timelineRef={ref}
-              className="mb-6 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+              className="mb-6 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
               Únete a la comunidad
             </TimelineAnimation>
@@ -88,7 +88,7 @@ export function ComunidadCTA() {
             >
               Tu obra merece
               <br />
-              <span className="text-[#F65B7F]">más público,</span>
+              <span className="text-[#8ECAE6]">más público,</span>
               <br />
               más oportunidades.
             </TimelineAnimation>
@@ -113,7 +113,7 @@ export function ComunidadCTA() {
               {/* Primary CTA */}
               <a
                 href="/registro"
-                className="inline-flex items-center gap-3 border-2 border-[#F65B7F] bg-[#F65B7F] px-8 py-4 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                className="inline-flex items-center gap-3 border-2 border-[#E63946] bg-[#E63946] px-8 py-4 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
                 Comenzar gratis
                 <ArrowRight size={16} />
@@ -140,7 +140,7 @@ export function ComunidadCTA() {
                 transition={{ duration: 0.5, delay: i * 0.1, ease: [0.16, 1, 0.3, 1] }}
                 className="flex min-w-[120px] flex-col gap-1 lg:py-8"
               >
-                <Icon size={18} className="mb-2 text-[#F65B7F]" />
+                <Icon size={18} className="mb-2 text-[#8ECAE6]" />
                 <span className="text-4xl leading-none font-bold tracking-tight text-white">
                   <StatNumber end={end} thousands={thousands} suffix={suffix} />
                 </span>

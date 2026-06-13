@@ -47,7 +47,7 @@ export function PartnersStrip() {
             as="p"
             animationNum={0}
             timelineRef={sectionRef}
-            className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+            className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
             03 — Aliados y Red
           </TimelineAnimation>
@@ -103,7 +103,7 @@ export function PartnersStrip() {
             ¿Quieres colaborar con nosotros?{' '}
             <a
               href="mailto:direccion@operaprimacultura.com"
-              className="font-semibold text-[#F65B7F] underline-offset-4 hover:underline"
+              className="font-semibold text-[#023047] underline-offset-4 hover:underline"
             >
               direccion@operaprimacultura.com
             </a>

@@ -14,7 +14,7 @@ export function NewsletterForm() {
 
   if (sent) {
     return (
-      <p className="text-sm font-semibold" style={{ color: '#F65B7F' }}>
+      <p className="text-sm font-semibold" style={{ color: '#023047' }}>
         ¡Listo! Te avisamos cuando haya novedades.
       </p>
     )
@@ -32,13 +32,13 @@ export function NewsletterForm() {
         style={{
           border: '2px solid rgba(250,250,249,0.3)',
           borderRight: 'none',
-          color: '#FAFAF9',
+          color: '#F0F8FF',
         }}
       />
       <button
         type="submit"
         className="px-4 py-2 text-xs font-bold tracking-widest uppercase transition-colors hover:opacity-90"
-        style={{ background: '#F65B7F', color: '#FAFAF9', flexShrink: 0 }}
+        style={{ background: '#E63946', color: '#F0F8FF', flexShrink: 0 }}
       >
         OK
       </button>

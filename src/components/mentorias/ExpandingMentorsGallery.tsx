@@ -305,7 +305,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
             <button
               type="button"
               onClick={handleCloseModal}
-              className="absolute top-4 right-4 z-20 inline-flex h-10 w-10 items-center justify-center border-2 border-white/20 text-white transition hover:border-[#F65B7F] hover:text-[#F65B7F]"
+              className="absolute top-4 right-4 z-20 inline-flex h-10 w-10 items-center justify-center border-2 border-white/20 text-white transition hover:border-[#8ECAE6] hover:text-[#8ECAE6]"
             >
               <X size={18} />
               <span className="sr-only">Cerrar</span>
@@ -322,7 +322,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
                   {getMentorPhotos(selectedMentor.id).map((photo, index) => (
                     <span
                       key={photo.url}
-                      className={`h-2 rounded-full transition-all duration-200 ${index === selectedImageIndex ? 'w-8 bg-[#F65B7F]' : 'w-2 bg-white/30'}`}
+                      className={`h-2 rounded-full transition-all duration-200 ${index === selectedImageIndex ? 'w-8 bg-[#8ECAE6]' : 'w-2 bg-white/30'}`}
                     />
                   ))}
                 </div>
@@ -334,12 +334,12 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
                   {selectedMentor.name}
                 </h3>
                 <p className="mt-3 text-lg font-semibold text-white/85">{selectedMentor.title}</p>
-                <p className="mt-2 text-sm font-medium text-[#F65B7F]">{selectedMentor.location}</p>
+                <p className="mt-2 text-sm font-medium text-[#8ECAE6]">{selectedMentor.location}</p>
                 <p className="mt-6 text-base leading-7 text-white/70">{selectedMentor.focus}</p>
 
                 <div className="mt-8 space-y-6 border-t border-white/10 pt-8 text-white/85">
                   <div>
-                    <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+                    <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                       Temas que trabajamos
                     </p>
                     <ul className="mt-4 grid gap-3">
@@ -357,7 +357,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
                     <button
                       type="button"
                       onClick={() => authModal.open('registro')}
-                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-[#F65B7F] bg-[#F65B7F] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#111] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:bg-transparent hover:text-[#F65B7F] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#E63946] hover:bg-transparent hover:text-[#E63946] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                     >
                       Reservar mentoría
                     </button>
@@ -365,7 +365,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
                     <Link
                       href={ROUTES.MENTOR_PROFILE(selectedMentor.id)}
                       onClick={handleCloseModal}
-                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-[#F65B7F] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                     >
                       Ver perfil
                     </Link>

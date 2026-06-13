@@ -36,7 +36,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
   return (
     <section
       style={{
-        background: '#111111',
+        background: '#353535',
         width: '100%',
         position: 'relative',
         overflow: 'hidden',
@@ -85,7 +85,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
           className="absolute top-3 right-3 flex items-center gap-1.5 border-2 border-white/30 px-3 py-1.5 text-[10px] font-bold tracking-widest text-white uppercase transition-all duration-200"
           style={{
             background: bannerHover ? 'rgba(246,91,127,0.85)' : 'rgba(17,17,17,0.65)',
-            borderColor: bannerHover ? '#F65B7F' : 'rgba(255,255,255,0.2)',
+            borderColor: bannerHover ? '#8ECAE6' : 'rgba(255,255,255,0.2)',
             backdropFilter: 'blur(4px)',
             opacity: bannerHover ? 1 : 0.6,
           }}
@@ -106,7 +106,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
           className="pointer-events-none absolute right-0 bottom-0 left-0"
           style={{
             height: '60px',
-            background: 'linear-gradient(to bottom, transparent, #111111)',
+            background: 'linear-gradient(to bottom, transparent, #353535)',
           }}
         />
       </div>
@@ -121,7 +121,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
           <div className="min-w-0 flex-1">
             <p
               className="mb-4 text-xs font-bold tracking-[0.25em] uppercase"
-              style={{ color: '#F65B7F' }}
+              style={{ color: '#023047' }}
             >
               Perfil Artístico
             </p>
@@ -129,7 +129,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
               style={{
                 fontSize: 'clamp(2.25rem, 8vw, 6rem)',
                 fontWeight: 700,
-                color: '#FAFAF9',
+                color: '#F0F8FF',
                 letterSpacing: '-0.025em',
                 textTransform: 'uppercase',
                 lineHeight: 0.95,
@@ -149,7 +149,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
             >
               {user.realName}
             </p>
-            <p className="text-sm font-semibold" style={{ color: '#F65B7F' }}>
+            <p className="text-sm font-semibold" style={{ color: '#023047' }}>
               @{user.username}
             </p>
           </div>
@@ -162,8 +162,8 @@ export function ProfileHero({ user }: ProfileHeroProps) {
                 width: 'clamp(100px, 14vw, 192px)',
                 aspectRatio: '1 / 1',
                 overflow: 'hidden',
-                border: '2px solid #F65B7F',
-                boxShadow: '6px 6px 0 #F65B7F',
+                border: '2px solid #023047',
+                boxShadow: '6px 6px 0 #023047',
               }}
               onMouseEnter={() => setAvatarHover(true)}
               onMouseLeave={() => setAvatarHover(false)}
@@ -185,10 +185,10 @@ export function ProfileHero({ user }: ProfileHeroProps) {
                   opacity: avatarHover ? 1 : 0,
                 }}
               >
-                <Camera size={22} color="#F65B7F" strokeWidth={2} />
+                <Camera size={22} color="#8ECAE6" strokeWidth={2} />
                 <span
                   className="text-[9px] font-bold tracking-[0.2em] uppercase"
-                  style={{ color: '#F65B7F' }}
+                  style={{ color: '#023047' }}
                 >
                   Cambiar foto
                 </span>

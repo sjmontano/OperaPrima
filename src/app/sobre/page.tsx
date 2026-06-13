@@ -14,7 +14,7 @@ export default function SobrePage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col bg-[#FAFAF9]">
+      <main className="flex flex-col bg-[#F0F8FF]">
         <SobreLandingSection />
         <PartnersStrip />
       </main>

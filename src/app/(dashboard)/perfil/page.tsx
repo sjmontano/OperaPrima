@@ -138,9 +138,9 @@ const DISCIPLINES = ['Música', 'Artes Visuales', 'Danza', 'Teatro', 'Performanc
 
 // ── Interest badge color rotation ─────────────────────────────────────────────
 const INTEREST_COLORS = [
-  { bg: 'oklch(0.30 0.07 165)', text: '#FAFAF9' }, // verde selva
-  { bg: 'oklch(0.40 0.14 295)', text: '#FAFAF9' }, // lavanda
-  { bg: 'oklch(0.92 0.008 350)', text: '#111111' }, // surface tinted
+  { bg: 'oklch(0.30 0.07 165)', text: '#F0F8FF' },
+  { bg: 'oklch(0.40 0.14 295)', text: '#F0F8FF' },
+  { bg: 'oklch(0.92 0.008 350)', text: '#353535' },
 ]
 
 // ── Page ──────────────────────────────────────────────────────────────────────
@@ -198,7 +198,7 @@ export default function PerfilPage() {
                   return (
                     <span
                       key={interest}
-                      className="border-2 border-[#111111] px-3 py-1 text-xs font-bold"
+                      className="border-2 border-[#353535] px-3 py-1 text-xs font-bold"
                       style={{ background: c.bg, color: c.text }}
                     >
                       {interest}
@@ -223,7 +223,7 @@ export default function PerfilPage() {
                   <a
                     href="#"
                     className="text-base font-semibold transition-colors hover:text-[#c8405f] hover:underline"
-                    style={{ color: '#F65B7F' }}
+                    style={{ color: '#023047' }}
                   >
                     #{tag}
                   </a>
@@ -238,7 +238,7 @@ export default function PerfilPage() {
       <section style={{ borderBottom: '1px solid oklch(0.88 0.010 350)', paddingBottom: '2.5rem' }}>
         <div className="mx-auto px-6 pt-10 pb-6" style={{ maxWidth: '1024px' }}>
           <div className="mb-6 flex items-baseline gap-3">
-            <h2 className="text-lg font-bold tracking-wide uppercase" style={{ color: '#111111' }}>
+            <h2 className="text-lg font-bold tracking-wide uppercase" style={{ color: '#353535' }}>
               Galería
             </h2>
             <span className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
@@ -270,7 +270,7 @@ export default function PerfilPage() {
             <a
               key={s.label}
               href={s.href}
-              className="group flex items-baseline gap-2 border-b-2 border-[#111111] pb-0.5 transition-colors duration-150 hover:border-[#F65B7F]"
+              className="group flex items-baseline gap-2 border-b-2 border-[#353535] pb-0.5 transition-colors duration-150 hover:border-[#023047]"
             >
               <span
                 className="text-xs font-medium tracking-widest uppercase"
@@ -279,8 +279,8 @@ export default function PerfilPage() {
                 {s.label}
               </span>
               <span
-                className="text-base font-bold transition-colors duration-150 group-hover:text-[#F65B7F]"
-                style={{ color: '#111111' }}
+                className="text-base font-bold transition-colors duration-150 group-hover:text-[#023047]"
+                style={{ color: '#353535' }}
               >
                 {s.handle}
               </span>
@@ -289,26 +289,19 @@ export default function PerfilPage() {
         </div>
       </section>
 
-      {/* ── DESCUBRE MIEMBROS ── */}
-      <section
-        className="mx-auto px-6 py-10"
-        style={{
-          maxWidth: '1024px',
-          borderBottom: '1px solid oklch(0.88 0.010 350)',
-        }}
-      >
-        <div className="mb-6">
-          <h2
-            className="mb-1 text-lg font-bold tracking-wide uppercase"
-            style={{ color: '#111111' }}
-          >
-            Descubre a otros miembros
-          </h2>
-          <p className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
-            Artistas de tu comunidad — filtra por disciplina
-          </p>
+      {/* ── COMUNIDAD ── */}
+      <section style={{ borderBottom: '1px solid oklch(0.88 0.010 350)' }}>
+        <div className="mx-auto px-6 py-10" style={{ maxWidth: '1024px' }}>
+          <div className="mb-6">
+            <h2 className="text-lg font-bold tracking-wide uppercase" style={{ color: '#353535' }}>
+              Descubre a otros miembros
+            </h2>
+            <p className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
+              Artistas de tu comunidad — filtra por disciplina
+            </p>
+          </div>
+          <MemberGrid members={COMMUNITY_MEMBERS} disciplines={DISCIPLINES} />
         </div>
-        <MemberGrid members={COMMUNITY_MEMBERS} disciplines={DISCIPLINES} />
       </section>
 
       <Footer />

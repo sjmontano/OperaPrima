@@ -33,7 +33,7 @@ function Lightbox({ item, onClose }: { item: GalleryItem; onClose: () => void })
     >
       <div
         className="relative w-full max-w-3xl"
-        style={{ border: '2px solid #F65B7F', boxShadow: '8px 8px 0 #111111' }}
+        style={{ border: '2px solid #8ECAE6', boxShadow: '8px 8px 0 #353535' }}
         onClick={(e) => e.stopPropagation()}
       >
         <img
@@ -44,16 +44,16 @@ function Lightbox({ item, onClose }: { item: GalleryItem; onClose: () => void })
         />
         <div
           className="flex items-center justify-between px-5 py-3"
-          style={{ background: '#111111', borderTop: '1px solid rgba(250,250,249,0.1)' }}
+          style={{ background: '#353535', borderTop: '1px solid rgba(250,250,249,0.1)' }}
         >
           <div>
             <p
               className="text-[10px] font-bold tracking-widest uppercase"
-              style={{ color: '#F65B7F' }}
+              style={{ color: '#8ECAE6' }}
             >
               {item.date}
             </p>
-            <p className="mt-0.5 text-sm font-semibold" style={{ color: '#FAFAF9' }}>
+            <p className="mt-0.5 text-sm font-semibold" style={{ color: '#F0F8FF' }}>
               {item.title}
             </p>
           </div>
@@ -61,7 +61,7 @@ function Lightbox({ item, onClose }: { item: GalleryItem; onClose: () => void })
             type="button"
             onClick={onClose}
             aria-label="Cerrar"
-            className="flex h-8 w-8 items-center justify-center border-2 border-white/20 text-white/60 transition-colors duration-150 hover:border-[#F65B7F] hover:text-[#F65B7F]"
+            className="flex h-8 w-8 items-center justify-center border-2 border-white/20 text-white/60 transition-colors duration-150 hover:border-[#8ECAE6] hover:text-[#8ECAE6]"
           >
             <X size={14} />
           </button>
@@ -259,11 +259,11 @@ function GalleryItemCard({
         >
           <p
             className="mb-1 text-[10px] font-bold tracking-widest uppercase"
-            style={{ color: '#F65B7F' }}
+            style={{ color: '#8ECAE6' }}
           >
             {item.date}
           </p>
-          <p className="text-sm leading-tight font-semibold" style={{ color: '#FAFAF9' }}>
+          <p className="text-sm leading-tight font-semibold" style={{ color: '#F0F8FF' }}>
             {item.title}
           </p>
         </div>
@@ -279,14 +279,14 @@ function GalleryItemCard({
           transition: 'opacity 0.2s ease',
         }}
       >
-        <ZoomIn size={13} color="#F65B7F" />
+        <ZoomIn size={13} color="#8ECAE6" />
       </div>
 
       {/* Inset coral border */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          outline: '2px solid #F65B7F',
+          outline: '2px solid #8ECAE6',
           outlineOffset: '-2px',
           opacity: hovered ? 1 : 0,
           transition: 'opacity 0.25s ease',
@@ -313,7 +313,7 @@ function UploadButton() {
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="flex items-center gap-2 border-2 border-[#111111] px-4 py-2 text-xs font-bold tracking-widest text-[#111111] uppercase transition-all duration-150 hover:border-[#F65B7F] hover:bg-[#F65B7F] hover:text-white hover:shadow-[3px_3px_0_#111111] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+        className="flex items-center gap-2 border-2 border-[#353535] px-4 py-2 text-xs font-bold tracking-widest text-[#353535] uppercase transition-all duration-150 hover:border-[#E63946] hover:bg-[#E63946] hover:text-white hover:shadow-[3px_3px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
       >
         <Upload size={13} />
         Subir obra
@@ -328,8 +328,8 @@ function UploadButton() {
 
       {preview && (
         <div
-          className="fixed right-6 bottom-6 z-50 flex items-center gap-3 border-2 border-[#111111] px-4 py-3 shadow-[4px_4px_0_#111111]"
-          style={{ background: '#FAFAF9' }}
+          className="fixed right-6 bottom-6 z-50 flex items-center gap-3 border-2 border-[#353535] px-4 py-3 shadow-[4px_4px_0_#353535]"
+          style={{ background: '#F0F8FF' }}
         >
           <img
             src={preview.src}
@@ -338,7 +338,7 @@ function UploadButton() {
             style={{ border: '1px solid rgba(17,17,17,0.15)' }}
           />
           <div>
-            <p className="text-xs font-bold tracking-widest uppercase" style={{ color: '#111111' }}>
+            <p className="text-xs font-bold tracking-widest uppercase" style={{ color: '#353535' }}>
               Obra cargada
             </p>
             <p className="max-w-32 truncate text-[10px]" style={{ color: 'oklch(0.52 0.010 350)' }}>

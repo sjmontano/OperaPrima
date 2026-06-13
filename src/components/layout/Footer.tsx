@@ -23,7 +23,7 @@ const NAV_LINKS = [
 ]
 
 const SOCIAL_LINKS = [
-  { label: 'Instagram', href: 'https://instagram.com/operaprimacultura', icon: Link2 },
+  { label: 'Instagram', href: 'https://instagram.com/opera.prima_', icon: Link2 },
   { label: 'YouTube', href: 'https://youtube.com/@operaprimacultura', icon: PlayCircle },
   { label: 'Correo', href: `mailto:${FOOTER_CONFIG.email}`, icon: Mail },
 ]
@@ -87,7 +87,7 @@ export function Footer() {
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="text-white/40 transition-colors hover:text-[#F65B7F]"
+                  className="text-white/40 transition-colors hover:text-[#8ECAE6]"
                 >
                   <Icon size={24} />
                 </a>
@@ -151,12 +151,12 @@ export function Footer() {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="Tu correo electrónico"
-                  className="w-full border-2 border-white/15 bg-white/8 px-3 py-2 pr-10 text-sm text-white transition-all duration-150 placeholder:text-white/40 hover:border-white/40 hover:shadow-[4px_4px_0_rgba(255,255,255,0.15)] focus:border-[#F65B7F] focus:shadow-[4px_4px_0_#F65B7F] focus:outline-none"
+                  className="w-full border-2 border-white/15 bg-white/8 px-3 py-2 pr-10 text-sm text-white transition-all duration-150 placeholder:text-white/40 hover:border-white/40 hover:shadow-[4px_4px_0_rgba(255,255,255,0.15)] focus:border-[#8ECAE6] focus:shadow-[4px_4px_0_#8ECAE6] focus:outline-none"
                 />
                 <button
                   type="submit"
                   aria-label="Suscríbete"
-                  className="absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center bg-[#F65B7F] text-white transition-colors hover:bg-[#d6405f]"
+                  className="absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center bg-[#E63946] text-white transition-colors hover:bg-[#4682B4]"
                 >
                   <ArrowRight size={14} />
                 </button>

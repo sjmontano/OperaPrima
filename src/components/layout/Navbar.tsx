@@ -112,7 +112,7 @@ export function Navbar() {
                 }`}
               >
                 {link.label}
-                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-[#F65B7F] transition-transform duration-200 group-hover:scale-x-100" />
+                <span className="absolute inset-x-3 bottom-1 h-px origin-left scale-x-0 bg-[#8ECAE6] transition-transform duration-200 group-hover:scale-x-100" />
               </Link>
             ))}
           </nav>
@@ -134,7 +134,7 @@ export function Navbar() {
                   {/* Avatar initials */}
                   <span
                     className="flex h-6 w-6 shrink-0 items-center justify-center text-[10px] font-bold text-white"
-                    style={{ background: '#F65B7F' }}
+                    style={{ background: '#023047' }}
                   >
                     {currentUser.firstName[0]}
                     {currentUser.lastName[0]}
@@ -156,12 +156,12 @@ export function Navbar() {
                       exit={{ opacity: 0, y: -4, scale: 0.97 }}
                       transition={{ duration: 0.15, ease: [0.16, 1, 0.3, 1] }}
                       className="absolute top-full right-0 z-50 mt-2 w-48 border-2 border-zinc-900 shadow-[4px_4px_0_#111]"
-                      style={{ background: '#FAFAF9' }}
+                      style={{ background: '#F0F8FF' }}
                     >
                       <div className="border-b border-zinc-200 px-3 py-2">
                         <p
                           className="text-[10px] font-bold tracking-widest uppercase"
-                          style={{ color: '#F65B7F' }}
+                          style={{ color: '#023047' }}
                         >
                           Sesión activa
                         </p>
@@ -209,7 +209,7 @@ export function Navbar() {
                 <button
                   type="button"
                   onClick={() => authModal.open('registro')}
-                  className="border-2 border-[#F65B7F] bg-[#F65B7F] px-4 py-2 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[3px_3px_0_rgba(255,255,255,0.4)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  className="border-2 border-[#E63946] bg-[#E63946] px-4 py-2 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-transparent hover:text-[#E63946] hover:shadow-[3px_3px_0_rgba(255,255,255,0.4)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
                   {NAVBAR_CONFIG.cta.register.label}
                 </button>
@@ -282,7 +282,7 @@ export function Navbar() {
                     <div className="flex items-center gap-2 px-3 py-2">
                       <span
                         className="flex h-7 w-7 shrink-0 items-center justify-center text-[11px] font-bold text-white"
-                        style={{ background: '#F65B7F' }}
+                        style={{ background: '#023047' }}
                       >
                         {currentUser.firstName[0]}
                         {currentUser.lastName[0]}
@@ -293,7 +293,7 @@ export function Navbar() {
                         >
                           {currentUser.firstName} {currentUser.lastName}
                         </p>
-                        <p className="text-[10px]" style={{ color: '#F65B7F' }}>
+                        <p className="text-[10px]" style={{ color: '#8ECAE6' }}>
                           @{currentUser.username}
                         </p>
                       </div>
@@ -312,7 +312,7 @@ export function Navbar() {
                         logout()
                         setMobileOpen(false)
                       }}
-                      className="flex w-full items-center gap-2 border-2 border-[#111111] bg-[#111111] px-4 py-2.5 text-xs font-bold tracking-widest text-white uppercase"
+                      className="flex w-full items-center gap-2 border-2 border-[#353535] bg-[#353535] px-4 py-2.5 text-xs font-bold tracking-widest text-white uppercase"
                     >
                       <LogOut size={13} />
                       Cerrar sesión
@@ -340,7 +340,7 @@ export function Navbar() {
                         authModal.open('registro')
                         setMobileOpen(false)
                       }}
-                      className="block w-full border-2 border-[#F65B7F] bg-[#F65B7F] px-4 py-2.5 text-center text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[3px_3px_0_rgba(255,255,255,0.4)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      className="block w-full border-2 border-[#E63946] bg-[#E63946] px-4 py-2.5 text-center text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-transparent hover:text-[#E63946] hover:shadow-[3px_3px_0_rgba(255,255,255,0.4)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                     >
                       {NAVBAR_CONFIG.cta.register.label}
                     </button>

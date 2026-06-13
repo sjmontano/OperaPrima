@@ -34,9 +34,9 @@ export interface CalendarEvent {
 
 // -- Brand accent map --
 const CAT_STYLES = {
-  terracota: { fg: '#F65B7F', bg: 'rgba(246,91,127,0.10)', border: 'rgba(246,91,127,0.40)' },
-  selva: { fg: '#1A4A3C', bg: 'rgba(26,74,60,0.08)', border: 'rgba(26,74,60,0.35)' },
-  lavanda: { fg: '#5E3A8A', bg: 'rgba(94,58,138,0.08)', border: 'rgba(94,58,138,0.35)' },
+  terracota: { fg: '#8ECAE6', bg: 'rgba(142,202,230,0.10)', border: 'rgba(142,202,230,0.40)' },
+  selva: { fg: '#023047', bg: 'rgba(2,48,71,0.08)', border: 'rgba(2,48,71,0.35)' },
+  lavanda: { fg: '#4682B4', bg: 'rgba(70,130,180,0.08)', border: 'rgba(70,130,180,0.35)' },
 } as const
 
 const INITIAL_VISIBLE = 6
@@ -279,13 +279,13 @@ function CategoryDropdown({
         onClick={() => setOpen((v) => !v)}
         className={`flex items-center gap-2 border-2 px-4 py-3 text-[0.62rem] font-bold tracking-widest whitespace-nowrap uppercase transition-all duration-150 ${
           open || hasActive
-            ? '-translate-x-0.5 -translate-y-0.5 border-[#F65B7F] text-[#F65B7F] shadow-[4px_4px_0_#F65B7F]'
-            : 'border-zinc-200 text-zinc-600 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#F65B7F]'
+            ? '-translate-x-0.5 -translate-y-0.5 border-[#023047] text-[#023047] shadow-[4px_4px_0_#023047]'
+            : 'border-zinc-200 text-zinc-600 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#023047] hover:text-[#023047] hover:shadow-[4px_4px_0_#023047]'
         }`}
       >
         {label}
         {hasActive && (
-          <span className="bg-[#F65B7F] px-1.5 py-0.5 text-[0.55rem] leading-none font-bold text-white">
+          <span className="bg-[#E63946] px-1.5 py-0.5 text-[0.55rem] leading-none font-bold text-white">
             {activeFilters.length}
           </span>
         )}
@@ -313,7 +313,7 @@ function CategoryDropdown({
                   type="checkbox"
                   checked={activeFilters.includes(cat)}
                   onChange={() => onToggle(cat)}
-                  className="h-3.5 w-3.5 shrink-0 accent-[#F65B7F]"
+                  className="h-3.5 w-3.5 shrink-0 accent-[#023047]"
                 />
                 <span className="text-[0.62rem] font-bold tracking-widest text-zinc-700 uppercase">
                   {cat}
@@ -327,7 +327,7 @@ function CategoryDropdown({
                   onClear()
                   setOpen(false)
                 }}
-                className="flex w-full items-center gap-1.5 border-t-2 border-zinc-100 px-4 py-2.5 text-[0.62rem] text-zinc-400 transition-colors hover:text-[#F65B7F]"
+                className="flex w-full items-center gap-1.5 border-t-2 border-zinc-100 px-4 py-2.5 text-[0.62rem] text-zinc-400 transition-colors hover:text-[#023047]"
               >
                 <X size={11} />
                 Limpiar filtros
@@ -358,7 +358,7 @@ function EventCard({
       animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
       exit={{ opacity: 0, filter: 'blur(4px)', y: -10, transition: { duration: 0.2 } }}
       transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1], delay }}
-      className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 ease-out hover:shadow-[4px_4px_0_#F65B7F] hover:ring-[#F65B7F]"
+      className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 ease-out hover:shadow-[4px_4px_0_#023047] hover:ring-[#023047]"
     >
       {/* Image */}
       <div className="relative h-56 overflow-hidden">
@@ -433,7 +433,7 @@ function EventCard({
         ) : (
           <button
             type="button"
-            className="border-2 border-[#F65B7F] bg-[#F65B7F] px-3 py-1.5 text-[0.6rem] font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-white hover:text-[#F65B7F] hover:shadow-[3px_3px_0_#111] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+            className="border-2 border-[#E63946] bg-[#E63946] px-3 py-1.5 text-[0.6rem] font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-white hover:text-[#E63946] hover:shadow-[3px_3px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
           >
             Inscribirse →
           </button>
@@ -547,7 +547,7 @@ export function EventsSection() {
                 value={query}
                 onChange={(e) => handleQuery(e.target.value)}
                 placeholder="Buscar por nombre, artista o fecha…"
-                className="w-full border-2 border-zinc-200 bg-white py-3 pr-10 pl-10 text-sm text-zinc-900 transition-all duration-150 placeholder:text-zinc-400 focus:border-[#F65B7F] focus:shadow-[4px_4px_0_#F65B7F] focus:outline-none"
+                className="w-full border-2 border-zinc-200 bg-white py-3 pr-10 pl-10 text-sm text-zinc-900 transition-all duration-150 placeholder:text-zinc-400 focus:border-[#023047] focus:shadow-[4px_4px_0_#023047] focus:outline-none"
               />
               {query && (
                 <button
@@ -638,7 +638,7 @@ export function EventsSection() {
                 <button
                   type="button"
                   onClick={() => setVisibleCount((v) => v + LOAD_MORE_STEP)}
-                  className="flex items-center gap-3 border-2 border-zinc-200 bg-white/70 px-8 py-3 text-[0.62rem] font-bold tracking-widest text-zinc-600 uppercase backdrop-blur-sm transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#F65B7F] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  className="flex items-center gap-3 border-2 border-zinc-200 bg-white/70 px-8 py-3 text-[0.62rem] font-bold tracking-widest text-zinc-600 uppercase backdrop-blur-sm transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#023047] hover:text-[#023047] hover:shadow-[4px_4px_0_#023047] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
                   Ver más
                   <span className="bg-zinc-100 px-2 py-0.5 text-[0.55rem] font-bold tracking-widest text-zinc-500">
@@ -657,7 +657,7 @@ export function EventsSection() {
         <div className="px-8 py-8 lg:hidden">
           <a
             href="/eventos"
-            className="flex items-center justify-center border-2 border-[#F65B7F] bg-[#F65B7F] py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#111]"
+            className="flex items-center justify-center border-2 border-[#E63946] bg-[#E63946] py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535]"
           >
             Ver todos los eventos →
           </a>

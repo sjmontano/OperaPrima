@@ -94,7 +94,7 @@ function InfoCard({
       as="article"
       animationNum={animationNum}
       timelineRef={timelineRef}
-      className="group border-2 border-white/10 bg-white/5 p-7 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#F65B7F]"
+      className="group border-2 border-white/10 bg-white/5 p-7 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
     >
       <div className="flex items-start justify-between gap-4">
         <div>
@@ -126,7 +126,7 @@ function RotatingCTA() {
     <div className="border-2 border-white/10 bg-black/30 p-8 sm:p-10 lg:p-12">
       <div className="flex flex-wrap items-baseline gap-3 text-3xl font-bold tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
         <span className="sr-only">Cómo {TYPEWRITER_WORDS.join('. Cómo ')}.</span>
-        <span aria-hidden className="text-[#F65B7F]">
+        <span aria-hidden className="text-[#8ECAE6]">
           Cómo
         </span>
         <span aria-hidden className="min-h-[1.2em] text-white">
@@ -134,7 +134,7 @@ function RotatingCTA() {
         </span>
         <span
           aria-hidden="true"
-          className="inline-block h-[1em] w-0.5 animate-pulse bg-[#F65B7F] align-middle"
+          className="inline-block h-[1em] w-0.5 animate-pulse bg-[#8ECAE6] align-middle"
         />
       </div>
       <p className="mt-8 max-w-2xl text-sm leading-relaxed text-white/65">
@@ -163,7 +163,7 @@ export function EventsLandingSection() {
           backgroundSize: '80px 80px',
         }}
       />
-      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
       <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 sm:border-x sm:px-6">
         <div className="grid gap-20 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-30">
@@ -196,7 +196,7 @@ export function EventsLandingSection() {
               className="mt-12 flex flex-wrap gap-4"
             >
               {HIGHLIGHTS.map((highlight, index) => {
-                const colors = ['#F65B7F', '#1A4A3C', '#5E3A8A'] as const
+                const colors = ['#8ECAE6', '#023047', '#4682B4'] as const
                 const accent = colors[index % colors.length]
 
                 return (
@@ -217,24 +217,23 @@ export function EventsLandingSection() {
               eyebrow="Talleres"
               title="Aprender haciendo"
               body="Cada taller está guiado por profesionales del sector y pensado para responder a lo que no te enseñaron en la universidad, pero necesitas para vivir del arte."
-              accent="#F65B7F"
+              accent="#8ECAE6"
               icon={BookOpen}
               animationNum={4}
               timelineRef={sectionRef}
             />
-
             <InfoCard
-              eyebrow="Eventos"
-              title="Networking con intención"
-              body="Nuestros eventos de networking son espacios para conectar, compartir y generar oportunidades reales. Las conexiones surgen desde intereses comunes y el deseo de crecer en comunidad."
-              accent="#1A4A3C"
+              eyebrow="Networking"
+              title="Conectar con propósito"
+              body="Encuentros pensados para que conozcas a otros artistas, gestores y profesionales del sector cultural colombiano."
+              accent="#023047"
               icon={Users}
               animationNum={5}
               timelineRef={sectionRef}
             />
 
             <div className="border-2 border-white/10 bg-white/5 p-5 text-white/70 shadow-[4px_4px_0_rgba(255,255,255,0.08)]">
-              <div className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+              <div className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 <CalendarDays size={14} />
                 Próxima agenda
               </div>
@@ -268,7 +267,7 @@ export function EventsLandingSection() {
               <button
                 type="button"
                 onClick={() => authModal.open('registro')}
-                className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#111] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                className="inline-flex items-center justify-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
                 Comenzar gratis
                 <ArrowRight size={16} />

@@ -45,8 +45,8 @@ export function MemberGrid({ members, disciplines }: MemberGridProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Buscar artistas por nombre, disciplina o ciudad..."
-          className="w-full border-2 border-zinc-200 bg-transparent py-2.5 pr-4 pl-9 text-xs font-medium transition-colors duration-150 focus:border-[#111111] focus:outline-none"
-          style={{ fontFamily: 'var(--font-poppins)', color: '#111111' }}
+          className="w-full border-2 border-zinc-200 bg-transparent py-2.5 pr-4 pl-9 text-xs font-medium transition-colors duration-150 focus:border-[#353535] focus:outline-none"
+          style={{ fontFamily: 'var(--font-poppins)', color: '#353535' }}
         />
       </div>
 
@@ -60,10 +60,10 @@ export function MemberGrid({ members, disciplines }: MemberGridProps) {
               onClick={() => setActive(d)}
               className="cursor-pointer border-2 px-3 py-1.5 text-xs font-bold tracking-widest uppercase transition-all duration-150"
               style={{
-                borderColor: '#111111',
-                background: isActive ? '#F65B7F' : 'transparent',
-                color: isActive ? '#FAFAF9' : '#111111',
-                boxShadow: isActive ? '3px 3px 0 #111111' : 'none',
+                borderColor: '#353535',
+                background: isActive ? '#023047' : 'transparent',
+                color: isActive ? '#F0F8FF' : '#353535',
+                boxShadow: isActive ? '3px 3px 0 #353535' : 'none',
                 transform: isActive ? 'translate(-1px, -1px)' : 'none',
               }}
             >
@@ -119,7 +119,7 @@ function MemberCard({ member }: { member: Member }) {
           background: 'linear-gradient(to top, rgba(17,17,17,0.85) 0%, transparent 55%)',
         }}
       >
-        <p className="text-xs leading-tight font-bold" style={{ color: '#FAFAF9' }}>
+        <p className="text-xs leading-tight font-bold" style={{ color: '#F0F8FF' }}>
           {member.name}
         </p>
         <p className="text-[10px]" style={{ color: 'rgba(250,250,249,0.65)' }}>
@@ -131,7 +131,7 @@ function MemberCard({ member }: { member: Member }) {
       <div
         className="pointer-events-none absolute inset-0"
         style={{
-          outline: '2px solid #F65B7F',
+          outline: '2px solid #023047',
           outlineOffset: '-2px',
           opacity: hovered ? 1 : 0,
           transition: 'opacity 0.2s ease',
@@ -142,8 +142,8 @@ function MemberCard({ member }: { member: Member }) {
       <div
         className="absolute top-2 left-2 px-2 py-0.5"
         style={{
-          background: '#1A4A3C',
-          color: '#FAFAF9',
+          background: '#023047',
+          color: '#F0F8FF',
           fontSize: '0.6rem',
           fontWeight: 700,
           textTransform: 'uppercase',

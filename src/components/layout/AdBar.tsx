@@ -9,7 +9,7 @@ export function AdBar() {
   if (dismissed) return null
 
   return (
-    <div className="relative z-50 w-full bg-[#F65B7F]">
+    <div className="relative z-50 w-full bg-[#E63946]">
       <div className="mx-auto flex max-w-420 items-center justify-center gap-3 px-8 py-2.5">
         <span className="hidden text-[0.6rem] font-bold tracking-widest text-white/60 uppercase sm:inline">
           ✦

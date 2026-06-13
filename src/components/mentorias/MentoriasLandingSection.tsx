@@ -11,21 +11,21 @@ const INTRO_CARDS = [
     eyebrow: 'Mentorías 1:1',
     title: 'Sesión privada de 60 minutos',
     body: 'Un espacio dedicado para que el mentor te escuche, revise tu caso y te entregue acciones concretas.',
-    accent: '#F65B7F',
+    accent: '#8ECAE6',
     icon: Clock3,
   },
   {
     eyebrow: 'Portafolio & becas',
     title: 'Revisión de presentación',
     body: 'Trabaja tu portafolio, cartas y convocatorias con un mentor que conoce el circuito cultural.',
-    accent: '#1A4A3C',
+    accent: '#023047',
     icon: FileText,
   },
   {
     eyebrow: 'Proyectos con criterio',
     title: 'Estrategia para tu carrera',
     body: 'Define un proyecto cultural sólido, planifica una gira o ajusta tu presupuesto con soporte experto.',
-    accent: '#5E3A8A',
+    accent: '#4682B4',
     icon: Compass,
   },
 ]
@@ -143,7 +143,7 @@ export function MentoriasLandingSection() {
           backgroundSize: '80px 80px',
         }}
       />
-      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
       <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 sm:border-x sm:px-6">
         <div className="grid gap-20 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
@@ -154,7 +154,7 @@ export function MentoriasLandingSection() {
               timelineRef={sectionRef}
               className="flex flex-col gap-5"
             >
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 Mentorías a la medida
               </p>
               <h1 className="text-5xl leading-[1.2] font-bold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
@@ -183,7 +183,7 @@ export function MentoriasLandingSection() {
                 <button
                   type="button"
                   onClick={() => authModal.open('registro')}
-                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#F65B7F] bg-[#F65B7F] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#111] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#F65B7F]"
+                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#E63946]"
                 >
                   Reservar mentoría
                   <ArrowRight size={16} />
@@ -191,7 +191,7 @@ export function MentoriasLandingSection() {
                 <button
                   type="button"
                   onClick={() => authModal.open('login')}
-                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-white"
+                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >
                   Ver perfiles
                 </button>
@@ -208,7 +208,7 @@ export function MentoriasLandingSection() {
                   as="article"
                   animationNum={index + 1}
                   timelineRef={sectionRef}
-                  className="group relative border-2 border-white/10 bg-white/5 p-6 text-white shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#F65B7F]"
+                  className="group relative border-2 border-white/10 bg-white/5 p-6 text-white shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <div>
@@ -237,7 +237,7 @@ export function MentoriasLandingSection() {
         </div>
       </div>
 
-      <div className="border-t-2 border-white/10 bg-[#FAFAF9]">
+      <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
         <div className="mx-auto max-w-420 border-zinc-200 px-4 py-24 sm:border-x sm:px-6">
           <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
             <div>
@@ -247,7 +247,7 @@ export function MentoriasLandingSection() {
                 timelineRef={sectionRef}
                 className="max-w-2xl"
               >
-                <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+                <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
                   ¿Cómo funcionan?
                 </p>
                 <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-zinc-900">
@@ -277,10 +277,10 @@ export function MentoriasLandingSection() {
                     as="article"
                     animationNum={6 + index}
                     timelineRef={sectionRef}
-                    className="group relative border-2 border-zinc-200 bg-white p-6 text-zinc-900 shadow-[4px_4px_0_rgba(17,17,17,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#111]"
+                    className="group relative border-2 border-zinc-200 bg-white p-6 text-zinc-900 shadow-[4px_4px_0_rgba(17,17,17,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#353535]"
                   >
                     <div className="flex items-center gap-3 text-[#0f0f0f]">
-                      <span className="flex h-11 w-11 items-center justify-center border-2 border-zinc-200 text-[#F65B7F]">
+                      <span className="flex h-11 w-11 items-center justify-center border-2 border-zinc-200 text-[#023047]">
                         <Icon size={18} />
                       </span>
                       <h3 className="text-xl font-bold tracking-[-0.02em]">{item.title}</h3>
@@ -304,7 +304,7 @@ export function MentoriasLandingSection() {
             backgroundSize: '80px 80px',
           }}
         />
-        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
         <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 py-24 sm:border-x sm:px-6">
           <TimelineAnimation
@@ -313,7 +313,7 @@ export function MentoriasLandingSection() {
             timelineRef={sectionRef}
             className="max-w-2xl"
           >
-            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
               Nuestros mentores
             </p>
             <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white">

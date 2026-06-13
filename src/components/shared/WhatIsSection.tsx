@@ -10,7 +10,7 @@ const SERVICES = [
     icon: Users,
     title: 'Mentorías 1:1',
     desc: 'Sesiones personalizadas con artistas y gestores culturales que ya han recorrido el camino. Aprende directo de quien lo vive.',
-    accent: '#F65B7F',
+    accent: '#8ECAE6',
     href: '/mentorias',
   },
   {
@@ -18,7 +18,7 @@ const SERVICES = [
     icon: CalendarDays,
     title: 'Talleres y Eventos',
     desc: 'Workshops prácticos, encuentros de networking y residencias. Presenciales y online, pensados para el contexto colombiano.',
-    accent: '#1A4A3C',
+    accent: '#023047',
     href: '/eventos',
   },
   {
@@ -26,7 +26,7 @@ const SERVICES = [
     icon: Compass,
     title: 'Tablero de Oportunidades',
     desc: 'Convocatorias, becas y proyectos que buscan artistas como tú. Actualizado constantemente por nuestro equipo editorial.',
-    accent: '#5E3A8A',
+    accent: '#4682B4',
     href: '/tablero',
   },
   {
@@ -34,7 +34,7 @@ const SERVICES = [
     icon: Layers,
     title: 'Membresía Premium',
     desc: 'Acceso completo a contenido exclusivo, tarifas preferenciales en eventos y visibilidad dentro de la comunidad.',
-    accent: '#F65B7F',
+    accent: '#8ECAE6',
     href: '/membresia',
   },
 ]
@@ -54,7 +54,7 @@ export function WhatIsSection() {
                 as="p"
                 animationNum={0}
                 timelineRef={ref}
-                className="mb-5 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                className="mb-5 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
               >
                 02 -- ¿Qué es Opera Prima?
               </TimelineAnimation>
@@ -67,13 +67,12 @@ export function WhatIsSection() {
                 className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
               >
                 Bienvenido a{' '}
-                <span className="relative inline-block" style={{ color: '#F65B7F' }}>
+                <span className="relative inline-block" style={{ color: '#023047' }}>
                   Ópera
-                  {/* Underline pintada con el color de marca */}
                   <span
                     aria-hidden
                     className="absolute right-0 -bottom-1 left-0 h-0.75"
-                    style={{ background: '#F65B7F' }}
+                    style={{ background: '#023047' }}
                   />
                 </span>{' '}
                 Prima
@@ -110,7 +109,7 @@ export function WhatIsSection() {
             as="p"
             animationNum={4}
             timelineRef={ref}
-            className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+            className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
             Nuestros servicios
           </TimelineAnimation>

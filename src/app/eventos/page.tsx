@@ -13,7 +13,7 @@ export default function EventosPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col bg-[#FAFAF9]">
+      <main className="flex flex-col bg-[#F0F8FF]">
         <EventsLandingSection />
 
         <div id="proximos">

@@ -13,32 +13,32 @@ const VALORES = [
   {
     name: 'Pasión',
     desc: 'Creemos en el arte como motor de transformación. Cada proyecto nace del deseo genuino de crear.',
-    accent: '#F65B7F',
+    accent: '#8ECAE6',
   },
   {
     name: 'Colaboración',
     desc: 'Construimos en red. El talento crece cuando se comparte, no cuando compite.',
-    accent: '#1A4A3C',
+    accent: '#023047',
   },
   {
     name: 'Accesibilidad',
     desc: 'Democratizamos el acceso a herramientas profesionales. El contexto no debería limitar el potencial.',
-    accent: '#5E3A8A',
+    accent: '#4682B4',
   },
   {
     name: 'Autonomía',
     desc: 'Te damos herramientas, no recetas. Queremos artistas independientes, con criterio propio.',
-    accent: '#F65B7F',
+    accent: '#8ECAE6',
   },
   {
     name: 'Diversidad',
     desc: 'Todas las disciplinas, regiones y voces tienen lugar. La riqueza está en la diferencia.',
-    accent: '#1A4A3C',
+    accent: '#023047',
   },
   {
     name: 'Internacionalización',
     desc: 'Conectamos el talento colombiano con oportunidades globales. Pensamos local, actuamos sin fronteras.',
-    accent: '#5E3A8A',
+    accent: '#4682B4',
   },
 ]
 
@@ -106,7 +106,7 @@ export function SobreLandingSection() {
         }}
       />
       {/* ── Pink accent strip top ── */}
-      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+      <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
       {/* ═══════════════ HERO + VALORES ═══════════════ */}
       <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 sm:border-x sm:px-6">
@@ -119,7 +119,7 @@ export function SobreLandingSection() {
               timelineRef={sectionRef}
               className="flex flex-col gap-5"
             >
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 Sobre la plataforma
               </p>
               <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
@@ -147,7 +147,7 @@ export function SobreLandingSection() {
                 <button
                   type="button"
                   onClick={() => authModal.open('registro')}
-                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#F65B7F] bg-[#F65B7F] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#111] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#F65B7F]"
+                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#E63946]"
                 >
                   Únete a la comunidad
                   <ArrowRight size={16} />
@@ -155,7 +155,7 @@ export function SobreLandingSection() {
                 <button
                   type="button"
                   onClick={() => authModal.open('login')}
-                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-white"
+                  className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >
                   Iniciar sesión
                 </button>
@@ -166,7 +166,7 @@ export function SobreLandingSection() {
           {/* Right: espacio visual */}
           <div className="hidden items-start justify-end lg:flex">
             <div
-              className="relative aspect-square w-full max-w-[320px] border-2 border-white/10 shadow-[6px_6px_0_rgba(246,91,127,0.35)]"
+              className="relative aspect-square w-full max-w-[320px] border-2 border-white/10 shadow-[6px_6px_0_rgba(142,202,230,0.35)]"
               style={{ background: 'oklch(0.30 0.07 165)' }}
             >
               <Image
@@ -184,7 +184,7 @@ export function SobreLandingSection() {
         {/* ── Valores grid ── */}
         <div className="border-t-2 border-white/10 px-4 pb-24 sm:px-2 lg:pb-28">
           <TimelineAnimation as="div" animationNum={6} timelineRef={sectionRef} className="mb-10">
-            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
               Nuestros valores
             </p>
             <h2 className="mt-3 text-4xl font-bold tracking-[-0.03em] text-white lg:text-5xl">
@@ -199,7 +199,7 @@ export function SobreLandingSection() {
                 as="article"
                 animationNum={7 + i}
                 timelineRef={sectionRef}
-                className="group border-2 border-white/10 bg-white/5 p-6 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#F65B7F]"
+                className="group border-2 border-white/10 bg-white/5 p-6 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
               >
                 <p
                   className="text-[0.62rem] font-bold tracking-[0.28em] uppercase"
@@ -215,7 +215,7 @@ export function SobreLandingSection() {
       </div>
 
       {/* ═══════════════ MISIÓN + VISIÓN ═══════════════ */}
-      <div className="border-t-2 border-white/10 bg-[#FAFAF9]">
+      <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
         <div className="mx-auto max-w-420 border-zinc-200 px-4 py-24 sm:border-x sm:px-6 lg:py-32">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
             {/* Misión */}
@@ -223,18 +223,18 @@ export function SobreLandingSection() {
               as="article"
               animationNum={13}
               timelineRef={sectionRef}
-              className="group relative flex flex-col border-2 border-[#111111] bg-white p-8 shadow-[4px_4px_0_#111] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#F65B7F] lg:p-10"
+              className="group relative flex flex-col border-2 border-[#353535] bg-white p-8 shadow-[4px_4px_0_#353535] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#023047] lg:p-10"
             >
               <div
-                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#111111]"
-                style={{ boxShadow: '3px 3px 0 #F65B7F' }}
+                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#353535]"
+                style={{ boxShadow: '3px 3px 0 #023047' }}
               >
-                <Target size={22} style={{ color: '#F65B7F' }} />
+                <Target size={22} style={{ color: '#023047' }} />
               </div>
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
                 Nuestra Misión
               </p>
-              <h3 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[#111111] lg:text-3xl">
+              <h3 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[#353535] lg:text-3xl">
                 Acortar la distancia entre la formación y la profesión.
               </h3>
               <p className="mt-5 text-base leading-relaxed text-zinc-600">
@@ -248,18 +248,18 @@ export function SobreLandingSection() {
               as="article"
               animationNum={14}
               timelineRef={sectionRef}
-              className="group relative flex flex-col border-2 border-[#111111] bg-white p-8 shadow-[4px_4px_0_#111] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#5E3A8A] lg:p-10"
+              className="group relative flex flex-col border-2 border-[#353535] bg-white p-8 shadow-[4px_4px_0_#353535] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#023047] lg:p-10"
             >
               <div
-                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#111111]"
-                style={{ boxShadow: '3px 3px 0 #5E3A8A' }}
+                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#353535]"
+                style={{ boxShadow: '3px 3px 0 #023047' }}
               >
-                <Heart size={22} style={{ color: '#5E3A8A' }} />
+                <Heart size={22} style={{ color: '#023047' }} />
               </div>
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#5E3A8A] uppercase">
+              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
                 Nuestra Visión
               </p>
-              <h3 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[#111111] lg:text-3xl">
+              <h3 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-[#353535] lg:text-3xl">
                 Ser el puente que el talento hispanohablante necesita.
               </h3>
               <p className="mt-5 text-base leading-relaxed text-zinc-600">
@@ -273,13 +273,13 @@ export function SobreLandingSection() {
       </div>
 
       {/* ═══════════════ COMUNIDAD ═══════════════ */}
-      <div className="bg-[#FAFAF9]">
+      <div className="bg-[#F0F8FF]">
         <TestimonialsWall
           headline="Esto dicen los artistas de nuestra comunidad"
           testimonialEyebrow="La comunidad"
           testimonials={COMUNIDAD_TESTIMONIALS}
           rows={1}
-          fadeColor="#FAFAF9"
+          fadeColor="#F0F8FF"
         />
       </div>
 
@@ -294,7 +294,7 @@ export function SobreLandingSection() {
             backgroundSize: '80px 80px',
           }}
         />
-        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
         <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 py-24 sm:border-x sm:px-6 lg:py-32">
           <div className="mb-14">
@@ -302,7 +302,7 @@ export function SobreLandingSection() {
               as="p"
               animationNum={15}
               timelineRef={sectionRef}
-              className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+              className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
               El equipo
             </TimelineAnimation>
@@ -332,7 +332,7 @@ export function SobreLandingSection() {
                 as="article"
                 animationNum={18 + i}
                 timelineRef={sectionRef}
-                className="group flex flex-col gap-6 border-2 border-white/10 bg-white/5 p-8 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#F65B7F] sm:flex-row lg:p-10"
+                className="group flex flex-col gap-6 border-2 border-white/10 bg-white/5 p-8 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6] sm:flex-row lg:p-10"
               >
                 <Image
                   src={member.image}
@@ -340,10 +340,10 @@ export function SobreLandingSection() {
                   width={120}
                   height={120}
                   unoptimized
-                  className="h-28 w-28 shrink-0 rounded-full border-2 border-white/20 object-cover transition-colors duration-200 group-hover:border-[#F65B7F]"
+                  className="h-28 w-28 shrink-0 rounded-full border-2 border-white/20 object-cover transition-colors duration-200 group-hover:border-[#8ECAE6]"
                 />
                 <div className="flex flex-col justify-center">
-                  <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+                  <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                     {member.role}
                   </p>
                   <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white">
@@ -368,7 +368,7 @@ export function SobreLandingSection() {
             backgroundSize: '80px 80px',
           }}
         />
-        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
+        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
         <div className="relative z-10 mx-auto max-w-420 border-white/10 px-4 py-24 sm:border-x sm:px-6 lg:py-32">
           <div className="mb-12 max-w-2xl">
@@ -376,7 +376,7 @@ export function SobreLandingSection() {
               as="p"
               animationNum={20}
               timelineRef={sectionRef}
-              className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+              className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
               Nuestros mentores
             </TimelineAnimation>

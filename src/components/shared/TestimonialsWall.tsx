@@ -89,7 +89,7 @@ export function TestimonialsWall({
             as="p"
             animationNum={0}
             timelineRef={sectionRef}
-            className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+            className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
             {testimonialEyebrow}
           </TimelineAnimation>

@@ -3,6 +3,7 @@
 import type { LocalUser } from '@/lib/localUsers'
 import { createUser, findUserByCredential, isFieldTaken } from '@/lib/localUsers'
 import { createClient } from '@/lib/supabase/client'
+import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -905,15 +906,15 @@ export function FlipAuthCard({
                   />
                   <span className="flip-auth-check-label">
                     Acepto la{' '}
-                    <a href="/legal/privacidad" target="_blank" rel="noopener noreferrer">
+                    <a href="/privacidad" target="_blank" rel="noopener noreferrer">
                       Política de privacidad
                     </a>
                     , el{' '}
-                    <a href="/legal/privacidad#colombia" target="_blank" rel="noopener noreferrer">
+                    <a href="/privacidad#colombia" target="_blank" rel="noopener noreferrer">
                       anexo para ciudadanos colombianos
                     </a>{' '}
                     (si aplica), y los{' '}
-                    <a href="/legal/terminos" target="_blank" rel="noopener noreferrer">
+                    <a href="/terminos" target="_blank" rel="noopener noreferrer">
                       Términos y condiciones
                     </a>{' '}
                     de Ópera Prima. Autorizo el tratamiento de mis datos personales.
@@ -1000,9 +1001,9 @@ export function FlipAuthCard({
 
       {!onClose && (
         <p className="flip-auth-brand">
-          <a href="/" className="flip-auth-brand-link">
+          <Link href="/" className="flip-auth-brand-link">
             ← Volver a Ópera Prima
-          </a>
+          </Link>
         </p>
       )}
     </div>

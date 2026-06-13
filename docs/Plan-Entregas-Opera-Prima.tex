@@ -1,0 +1,675 @@
+% ==============================================================================
+%  PLAN DE ENTREGAS — ÓPERA PRIMA
+%  Versión 2.0 — 4 semanas · 20 días hábiles
+%  Sprint 1: MVP (15 días) · Sprint 2: Correcciones (15 días)
+%  Equipo: Santiago Montaño (Frontend) · Camilo Sotelo (Backend)
+%  Coordinación: Alexander Paz
+%  Compila con: pdflatex (2 pasadas)
+%  Diseño editorial con identidad visual de Ópera Prima
+%  Paleta: Rosa coral #F65B7F · Verde selva #1A4A3C · Lavanda #5E3A8A
+% ==============================================================================
+
+\documentclass[11pt]{article}
+
+% ── Encoding & Language ──
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[T1]{fontenc}
+
+% ── Typography ──
+\usepackage[scaled]{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+
+% ── Geometry ──
+\usepackage[
+  a4paper,
+  margin=2.5cm,
+  bottom=3cm,
+  headheight=2cm,
+  footskip=1.5cm
+]{geometry}
+
+% ── Colors (Opera Prima) ──
+\usepackage{xcolor}
+\definecolor{op-rosa}{HTML}{F65B7F}
+\definecolor{op-rosa-dark}{HTML}{D94268}
+\definecolor{op-verde}{HTML}{1A4A3C}
+\definecolor{op-lavanda}{HTML}{5E3A8A}
+\definecolor{op-nearblack}{HTML}{111111}
+\definecolor{op-surface}{HTML}{FAFAF9}
+\definecolor{op-white}{HTML}{FFFFFF}
+\definecolor{op-text}{HTML}{111111}
+\definecolor{op-textsec}{HTML}{52525B}
+\definecolor{op-textmuted}{HTML}{A1A1AA}
+
+% ── Graphics ──
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{shapes.geometric, arrows.meta, positioning}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{colortbl}
+\usepackage{multirow}
+
+% ── Boxes ──
+\usepackage{tcolorbox}
+\tcbuselibrary{skins, breakable}
+
+\tcbset{
+  op-box/.style={
+    colback=op-surface,
+    colframe=op-nearblack,
+    boxrule=0.4mm,
+    arc=0mm,
+    outer arc=0mm,
+    left=5mm,
+    right=5mm,
+    top=3mm,
+    bottom=3mm,
+    sharp corners,
+  },
+  op-fase/.style={
+    colback=op-nearblack,
+    colframe=op-nearblack,
+    coltext=op-white,
+    boxrule=0mm,
+    arc=0mm,
+    outer arc=0mm,
+    left=5mm,
+    right=5mm,
+    top=2.5mm,
+    bottom=2.5mm,
+    sharp corners,
+    fontupper=\Large\bfseries,
+  },
+  op-aviso/.style={
+    colback=op-rosa!12,
+    colframe=op-rosa,
+    boxrule=0.3mm,
+    arc=0mm,
+    outer arc=0mm,
+    left=4mm,
+    right=4mm,
+    top=2mm,
+    bottom=2mm,
+    sharp corners,
+  },
+  op-mvp/.style={
+    colback=op-verde!10,
+    colframe=op-verde,
+    boxrule=0.3mm,
+    arc=0mm,
+    outer arc=0mm,
+    left=4mm,
+    right=4mm,
+    top=2mm,
+    bottom=2mm,
+    sharp corners,
+  },
+}
+
+% ── Section Headings ──
+\usepackage{titlesec}
+\titleformat{\section}
+  {\LARGE\bfseries\color{op-nearblack}}
+  {\thesection}{1em}{}[\vspace{-0.3em}{\color{op-rosa}\rule{\textwidth}{0.4mm}}]
+\titleformat{\subsection}
+  {\Large\bfseries\color{op-nearblack}}
+  {\thesubsection}{1em}{}
+
+% ── Header / Footer ──
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\headrulewidth}{0.4mm}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{op-rosa}\leaders\hrule height 0.4mm\hfill}}
+\fancyhead[L]{\textcolor{op-textsec}{\footnotesize\bfseries ÓPERA PRIMA --- Plan de Entregas}}
+\fancyhead[R]{\textcolor{op-textsec}{\footnotesize 4 de junio de 2026 --- Versión 2.0}}
+\fancyfoot[C]{\textcolor{op-textmuted}{\footnotesize Página \thepage}}
+
+% ── Links ──
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=op-rosa,
+  urlcolor=op-rosa,
+}
+
+% ── Lists ──
+\usepackage{enumitem}
+\setlist[itemize]{label=\textcolor{op-rosa}{\textbullet}, leftmargin=1.5em}
+
+% ── Tables ──
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+\newcolumntype{C}[1]{>{\centering\arraybackslash}p{#1}}
+
+% ── Misc ──
+\usepackage{microtype}
+
+% =============================================================================
+\begin{document}
+
+% ─── PORTADA ───
+\thispagestyle{empty}
+
+\begin{center}
+  \vspace*{2.5cm}
+
+  {\footnotesize\bfseries\color{op-rosa}
+  \MakeUppercase{Propuesta de trabajo}}
+
+  \vspace{0.6cm}
+
+  {\Huge\bfseries\color{op-nearblack}
+  Plan de Entregas\\[0.3em]
+  Ópera Prima}
+
+  \vspace{0.4cm}
+
+  {\color{op-rosa}\rule{0.35\textwidth}{0.5mm}}
+
+  \vspace{0.4cm}
+
+  {\large\color{op-textsec}
+  Plataforma digital para artistas emergentes}
+
+  \vspace{2cm}
+
+  \begin{tcolorbox}[op-box, width=0.6\textwidth, center]
+    \begin{tabular}{>{\color{op-textsec}\bfseries}r @{\hspace{0.8em}} l}
+      Cliente: & Ángela María Rodríguez \\
+      Proyecto: & Plataforma Ópera Prima \\
+      Duración: & 4 Jun $\rightarrow$ 4 Jul (30 días / 2 sprints) \\
+      Fecha: & 4 de junio de 2026 \\
+      Versión: & 2.0 \\
+    \end{tabular}
+  \end{tcolorbox}
+
+  \vspace{1.5cm}
+
+  \begin{tcolorbox}[op-box, width=0.6\textwidth, center]
+    \small\centering
+    {\bfseries\color{op-nearblack} Equipo de trabajo}\\[4pt]
+    \begin{tabular}{>{\color{op-textsec}}l l}
+      \textcolor{op-rosa}{$\blacksquare$} & \textbf{Santiago Montaño} --- Frontend \\
+      \textcolor{op-verde}{$\blacksquare$} & \textbf{Camilo Sotelo} --- Backend \\
+      \textcolor{op-lavanda}{$\blacksquare$} & \textbf{Alexander Paz} --- Coordinación \\
+    \end{tabular}
+  \end{tcolorbox}
+
+  \vspace{2.5cm}
+
+  {\color{op-verde}\rule{0.15\textwidth}{0.3mm}}
+  \hspace{1em}
+  {\color{op-rosa}\rule{0.3\textwidth}{0.5mm}}
+  \hspace{1em}
+  {\color{op-lavanda}\rule{0.15\textwidth}{0.3mm}}
+
+  \vfill
+\end{center}
+
+\newpage
+
+% ─── RESUMEN EJECUTIVO ───
+\section{Resumen ejecutivo}
+
+El desarrollo de la plataforma \textbf{Ópera Prima} se divide en \textbf{2 sprints} de 15 días cada uno:
+
+\medskip
+
+\begin{tcolorbox}[op-mvp]
+  \centering
+  {\Large\bfseries\color{op-verde} Sprint 1: MVP (días 1--15)}\\[2pt]
+  {\color{op-textsec} 4 -- 18 de junio --- Santiago y Camilo trabajan en paralelo cada uno en su campo}\\[4pt]
+  {\bfseries\color{op-nearblack} Objetivo:} Versión funcional de la plataforma con frontend y backend operativos.
+\end{tcolorbox}
+
+\medskip
+
+\begin{tcolorbox}[op-aviso]
+  \centering
+  {\Large\bfseries\color{op-rosa-dark} Sprint 2: Correcciones y ajustes (días 16--30)}\\[2pt]
+  {\color{op-textsec} 19 de junio -- 4 de julio --- Ambos trabajan juntos en pulir y desplegar}\\[4pt]
+  {\bfseries\color{op-nearblack} Objetivo:} Integración, QA, assets finales y deploy a producción.
+\end{tcolorbox}
+
+\medskip
+
+\begin{tcolorbox}[op-box]
+  \begin{minipage}[c]{0.12\textwidth}
+    \centering
+    \Huge\bfseries\color{op-verde} 15
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.82\textwidth}
+    {\large\bfseries\color{op-nearblack} Días para el MVP --- 4 al 18 de junio}\\[2pt]
+    {\color{op-textsec} Santiago entrega correcciones UI + frontend de funcionalidades. Camilo entrega backend completo con APIs.}
+  \end{minipage}
+\end{tcolorbox}
+
+\medskip
+
+\begin{tcolorbox}[op-box]
+  \begin{minipage}[c]{0.12\textwidth}
+    \centering
+    \Huge\bfseries\color{op-rosa} 15
+  \end{minipage}
+  \hfill
+  \begin{minipage}[c]{0.82\textwidth}
+    {\large\bfseries\color{op-nearblack} Días para correcciones y ajustes --- 19 de junio al 4 de julio}\\[2pt]
+    {\color{op-textsec} Integración frontend-backend, QA completo, carga de assets y deploy a producción.}
+  \end{minipage}
+\end{tcolorbox}
+
+\bigskip
+
+\subsection*{Estructura general}
+
+\begin{table}[h]
+  \centering
+  \small
+  \renewcommand{\arraystretch}{1.3}
+  \begin{tabular}{L{2cm} C{2.5cm} C{0.8cm} L{2.2cm} L{5.5cm}}
+    \toprule
+    \rowcolor{op-nearblack!90}
+    {\color{op-white}\bfseries Semana} &
+    {\color{op-white}\bfseries Fechas} &
+    {\color{op-white}\bfseries Días} &
+    {\color{op-white}\bfseries Sprint} &
+    {\color{op-white}\bfseries Enfoque} \\
+    \midrule
+    \textbf{Semana 1} & 4 -- 10 Jun & 5 & \multirow{2}{*}{\textbf{MVP}} & Santiago: Correcciones UI + páginas nuevas \\
+    \cline{1-3}\cline{5-5}
+    \rowcolor{op-surface}
+    \textbf{Semana 2} & 11 -- 17 Jun & 5 & & Santiago: Funcionalidades frontend + perfiles \\
+    \midrule
+    \textbf{Semana 3} & 18 -- 24 Jun & 5 & \multirow{2}{*}{\textbf{Ajustes}} & Ambos: Backend + correcciones \\
+    \cline{1-3}\cline{5-5}
+    \rowcolor{op-surface}
+    \textbf{Semana 4} & 25 Jun -- 4 Jul & 5 & & Ambos: Integración + QA + Deploy \\
+    \midrule
+    \rowcolor{op-rosa!10}
+    \textbf{Total} & \textbf{4 semanas} & \textbf{20} & \textbf{2 sprints} & \textbf{Plataforma completa operativa} \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\bigskip
+
+\begin{tcolorbox}[op-mvp]
+  \centering\small\bfseries\color{op-verde}
+  \MakeUppercase{MVP listo el 18 de junio:} Correcciones UI aplicadas, frontend de funcionalidades clave montado, backend con APIs listas para integrar.
+\end{tcolorbox}
+
+\newpage
+
+% ─── SEMANA 1 ───
+\begin{tcolorbox}[op-fase]
+  \makebox[0pt][l]{\hspace*{-5mm}{\color{op-rosa}\rule{2mm}{1.2em}}}%
+  \hspace{3mm} Semana 1: MVP --- Frontend + Backend en paralelo
+\end{tcolorbox}
+
+\medskip
+{\small\color{op-textsec} \textbf{4 -- 10 de junio de 2026} \hfill \textbf{Santiago (Front) + Camilo (Back) trabajan simultáneamente}}
+
+\medskip
+
+\textbf{Santiago} aplica las correcciones UI mientras \textbf{Camilo} configura la infraestructura backend. No se esperan el uno al otro.
+
+\vspace{0.2cm}
+
+\begin{tcolorbox}[op-aviso]
+  \small\bfseries\color{op-rosa-dark}
+  El cliente debe entregar: título del Evento Networking \#1 durante esta semana. La imagen 1920×1080 del hero se entrega en Semana 4.
+\end{tcolorbox}
+
+\vspace{0.3cm}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \vspace{0pt}
+  \subsubsection*{Santiago --- Frontend}
+  \begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{c L{2.5cm} C{0.5cm}}
+      \toprule
+      \rowcolor{op-rosa!80}
+      {\color{op-white}\bfseries \#} & {\color{op-white}\bfseries Tarea} & {\color{op-white}\bfseries D} \\
+      \midrule
+      1.1 & Términos y Condiciones & 1 \\
+      \rowcolor{op-surface}
+      1.2 & Eliminar grid overlay & 0.5 \\
+      1.3 & Hero /sobre -- textos & 0.5 \\
+      \rowcolor{op-surface}
+      1.4 & Hero /sobre -- fondo & 0.5 \\
+      1.5 & Sección Servicios & 2 \\
+      \rowcolor{op-surface}
+      1.6 & Quitar iconos Valores & 0.5 \\
+      1.7 & Cards Equipo clickeables & 1 \\
+      \rowcolor{op-surface}
+      1.8 & Hero /mentorias & 1 \\
+      1.9 & Paso a paso 6 pasos & 1 \\
+      \rowcolor{op-surface}
+      1.10 & Texto rotativo & 1 \\
+      1.11 & Textos mentores & 0.5 \\
+      \rowcolor{op-surface}
+      1.12 & Rediseño /eventos & 1 \\
+      1.13 & Evento Networking \#1 & 1 \\
+      \rowcolor{op-surface}
+      1.14 & Instagram & 0.5 \\
+      1.15 & Google Drive & 1 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \vspace{0pt}
+  \subsubsection*{Camilo --- Backend}
+  \begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{c L{2.5cm} C{0.5cm}}
+      \toprule
+      \rowcolor{op-verde!80}
+      {\color{op-white}\bfseries \#} & {\color{op-white}\bfseries Tarea} & {\color{op-white}\bfseries D} \\
+      \midrule
+      B.1 & Configurar Supabase & 1.5 \\
+      \rowcolor{op-surface}
+      B.2 & Schema de tablas + RLS & 1 \\
+      B.3 & Migrar autenticación & 2 \\
+      \rowcolor{op-surface}
+      B.4 & API de perfiles & 1.5 \\
+      B.5 & API de Oportunidades & 1.5 \\
+      \rowcolor{op-surface}
+      B.6 & API de Calendario & 1.5 \\
+      B.7 & API de reserva mentorías & 1.5 \\
+      \rowcolor{op-surface}
+      B.8 & API de registro eventos & 1 \\
+      B.9 & API de newsletter & 0.5 \\
+      \rowcolor{op-surface}
+      B.10 & Dominio & 1 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{minipage}
+
+\vspace{0.2cm}
+{\footnotesize\color{op-textmuted} \textbf{Total S1:} \textasciitilde12 días frontend + \textasciitilde12 días backend --- tareas altamente paralelizables.}
+
+\newpage
+
+% ─── SEMANA 2 ───
+\begin{tcolorbox}[op-fase]
+  \makebox[0pt][l]{\hspace*{-5mm}{\color{op-verde}\rule{2mm}{1.2em}}}%
+  \hspace{3mm} Semana 2: MVP --- Funcionalidades Frontend + Backend
+\end{tcolorbox}
+
+\medskip
+{\small\color{op-textsec} \textbf{11 -- 17 de junio de 2026} \hfill \textbf{Santiago completa frontend -- Camilo termina APIs}}
+
+\medskip
+
+\textbf{Santiago} construye las páginas funcionales. \textbf{Camilo} termina las APIs que faltan. Al final de la semana se tiene el MVP completo.
+
+\vspace{0.3cm}
+
+\begin{minipage}[t]{0.48\textwidth}
+  \vspace{0pt}
+  \subsubsection*{Santiago --- Frontend}
+  \begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{c L{2.5cm} C{0.5cm}}
+      \toprule
+      \rowcolor{op-rosa!80}
+      {\color{op-white}\bfseries \#} & {\color{op-white}\bfseries Tarea} & {\color{op-white}\bfseries D} \\
+      \midrule
+      2.1 & Sistema de perfiles & 2 \\
+      \rowcolor{op-surface}
+      2.2 & Conectar cards a perfiles & 1 \\
+      2.3 & Tablero Oportunidades & 2 \\
+      \rowcolor{op-surface}
+      2.4 & Calendario Comunitario & 2 \\
+      2.5 & Formulario reserva mentorías & 1.5 \\
+      \rowcolor{op-surface}
+      2.6 & Formulario registro eventos & 1.5 \\
+      2.7 & Newsletter & 1 \\
+      \rowcolor{op-surface}
+      2.8 & QA responsive & 1 \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{minipage}
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+  \vspace{0pt}
+  \subsubsection*{Camilo --- Backend}
+  \begin{table}[h]
+    \centering
+    \footnotesize
+    \renewcommand{\arraystretch}{1.15}
+    \begin{tabular}{c L{2.5cm} C{0.5cm}}
+      \toprule
+      \rowcolor{op-verde!80}
+      {\color{op-white}\bfseries \#} & {\color{op-white}\bfseries Tarea} & {\color{op-white}\bfseries D} \\
+      \midrule
+      B.11 & Refinar APIs existentes & 2 \\
+      \rowcolor{op-surface}
+      B.12 & Tests de integración & 1.5 \\
+      B.13 & Documentación técnica & 1 \\
+      \rowcolor{op-surface}
+      B.14 & Ajustes de seguridad & 1 \\
+      B.15 & Preparar deploy backend & 1 \\
+      \rowcolor{op-surface}
+      \multicolumn{3}{l}{\footnotesize\itshape\color{op-textsec} APIs completadas en Semana 1.} \\
+      \bottomrule
+    \end{tabular}
+  \end{table}
+\end{minipage}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[op-mvp]
+  \centering\small\bfseries\color{op-verde}
+  \MakeUppercase{Fin del Sprint 1 (18 de junio): MVP entregado.} Santiago: todas las páginas montadas. Camilo: backend operativo con APIs listas. El producto es funcional --- siguiente paso: integrar.
+\end{tcolorbox}
+
+\newpage
+
+% ─── SEMANA 3 ───
+\begin{tcolorbox}[op-fase]
+  \makebox[0pt][l]{\hspace*{-5mm}{\color{op-lavanda}\rule{2mm}{1.2em}}}%
+  \hspace{3mm} Semana 3: Sprint 2 --- Correcciones y ajustes
+\end{tcolorbox}
+
+\medskip
+{\small\color{op-textsec} \textbf{18 -- 24 de junio de 2026} \hfill \textbf{Santiago + Camilo --- Integración y pruebas}}
+
+\medskip
+
+Comienza el Sprint 2. Se integra frontend con backend y se corrigen todos los detalles.
+
+\vspace{0.3cm}
+
+\begin{table}[h]
+  \centering
+  \footnotesize
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{c L{2.8cm} L{7cm} C{0.6cm} L{1.5cm}}
+    \toprule
+    \rowcolor{op-nearblack!90}
+    {\color{op-white}\bfseries \#} &
+    {\color{op-white}\bfseries Tarea} &
+    {\color{op-white}\bfseries Descripción} &
+    {\color{op-white}\bfseries Días} &
+    {\color{op-white}\bfseries Resp.} \\
+    \midrule
+    3.1 & Integración parcial & Conectar primeras APIs con frontend. Auth real, perfiles vivos. & 2 & S + C \\
+    \rowcolor{op-surface}
+    3.2 & QA de flujos críticos & Probar registro, login, edición de perfil, mentorías. & 1.5 & Santiago \\
+    3.3 & Imagen hero & Cargar imagen 1920×1080 del cliente en /sobre. & 0.5 & Santiago \\
+    \rowcolor{op-surface}
+    3.4 & Assets Google Drive & Integrar imágenes y fotos de mentores. & 1 & Santiago \\
+    3.5 & Correcciones rápidas & Bugs y ajustes detectados en QA. & 2 & S + C \\
+    \rowcolor{op-surface}
+    3.6 & Ajustes responsive & Revisión en móvil, tablet y desktop. & 1 & Santiago \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\vspace{0.2cm}
+{\footnotesize\color{op-textmuted} \textbf{Total estimado:} \textasciitilde8 días --- tareas en paralelo.}
+
+\newpage
+
+% ─── SEMANA 4 ───
+\begin{tcolorbox}[op-fase]
+  \makebox[0pt][l]{\hspace*{-5mm}{\color{op-nearblack}\rule{2mm}{1.2em}}}%
+  \hspace{3mm} Semana 4: Sprint 2 --- Deploy y cierre
+\end{tcolorbox}
+
+\medskip
+{\small\color{op-textsec} \textbf{25 de junio -- 4 de julio de 2026} \hfill \textbf{Santiago + Camilo --- Preparación final}}
+
+\medskip
+
+Últimos ajustes, deploy a producción y reunión de cierre con el cliente.
+
+\vspace{0.3cm}
+
+\begin{table}[h]
+  \centering
+  \footnotesize
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{c L{2.8cm} L{7cm} C{0.6cm} L{1.5cm}}
+    \toprule
+    \rowcolor{op-nearblack!90}
+    {\color{op-white}\bfseries \#} &
+    {\color{op-white}\bfseries Tarea} &
+    {\color{op-white}\bfseries Descripción} &
+    {\color{op-white}\bfseries Días} &
+    {\color{op-white}\bfseries Resp.} \\
+    \midrule
+    4.1 & Integración total & Conectar frontend completo con backend. Datos dinámicos. & 2 & S + C \\
+    \rowcolor{op-surface}
+    4.2 & QA completo & Todos los flujos: oportunidades, mentorías, eventos, newsletter. & 1.5 & Santiago \\
+    4.3 & Correcciones finales & Bugs y ajustes de última hora. & 1.5 & S + C \\
+    \rowcolor{op-surface}
+    4.4 & Deploy Vercel & Variables de entorno, secrets, build y producción. & 1 & Camilo \\
+    4.5 & Reunión final & Presentación de la plataforma. Validación y cierre. & --- & Ambos \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\vspace{0.3cm}
+
+\begin{tcolorbox}[op-aviso]
+  \centering\Large\bfseries\color{op-rosa-dark}
+  4 de julio de 2026 --- Entrega final de la plataforma
+\end{tcolorbox}
+
+% ─── ENTREGABLES ───
+\newpage
+\section{Entregables por sprint}
+
+\medskip
+
+\begin{center}
+\small
+\begin{tikzpicture}
+  \draw[op-verde, line width=0.5mm, rounded corners=0] (0,0) rectangle (16,2.5);
+  \fill[op-verde] (0.5,1.25) circle (4mm);
+  \node[color=op-white, font=\bfseries] at (0.5,1.25) {1};
+  \node[anchor=west, color=op-nearblack, font=\bfseries] at (1.3,1.8) {Sprint 1 --- MVP (4 al 18 de junio)};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,1.2) {Santiago: Correcciones UI, /terminos, /sobre, /mentorias, /eventos, perfiles, tablero, calendario, formularios};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,0.7) {Camilo: Supabase, auth real, APIs de perfiles, oportunidades, calendario, mentorías, eventos, newsletter};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,0.2) {\textbf{Resultado:} Plataforma funcional --- frontend y backend listos para integrar};
+
+  \draw[op-nearblack, dashed, line width=0.2mm] (-0.3,-0.5) -- (16.3,-0.5);
+
+  \draw[op-rosa, line width=0.5mm, rounded corners=0] (0,-1.3) rectangle (16,-3.8);
+  \fill[op-rosa] (0.5,-2.55) circle (4mm);
+  \node[color=op-white, font=\bfseries] at (0.5,-2.55) {2};
+  \node[anchor=west, color=op-nearblack, font=\bfseries] at (1.3,-1.6) {Sprint 2 --- Correcciones y ajustes (19 de junio al 4 de julio)};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,-2.3) {Integración frontend-backend, QA completo, imagen hero, assets, correcciones};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,-2.8) {Deploy a producción, reunión final con el cliente};
+  \node[anchor=west, color=op-textsec, font=\small] at (1.3,-3.3) {\textbf{Resultado:} Plataforma completa en producción};
+
+  \draw[op-nearblack, dashed, line width=0.2mm] (-0.3,-4.6) -- (16.3,-4.6);
+
+  \draw[op-nearblack, line width=0.2mm, rounded corners=0] (4.5,-5.3) rectangle (11.5,-6.8);
+  \node[color=op-rosa, font=\Huge\bfseries] at (8,-6.05) {4 de julio};
+\end{tikzpicture}
+\end{center}
+
+% ─── DEPENDENCIAS ───
+\newpage
+\section{Dependencias del cliente}
+
+\medskip
+
+\begin{table}[h]
+  \centering
+  \small
+  \renewcommand{\arraystretch}{1.2}
+  \begin{tabular}{L{5cm} C{3cm} L{6cm}}
+    \toprule
+    \rowcolor{op-nearblack!90}
+    {\color{op-white}\bfseries Elemento} &
+    {\color{op-white}\bfseries Fecha tope} &
+    {\color{op-white}\bfseries ¿Qué bloquea?} \\
+    \midrule
+    Imagen hero 1920×1080 &
+    19 de junio &
+    Hero /sobre se queda con fondo negro \\
+    \rowcolor{op-surface}
+    Assets en Google Drive &
+    11 de junio &
+    No se integran elementos visuales \\
+    Definición del dominio &
+    25 de junio &
+    Deploy a producción \\
+    \rowcolor{op-surface}
+    Título Evento Networking \#1 &
+    11 de junio &
+    Card se publica con ``Por definir'' \\
+    Disponibilidad reuniones &
+    18 jun y 4 jul &
+    Validación del MVP y cierre \\
+    \rowcolor{op-surface}
+    Datos reales de mentores &
+    11 de junio &
+    Perfiles con placeholder \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+% ─── NOTAS ───
+\section{Notas importantes}
+
+\medskip
+
+\begin{enumerate}
+  \item \textbf{Días calendario, no hábiles.} El plazo es del 4 de junio al 4 de julio.
+  \item \textbf{Trabajo en paralelo desde el día 1.} Santiago y Camilo arrancan juntos pero cada uno en su campo. No se bloquean mutuamente.
+  \item \textbf{Supabase} tiene plan gratuito que cubre las necesidades iniciales.
+  \item \textbf{Los pagos y facturación} están a cargo de Alexander Paz y no forman parte de este cronograma.
+  \item Se asume \textbf{respuesta del cliente en máximo 48 horas} para dudas y aprobaciones.
+  \item Los elementos visuales siguen la línea editorial del manual de diseño (\texttt{DESIGN.md}).
+\end{enumerate}
+
+\vspace{1.5cm}
+
+\begin{center}
+  {\color{op-verde}\rule{0.2\textwidth}{0.3mm}}
+  \hspace{1.5em}
+  {\color{op-textmuted}\footnotesize Documento preparado para revisión del cliente --- Versión 2.0}
+  \hspace{1.5em}
+  {\color{op-rosa}\rule{0.2\textwidth}{0.3mm}}
+\end{center}
+
+\end{document}

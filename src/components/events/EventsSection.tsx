@@ -17,6 +17,7 @@ import Image from 'next/image'
 import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
 import { CreateEventModal, EventFormData } from './CreateEventModal'
 import { MonthCalendar } from './MonthCalendar'
+import { Session } from '@supabase/supabase-js'
 
 // -- Types --
 export interface CalendarEvent {
@@ -36,8 +37,33 @@ export interface CalendarEvent {
   eventDate: Date
 }
 
+interface DbEvent {
+  id: string
+  titulo: string
+  descripcion?: string
+  categoria: string
+  fecha: string
+  ubicacion: string
+  imagen?: string | null
+  precio: string
+  agotado?: boolean
+  likes?: number
+  comentarios?: number
+  vistas?: number
 
+  usuario: {
+    username: string
 
+    perfil?: {
+      artisticName?: string | null
+    } | null
+  }
+}
+
+interface CurrentUser {
+  id: string
+  rol: string
+}
 
 // -- Brand accent map --
 const CAT_STYLES = {
@@ -46,11 +72,8 @@ const CAT_STYLES = {
   lavanda: { fg: '#4682B4', bg: 'rgba(70,130,180,0.08)', border: 'rgba(70,130,180,0.35)' },
 } as const
 
-
-function mapEvent(evento: any): CalendarEvent {
-
+function mapEvent(evento: DbEvent): CalendarEvent {
   const categoryMap: Record<string, CalendarEvent['categoryVariant']> = {
-
     Taller: 'terracota',
 
     Workshop: 'lavanda',
@@ -61,51 +84,38 @@ function mapEvent(evento: any): CalendarEvent {
 
     Concierto: 'terracota',
 
-    Exposición: 'lavanda'
-
+    Exposición: 'lavanda',
   }
 
   return {
-
     id: evento.id,
 
     title: evento.titulo,
 
-    artist:
-      evento.usuario.perfil?.artisticName ??
-      evento.usuario.username,
+    artist: evento.usuario?.perfil?.artisticName ?? evento.usuario?.username ?? 'Usuario',
 
     category: evento.categoria,
 
-    categoryVariant:
-      categoryMap[evento.categoria] ??
-      'terracota',
+    categoryVariant: categoryMap[evento.categoria] ?? 'terracota',
 
-    date:
-      new Date(evento.fecha)
-        .toLocaleDateString('es-CO'),
-        
-    eventDate:
-    new Date(evento.fecha),
+    date: new Date(evento.fecha).toLocaleDateString('es-CO'),
+
+    eventDate: new Date(evento.fecha),
 
     location: evento.ubicacion,
 
-    image:
-      evento.imagen ??
-      '/default-event.jpg',
+    image: evento.imagen ?? '/default-event.jpg',
 
     price: evento.precio,
 
-    soldOut: evento.agotado,
+    soldOut: evento.agotado ?? false,
 
-    likes: evento.likes,
+    likes: evento.likes ?? 0,
 
-    comments: evento.comentarios,
+    comments: evento.comentarios ?? 0,
 
-    views: evento.vistas
-
+    views: evento.vistas ?? 0,
   }
-
 }
 
 const INITIAL_VISIBLE = 6
@@ -343,23 +353,17 @@ function EmptyState() {
 
 // -- EventsSection --
 export function EventsSection() {
+  const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
 
-  const [dbEvents, setDbEvents] = useState<any[]>([])
-  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
 
-  const events = useMemo(
-  () => dbEvents.map(mapEvent),
-  [dbEvents]
-)
-const categories = useMemo(
+  const events = useMemo(() => dbEvents.map(mapEvent), [dbEvents])
+  const categories = useMemo(
+    () => [...new Set(events.map((e) => e.category))],
 
-  () => [...new Set(events.map(e => e.category))],
-
-  [events]
-
-)
-
+    [events]
+  )
 
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
@@ -376,42 +380,24 @@ const categories = useMemo(
   const yLeft = useTransform(scrollYProgress, [0, 0.5, 1], [0, 30, 0])
   const yRight = useTransform(scrollYProgress, [0, 0.5, 1], [0, -30, 0])
 
-  
   const filteredEvents = useMemo(() => {
+    const q = query.toLowerCase().trim()
 
-  const q = query.toLowerCase().trim()
+    return events.filter((e) => {
+      const matchesQuery =
+        !q ||
+        e.title.toLowerCase().includes(q) ||
+        e.artist.toLowerCase().includes(q) ||
+        e.date.toLowerCase().includes(q) ||
+        e.location.toLowerCase().includes(q)
 
-  return events.filter((e) => {
+      const matchesFilter = activeFilters.length === 0 || activeFilters.includes(e.category)
 
-    const matchesQuery =
+      return matchesQuery && matchesFilter
+    })
+  }, [events, query, activeFilters])
 
-      !q ||
-
-      e.title.toLowerCase().includes(q) ||
-
-      e.artist.toLowerCase().includes(q) ||
-
-      e.date.toLowerCase().includes(q) ||
-
-      e.location.toLowerCase().includes(q)
-
-    const matchesFilter =
-
-      activeFilters.length === 0 ||
-
-      activeFilters.includes(e.category)
-
-    return matchesQuery && matchesFilter
-
-  })
-
-}, [events, query, activeFilters])
-
-
-    const isMentor = currentUser?.rol === 'MENTOR'
-
-
-    
+  const isMentor = currentUser?.rol === 'MENTOR'
 
   const visibleEvents = filteredEvents.slice(0, visibleCount)
   const hasMore = filteredEvents.length > visibleCount
@@ -441,169 +427,121 @@ const categories = useMemo(
   }
 
   async function loadEvents() {
-
     try {
+      const response = await fetch('/api/eventos')
 
-      const response =
-        await fetch('/api/eventos')
+      if (!response.ok) return
 
-      if (!response.ok)
-        return
-
-      const data =
-        await response.json()
+      const data: {
+        eventos: DbEvent[]
+      } = await response.json()
 
       setDbEvents(data.eventos)
-
-    } catch (error) {
-
+      setDbEvents(data.eventos)
+    } catch (error: unknown) {
       console.error(error)
-
     }
-
   }
 
   useEffect(() => {
+    loadEvents()
+  }, [])
 
-  
+  useEffect(() => {
+    const supabase = createClient()
 
-  loadEvents()
-
-}, [])
-
-useEffect(() => {
-
-  const supabase = createClient()
-
-  async function loadCurrentUser(session: any) {
-
-    if (!session) {
-
-      setCurrentUser(null)
-
-      return
-
-    }
-
-    try {
-      
-      const response = await fetch('/api/auth/me', {
-        headers: {
-          Authorization: `Bearer ${session.access_token}`
-        }
-      })
-
-      if (!response.ok) {
+    async function loadCurrentUser(session: Session | null) {
+      if (!session) {
         setCurrentUser(null)
+
         return
       }
 
-      const data = await response.json()
-      setCurrentUser(data.usuario)
+      try {
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${session.access_token}`,
+          },
+        })
 
-    } catch (error) {
-      console.error(error)
-      setCurrentUser(null)
+        if (!response.ok) {
+          setCurrentUser(null)
+          return
+        }
+
+        const data = await response.json()
+        setCurrentUser(data.usuario)
+      } catch (error: unknown) {
+        console.error(error)
+        setCurrentUser(null)
+      }
     }
 
-  }
+    // Cargar la sesión actual al entrar a la página
+    supabase.auth.getSession().then(({ data }) => {
+      loadCurrentUser(data.session)
+    })
 
-  // Cargar la sesión actual al entrar a la página
-  supabase.auth.getSession().then(({ data }) => {
-    loadCurrentUser(data.session)
-  })
-
-  // Escuchar cambios de autenticación
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    (_event, session) => {
+    // Escuchar cambios de autenticación
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       loadCurrentUser(session)
+    })
+
+    return () => {
+      listener.subscription.unsubscribe()
     }
-  )
+  }, [])
 
-  return () => {
-    listener.subscription.unsubscribe()
-  }
-}, [])
+  async function createEvent(data: EventFormData) {
+    try {
+      const supabase = createClient()
 
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-async function createEvent(
-  data: EventFormData
-) {
+      if (!session) {
+        alert('Debes iniciar sesión')
 
-  try {
+        return
+      }
 
-    const supabase =
-      createClient()
+      if (!data.imagen) {
+        alert('Debes seleccionar una imagen')
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+        return
+      }
 
-    if (!session) {
+      // ===== 1. Subir imagen =====
 
-      alert('Debes iniciar sesión')
+      const imageForm = new FormData()
 
-      return
+      imageForm.append('file', data.imagen)
 
-    }
-
-    if (!data.imagen) {
-
-      alert('Debes seleccionar una imagen')
-
-      return
-
-    }
-
-    // ===== 1. Subir imagen =====
-
-    const imageForm =
-      new FormData()
-
-    imageForm.append(
-      'file',
-      data.imagen
-    )
-
-    const uploadResponse =
-      await fetch('/api/upload/image', {
-
+      const uploadResponse = await fetch('/api/upload/image', {
         method: 'POST',
 
-        body: imageForm
-
+        body: imageForm,
       })
 
-    if (!uploadResponse.ok) {
+      if (!uploadResponse.ok) {
+        throw new Error('Error al subir imagen')
+      }
 
-      throw new Error(
-        'Error al subir imagen'
-      )
+      const uploadData = await uploadResponse.json()
 
-    }
+      // ===== 2. Crear evento =====
 
-    const uploadData =
-      await uploadResponse.json()
-
-    // ===== 2. Crear evento =====
-
-    const response =
-      await fetch('/api/eventos', {
-
+      const response = await fetch('/api/eventos', {
         method: 'POST',
 
         headers: {
+          'Content-Type': 'application/json',
 
-          'Content-Type':
-            'application/json',
-
-          Authorization:
-            `Bearer ${session.access_token}`
-
+          Authorization: `Bearer ${session.access_token}`,
         },
 
         body: JSON.stringify({
-
           titulo: data.titulo,
 
           descripcion: data.descripcion,
@@ -617,38 +555,26 @@ async function createEvent(
           precio: data.precio,
 
           imagen: uploadData.url,
-
-        })
-
+        }),
       })
 
-    if (!response.ok) {
+      if (!response.ok) {
+        throw new Error('No se pudo crear el evento')
+      }
 
-      throw new Error(
-        'No se pudo crear el evento'
-      )
+      // ===== 3. Cerrar modal =====
 
+      setShowCreateModal(false)
+
+      // ===== 4. Recargar =====
+
+      await loadEvents()
+    } catch (error: unknown) {
+      console.error(error)
+
+      alert('Error al crear el evento')
     }
-
-    // ===== 3. Cerrar modal =====
-
-    setShowCreateModal(false)
-
-    // ===== 4. Recargar =====
-
-    await loadEvents()
-
-  } catch (error) {
-
-    console.error(error)
-
-    alert(
-      'Error al crear el evento'
-    )
-
   }
-
-}
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
@@ -704,46 +630,24 @@ async function createEvent(
             />
             {isMentor && (
               <div className="flex justify-center">
-
                 <button
-
                   type="button"
-
-                  className="border-2 border-[#E63946]
-                            bg-[#E63946]
-                            px-6
-                            py-3
-                            text-xs
-                            font-bold
-                            tracking-widest
-                            text-white
-                            uppercase
-                            transition-all
-                            duration-150
-                            hover:bg-white
-                            hover:text-[#E63946]
-                            hover:shadow-[4px_4px_0_#353535]"
-                            onClick={() => setShowCreateModal(true)}
-
+                  className="border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-white hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535]"
+                  onClick={() => setShowCreateModal(true)}
                 >
-
                   + Crear evento
-
                 </button>
-
               </div>
             )}
           </div>
-          
         </div>
-
 
         {/*--- modal de crear evento ---*/}
         <CreateEventModal
-  open={showCreateModal}
-  onClose={() => setShowCreateModal(false)}
-  onSubmit={createEvent}
-/>
+          open={showCreateModal}
+          onClose={() => setShowCreateModal(false)}
+          onSubmit={createEvent}
+        />
 
         {/* -- Events -- */}
         {filteredEvents.length === 0 ? (
@@ -828,11 +732,8 @@ async function createEvent(
           </>
         )}
 
-
         {/* -- Calendario -- */}
-        <MonthCalendar
-  events={events}
-/>
+        <MonthCalendar events={events} />
 
         {/* Mobile CTA */}
         <div className="px-8 py-8 lg:hidden">

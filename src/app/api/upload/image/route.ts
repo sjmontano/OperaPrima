@@ -1,37 +1,50 @@
-import cloudinary from "@/lib/cloudinary";
+import cloudinary from '@/lib/cloudinary'
+
+interface CloudinaryUploadResult {
+  secure_url: string
+}
 
 export async function POST(req: Request) {
   try {
-    const formData = await req.formData();
-    const file = formData.get("file") as File;
+    const formData = await req.formData()
 
-    if (!file) {
-      return Response.json({ error: "No file" }, { status: 400 });
+    const file = formData.get('file')
+
+    if (!(file instanceof File)) {
+      return Response.json({ error: 'No file' }, { status: 400 })
     }
 
-    const buffer = Buffer.from(await file.arrayBuffer());
+    const buffer = Buffer.from(await file.arrayBuffer())
 
-    const result = await new Promise<any>((resolve, reject) => {
+    const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
       cloudinary.uploader
         .upload_stream(
           {
-            folder: "profiles",
+            folder: 'profiles',
           },
           (err, res) => {
-            if (err) reject(err);
-            else resolve(res);
+            if (err) {
+              reject(err)
+              return
+            }
+
+            if (!res) {
+              reject(new Error('Upload failed'))
+              return
+            }
+
+            resolve({
+              secure_url: res.secure_url,
+            })
           }
         )
-        .end(buffer);
-    });
+        .end(buffer)
+    })
 
     return Response.json({
       url: result.secure_url,
-    });
-  } catch (error) {
-    return Response.json(
-      { error: "Upload failed" },
-      { status: 500 }
-    );
+    })
+  } catch {
+    return Response.json({ error: 'Upload failed' }, { status: 500 })
   }
 }

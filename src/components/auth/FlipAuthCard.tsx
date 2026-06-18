@@ -1,11 +1,11 @@
 ﻿'use client'
 
 import type { LocalUser } from '@/lib/localUsers'
-import {  isFieldTaken } from '@/lib/localUsers'
+import { isFieldTaken } from '@/lib/localUsers'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
-import { createClient } from "@/lib/supabaseClient";
+import { createClient } from '@/lib/supabaseClient'
 
 // ── Password requirements ──────────────────────────────────────────────────
 const REQUISITOS = [
@@ -245,8 +245,6 @@ export function FlipAuthCard({
   const [s2LastName, setS2LastName] = useState('')
   const [s2CountryCode, setS2CountryCode] = useState('+57')
   const [s2Phone, setS2Phone] = useState('')
-  const [s2DocType, setS2DocType] = useState('cedula')
-  const [s2DocNumber, setS2DocNumber] = useState('')
   const [s2BirthDate, setS2BirthDate] = useState('')
   const [s2Gender, setS2Gender] = useState('')
   const [s2Newsletter, setS2Newsletter] = useState(false)
@@ -286,9 +284,6 @@ export function FlipAuthCard({
       setRegSuccess(false)
     }
   }, [isSignUp])
-
-
-  
 
   // ── Handlers ──────────────────────────────────────────────────────────
 
@@ -340,7 +335,6 @@ export function FlipAuthCard({
       errors.phone = 'Este número ya está registrado'
     }
 
-
     if (!s2BirthDate) errors.birthDate = 'Selecciona tu fecha de nacimiento'
     if (!s2Gender) errors.gender = 'Selecciona una opción'
     if (!s2Terms) errors.terms = 'Debes aceptar los términos para continuar'
@@ -350,40 +344,39 @@ export function FlipAuthCard({
 
     setS2Submitting(true)
     try {
-      
-      const response = await fetch("/api/auth/register", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-  },
-  body: JSON.stringify({
-    username: s1Username.trim(),
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: s1Username.trim(),
 
-    email: s1Email.trim().toLowerCase(),
+          email: s1Email.trim().toLowerCase(),
 
-    password: s1Password,
+          password: s1Password,
 
-    firstName: s2FirstName.trim(),
+          firstName: s2FirstName.trim(),
 
-    lastName: s2LastName.trim(),
+          lastName: s2LastName.trim(),
 
-    countryCode: s2CountryCode,
+          countryCode: s2CountryCode,
 
-    phone: s2Phone.trim(),
+          phone: s2Phone.trim(),
 
-    birthDate: s2BirthDate,
+          birthDate: s2BirthDate,
 
-    gender: s2Gender.trim().toUpperCase(),
+          gender: s2Gender.trim().toUpperCase(),
 
-    rol: "USUARIO",
-  }),
-})
+          rol: 'USUARIO',
+        }),
+      })
 
-const data = await response.json()
+      const data = await response.json()
 
-if (!response.ok) {
-  throw new Error(data.error)
-}
+      if (!response.ok) {
+        throw new Error(data.error)
+      }
 
       setRegSuccess(true)
     } catch {
@@ -393,70 +386,61 @@ if (!response.ok) {
     }
   }
 
-  async function handleLoginSubmit(
-  e: React.FormEvent
-) {
-  e.preventDefault();
+  async function handleLoginSubmit(e: React.FormEvent) {
+    e.preventDefault()
 
-  setLoginError(null);
-  setLoginLoading(true);
+    setLoginError(null)
+    setLoginLoading(true)
 
-  try {
-    const response = await fetch(
-      "/api/auth/login",
-      {
-        method: "POST",
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
         headers: {
-          "Content-Type":
-            "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           email: loginId,
           password: loginPw,
         }),
+      })
+
+      const data = await response.json()
+      console.log(data)
+
+      if (!response.ok) {
+        throw new Error(data.error)
       }
-    );
 
-    const data =
-      await response.json();
-      console.log(data);
+      setLoginSuccess(`¡Bienvenido ${data.usuario.firstName}!`)
 
-    if (!response.ok) {
-      throw new Error(
-        data.error
-      );
+      const usuario: LocalUser = data.usuario
+
+      onLoginSuccess?.(usuario)
+    } catch (error) {
+      setLoginError(error instanceof Error ? error.message : 'Error al iniciar sesión')
+    } finally {
+      setLoginLoading(false)
     }
-
-    setLoginSuccess(
-      `¡Bienvenido ${data.usuario.firstName}!`
-    );
-
-    onLoginSuccess?.(
-      data.usuario
-    );
-  } catch (error: any) {
-    setLoginError(
-      error.message
-    );
-  } finally {
-    setLoginLoading(false);
   }
-}
 
-  async function handleSocialLogin(provider: 'google' | 'facebook' | 'apple') {
+  type OAuthProvider = 'google' | 'facebook' | 'apple'
+
+  async function handleSocialLogin(provider: OAuthProvider) {
     setSocialError(null)
     if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
       setSocialError('Social login no disponible aún — configura Supabase en .env.local')
       return
     }
-    setSocialLoading(provider);
-    const supabase = createClient();
+    setSocialLoading(provider)
+    const supabase = createClient()
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo:  `${window.location.origin}/auth/callback`, 
-      queryParams: {
-      prompt: "consent select_account",
-    },},
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+        queryParams: {
+          prompt: 'consent select_account',
+        },
+      },
     })
     if (error) {
       setSocialError(error.message)
@@ -846,8 +830,6 @@ if (!response.ok) {
                     <span className="flip-auth-field-error">{s2Errors.phone}</span>
                   )}
                 </div>
-
-                
 
                 {/* Fecha de nacimiento */}
                 <div className="flip-auth-field">

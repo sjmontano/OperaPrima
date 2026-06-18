@@ -7,40 +7,58 @@ import { createClient } from '@/lib/supabaseClient'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 
-// ── Mock data ──────────────────────────────────────────────────────────────────
+interface UsuarioApi {
+  id?: string
+  firstName?: string
+  lastName?: string
+  username?: string
 
-const USER = {
-  artisticName: 'Valentina Cruz',
-  realName: 'María Valentina Cruz Morales',
-  username: 'valentinacruze',
-  bio: 'Bailarina y coreógrafa contemporánea nacida en Cali, Colombia. Fusiono técnicas de danza clásica con expresión corporal urbana para crear piezas que dialogan con la identidad latinoamericana y la memoria del cuerpo. He colaborado con compañías en Colombia, México y Argentina.',
-  tags: ['Danza', 'Calí', 'Contemporánea', 'Coreografía', 'Performance'],
-  interests: [
-    'Danza Contemporánea',
-    'Performance Art',
-    'Instalación',
-    'Circo Social',
-    'Video Danza',
-  ],
-  avatar:
-    'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&h=400&auto=format&fit=crop&q=80',
-  socials: [
-    { label: 'Instagram', handle: '@valentinacruze', href: '#' },
-    { label: 'TikTok', handle: '@valentinacruze', href: '#' },
-    { label: 'Web', handle: 'valentinacruz.co', href: '#' },
-  ],
+  perfil?: {
+    artisticName?: string
+    realName?: string
+    bio?: string
+    tags?: string[]
+    interests?: string[]
+    avatar?: string | null
+    banner?: string | null
+
+    redes?: {
+      label: string
+      handle: string
+      href: string
+    }[]
+  }
 }
 
-function mapUser(usuario: any) {
+interface PerfilUsuario {
+  id: string
+  artisticName: string
+  realName: string
+  username: string
+  bio: string
+  tags: string[]
+  interests: string[]
+  avatar: string | null
+  banner: string | null
+
+  socials: {
+    label: string
+    handle: string
+    href: string
+  }[]
+}
+
+// ── Mock data ──────────────────────────────────────────────────────────────────
+
+function mapUser(usuario: UsuarioApi): PerfilUsuario {
   console.log(usuario)
   return {
-    id:  usuario.id ??'',
+    id: usuario.id ?? '',
     artisticName: usuario.perfil?.artisticName ?? '',
     realName:
-      usuario.perfil?.realName ??
-      `${usuario.firstName ?? ''} ${usuario.lastName ?? ''}`.trim(),
+      usuario.perfil?.realName ?? `${usuario.firstName ?? ''} ${usuario.lastName ?? ''}`.trim(),
 
-    username: usuario.username,
+    username: usuario.username ?? '',
 
     bio: usuario.perfil?.bio ?? '',
 
@@ -52,7 +70,7 @@ function mapUser(usuario: any) {
     banner: usuario.perfil?.banner ?? null,
 
     socials:
-      usuario.perfil?.redes?.map((r: any) => ({
+      usuario.perfil?.redes?.map((r) => ({
         label: r.label,
         handle: r.handle,
         href: r.href,
@@ -178,58 +196,45 @@ const INTEREST_COLORS = [
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function PerfilPage() {
-
-  const [user, setUser] = useState<any>(null)
+  const [user, setUser] = useState<PerfilUsuario | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-
     async function loadUser() {
-
       try {
-
-        const supabase =
-                createClient();
+        const supabase = createClient()
 
         const {
-        data: { session },
-      } = await supabase.auth.getSession();
+          data: { session },
+        } = await supabase.auth.getSession()
 
         if (!session) {
-          router.replace('http://localhost:3000/') ;
-          return;
+          router.replace('http://localhost:3000/')
+          return
         }
 
-        const { access_token } = session;
+        const { access_token } = session
 
-        const response =
-          await fetch("/api/auth/me", {
-            headers: {
-              Authorization: `Bearer ${access_token}`
-            }
-          })
+        const response = await fetch('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${access_token}`,
+          },
+        })
 
         if (!response.ok) return
 
-        const data =
-          await response.json()
+        const data = await response.json()
 
         setUser(mapUser(data.usuario))
-        
-
       } catch (error) {
-
         console.error(error)
-
       }
-
     }
 
     loadUser()
-
-  }, [])
+  }, [router])
   console.log(user)
-  
+
   if (!user) return <div>Cargando perfil...</div>
 
   return (

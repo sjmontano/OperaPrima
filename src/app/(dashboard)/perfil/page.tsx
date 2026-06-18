@@ -209,7 +209,7 @@ export default function PerfilPage() {
         } = await supabase.auth.getSession()
 
         if (!session) {
-          router.replace('http://localhost:3000/')
+          router.replace('/')
           return
         }
 

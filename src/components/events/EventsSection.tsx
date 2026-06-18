@@ -1,6 +1,7 @@
 ﻿'use client'
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { createClient } from '@/lib/supabaseClient'
 import {
   CalendarDays,
   ChevronDown,
@@ -14,6 +15,8 @@ import {
 import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import Image from 'next/image'
 import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
+import { CreateEventModal, EventFormData } from './CreateEventModal'
+import { MonthCalendar } from './MonthCalendar'
 
 // -- Types --
 export interface CalendarEvent {
@@ -30,7 +33,11 @@ export interface CalendarEvent {
   likes: number
   comments: number
   views: number
+  eventDate: Date
 }
+
+
+
 
 // -- Brand accent map --
 const CAT_STYLES = {
@@ -39,196 +46,70 @@ const CAT_STYLES = {
   lavanda: { fg: '#4682B4', bg: 'rgba(70,130,180,0.08)', border: 'rgba(70,130,180,0.35)' },
 } as const
 
+
+function mapEvent(evento: any): CalendarEvent {
+
+  const categoryMap: Record<string, CalendarEvent['categoryVariant']> = {
+
+    Taller: 'terracota',
+
+    Workshop: 'lavanda',
+
+    Networking: 'selva',
+
+    Residencia: 'selva',
+
+    Concierto: 'terracota',
+
+    Exposición: 'lavanda'
+
+  }
+
+  return {
+
+    id: evento.id,
+
+    title: evento.titulo,
+
+    artist:
+      evento.usuario.perfil?.artisticName ??
+      evento.usuario.username,
+
+    category: evento.categoria,
+
+    categoryVariant:
+      categoryMap[evento.categoria] ??
+      'terracota',
+
+    date:
+      new Date(evento.fecha)
+        .toLocaleDateString('es-CO'),
+        
+    eventDate:
+    new Date(evento.fecha),
+
+    location: evento.ubicacion,
+
+    image:
+      evento.imagen ??
+      '/default-event.jpg',
+
+    price: evento.precio,
+
+    soldOut: evento.agotado,
+
+    likes: evento.likes,
+
+    comments: evento.comentarios,
+
+    views: evento.vistas
+
+  }
+
+}
+
 const INITIAL_VISIBLE = 6
 const LOAD_MORE_STEP = 6
-
-// -- Mock data — replace with Supabase query --
-const ALL_EVENTS: CalendarEvent[] = [
-  {
-    id: 'ev-1',
-    title: 'Fotografía editorial: construye tu portafolio',
-    artist: 'Valentina Torres',
-    category: 'Taller',
-    categoryVariant: 'terracota',
-    date: '10 May 2026',
-    location: 'Bogotá, D.C.',
-    image:
-      'https://images.unsplash.com/photo-1452587925148-ce544e77e70d?w=700&auto=format&fit=crop&q=80',
-    price: '$120.000',
-    likes: 84,
-    comments: 12,
-    views: 540,
-  },
-  {
-    id: 'ev-2',
-    title: 'Encuentro de músicos emergentes — Bogotá',
-    artist: 'Colectivo Sonoro',
-    category: 'Networking',
-    categoryVariant: 'terracota',
-    date: '17 May 2026',
-    location: 'La Candelaria, Bogotá',
-    image:
-      'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=700&auto=format&fit=crop&q=80',
-    price: '$60.000',
-    likes: 192,
-    comments: 28,
-    views: 930,
-  },
-  {
-    id: 'ev-3',
-    title: 'Actuación en escena: técnica y presencia',
-    artist: 'Camilo Estrada',
-    category: 'Workshop',
-    categoryVariant: 'lavanda',
-    date: '14 May 2026',
-    location: 'Cali',
-    image:
-      'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=700&auto=format&fit=crop&q=80',
-    price: '$110.000',
-    likes: 63,
-    comments: 9,
-    views: 280,
-  },
-  {
-    id: 'ev-4',
-    title: 'Residencia de escritura creativa — Eje Cafetero',
-    artist: 'Paula Ríos & Juan Mora',
-    category: 'Residencia',
-    categoryVariant: 'selva',
-    date: '22 May 2026',
-    location: 'Armenia, Quindío',
-    image:
-      'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=700&auto=format&fit=crop&q=80',
-    price: '$350.000',
-    soldOut: true,
-    likes: 213,
-    comments: 31,
-    views: 1240,
-  },
-  {
-    id: 'ev-5',
-    title: 'Ilustración y narrativa visual latinoamericana',
-    artist: 'Andrea Lozano',
-    category: 'Taller',
-    categoryVariant: 'selva',
-    date: '30 May 2026',
-    location: 'Medellín',
-    image:
-      'https://images.unsplash.com/photo-1579762593175-20226054cad0?w=700&auto=format&fit=crop&q=80',
-    price: '$95.000',
-    likes: 76,
-    comments: 14,
-    views: 445,
-  },
-  {
-    id: 'ev-6',
-    title: 'Diseño de marca para artistas independientes',
-    artist: 'Diego Fuentes',
-    category: 'Workshop',
-    categoryVariant: 'lavanda',
-    date: '5 Jun 2026',
-    location: 'Online',
-    image:
-      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=700&auto=format&fit=crop&q=80',
-    price: '$80.000',
-    likes: 47,
-    comments: 8,
-    views: 312,
-  },
-  {
-    id: 'ev-7',
-    title: 'Concierto colectivo — artistas en red',
-    artist: 'Varios artistas',
-    category: 'Concierto',
-    categoryVariant: 'terracota',
-    date: '28 May 2026',
-    location: 'Teatro Mayor, Bogotá',
-    image:
-      'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=700&auto=format&fit=crop&q=80',
-    price: '$45.000',
-    soldOut: true,
-    likes: 387,
-    comments: 54,
-    views: 2100,
-  },
-  {
-    id: 'ev-8',
-    title: 'Curaduría independiente: primera exposición',
-    artist: 'Sara Gómez',
-    category: 'Taller',
-    categoryVariant: 'selva',
-    date: '19 Jun 2026',
-    location: 'Barranquilla',
-    image:
-      'https://images.unsplash.com/photo-1518998053901-5348d3961a04?w=700&auto=format&fit=crop&q=80',
-    price: '$140.000',
-    likes: 29,
-    comments: 5,
-    views: 198,
-  },
-  {
-    id: 'ev-9',
-    title: 'Danza contemporánea: cuerpo y espacio urbano',
-    artist: 'Compañía Raíz',
-    category: 'Workshop',
-    categoryVariant: 'lavanda',
-    date: '7 Jun 2026',
-    location: 'Medellín',
-    image:
-      'https://images.unsplash.com/photo-1547153760-18fc86324498?w=700&auto=format&fit=crop&q=80',
-    price: '$130.000',
-    likes: 118,
-    comments: 22,
-    views: 720,
-  },
-  {
-    id: 'ev-10',
-    title: 'Feria de arte gráfico — Bogotá 2026',
-    artist: 'Colectivo Impreso',
-    category: 'Exposición',
-    categoryVariant: 'terracota',
-    date: '14 Jun 2026',
-    location: 'Centro Cultural El Campin, Bogotá',
-    image:
-      'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=700&auto=format&fit=crop&q=80',
-    price: 'Entrada libre',
-    likes: 265,
-    comments: 40,
-    views: 1580,
-  },
-  {
-    id: 'ev-11',
-    title: 'Podcast en vivo: el negocio del arte',
-    artist: 'Felipe Arango',
-    category: 'Networking',
-    categoryVariant: 'selva',
-    date: '21 Jun 2026',
-    location: 'Online',
-    image:
-      'https://images.unsplash.com/photo-1478737270239-2f02b77fc618?w=700&auto=format&fit=crop&q=80',
-    price: 'Gratis',
-    likes: 95,
-    comments: 17,
-    views: 640,
-  },
-  {
-    id: 'ev-12',
-    title: 'Cerámica artística: moldes y texturas',
-    artist: 'Nata Cerámicas',
-    category: 'Taller',
-    categoryVariant: 'terracota',
-    date: '28 Jun 2026',
-    location: 'Bogotá, D.C.',
-    image:
-      'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=700&auto=format&fit=crop&q=80',
-    price: '$160.000',
-    likes: 53,
-    comments: 11,
-    views: 390,
-  },
-]
-
-const CATEGORIES = [...new Set(ALL_EVENTS.map((e) => e.category))]
 
 // -- StatChip --
 function StatChip({ Icon, count, delayMs }: { Icon: ElementType; count: number; delayMs: number }) {
@@ -246,10 +127,12 @@ function StatChip({ Icon, count, delayMs }: { Icon: ElementType; count: number; 
 
 // -- CategoryDropdown --
 function CategoryDropdown({
+  categories,
   activeFilters,
   onToggle,
   onClear,
 }: {
+  categories: string[]
   activeFilters: string[]
   onToggle: (cat: string) => void
   onClear: () => void
@@ -304,10 +187,10 @@ function CategoryDropdown({
             transition={{ duration: 0.14 }}
             className="absolute top-full right-0 z-50 mt-1.5 min-w-48 border-2 border-zinc-900 bg-white shadow-[4px_4px_0_#111]"
           >
-            {CATEGORIES.map((cat, i) => (
+            {categories.map((cat, i) => (
               <label
                 key={cat}
-                className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 ${i < CATEGORIES.length - 1 ? 'border-b border-zinc-100' : ''}`}
+                className={`flex cursor-pointer items-center gap-3 px-4 py-2.5 hover:bg-zinc-50 ${i < categories.length - 1 ? 'border-b border-zinc-100' : ''}`}
               >
                 <input
                   type="checkbox"
@@ -460,6 +343,24 @@ function EmptyState() {
 
 // -- EventsSection --
 export function EventsSection() {
+
+  const [dbEvents, setDbEvents] = useState<any[]>([])
+  const [currentUser, setCurrentUser] = useState<any>(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+
+  const events = useMemo(
+  () => dbEvents.map(mapEvent),
+  [dbEvents]
+)
+const categories = useMemo(
+
+  () => [...new Set(events.map(e => e.category))],
+
+  [events]
+
+)
+
+
   const sectionRef = useRef<HTMLElement>(null)
   const gridRef = useRef<HTMLDivElement>(null)
 
@@ -469,25 +370,48 @@ export function EventsSection() {
 
   // Parallax — columns drift in opposite directions
   const { scrollYProgress } = useScroll({
-    target: gridRef,
+    target: sectionRef,
     offset: ['start end', 'end start'],
   })
   const yLeft = useTransform(scrollYProgress, [0, 0.5, 1], [0, 30, 0])
   const yRight = useTransform(scrollYProgress, [0, 0.5, 1], [0, -30, 0])
 
+  
   const filteredEvents = useMemo(() => {
-    const q = query.toLowerCase().trim()
-    return ALL_EVENTS.filter((e) => {
-      const matchesQuery =
-        !q ||
-        e.title.toLowerCase().includes(q) ||
-        e.artist.toLowerCase().includes(q) ||
-        e.date.toLowerCase().includes(q) ||
-        e.location.toLowerCase().includes(q)
-      const matchesFilter = activeFilters.length === 0 || activeFilters.includes(e.category)
-      return matchesQuery && matchesFilter
-    })
-  }, [query, activeFilters])
+
+  const q = query.toLowerCase().trim()
+
+  return events.filter((e) => {
+
+    const matchesQuery =
+
+      !q ||
+
+      e.title.toLowerCase().includes(q) ||
+
+      e.artist.toLowerCase().includes(q) ||
+
+      e.date.toLowerCase().includes(q) ||
+
+      e.location.toLowerCase().includes(q)
+
+    const matchesFilter =
+
+      activeFilters.length === 0 ||
+
+      activeFilters.includes(e.category)
+
+    return matchesQuery && matchesFilter
+
+  })
+
+}, [events, query, activeFilters])
+
+
+    const isMentor = currentUser?.rol === 'MENTOR'
+
+
+    
 
   const visibleEvents = filteredEvents.slice(0, visibleCount)
   const hasMore = filteredEvents.length > visibleCount
@@ -515,6 +439,216 @@ export function EventsSection() {
     setQuery(val)
     setVisibleCount(INITIAL_VISIBLE)
   }
+
+  async function loadEvents() {
+
+    try {
+
+      const response =
+        await fetch('/api/eventos')
+
+      if (!response.ok)
+        return
+
+      const data =
+        await response.json()
+
+      setDbEvents(data.eventos)
+
+    } catch (error) {
+
+      console.error(error)
+
+    }
+
+  }
+
+  useEffect(() => {
+
+  
+
+  loadEvents()
+
+}, [])
+
+useEffect(() => {
+
+  const supabase = createClient()
+
+  async function loadCurrentUser(session: any) {
+
+    if (!session) {
+
+      setCurrentUser(null)
+
+      return
+
+    }
+
+    try {
+      
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`
+        }
+      })
+
+      if (!response.ok) {
+        setCurrentUser(null)
+        return
+      }
+
+      const data = await response.json()
+      setCurrentUser(data.usuario)
+
+    } catch (error) {
+      console.error(error)
+      setCurrentUser(null)
+    }
+
+  }
+
+  // Cargar la sesión actual al entrar a la página
+  supabase.auth.getSession().then(({ data }) => {
+    loadCurrentUser(data.session)
+  })
+
+  // Escuchar cambios de autenticación
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    (_event, session) => {
+      loadCurrentUser(session)
+    }
+  )
+
+  return () => {
+    listener.subscription.unsubscribe()
+  }
+}, [])
+
+
+async function createEvent(
+  data: EventFormData
+) {
+
+  try {
+
+    const supabase =
+      createClient()
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
+    if (!session) {
+
+      alert('Debes iniciar sesión')
+
+      return
+
+    }
+
+    if (!data.imagen) {
+
+      alert('Debes seleccionar una imagen')
+
+      return
+
+    }
+
+    // ===== 1. Subir imagen =====
+
+    const imageForm =
+      new FormData()
+
+    imageForm.append(
+      'file',
+      data.imagen
+    )
+
+    const uploadResponse =
+      await fetch('/api/upload/image', {
+
+        method: 'POST',
+
+        body: imageForm
+
+      })
+
+    if (!uploadResponse.ok) {
+
+      throw new Error(
+        'Error al subir imagen'
+      )
+
+    }
+
+    const uploadData =
+      await uploadResponse.json()
+
+    // ===== 2. Crear evento =====
+
+    const response =
+      await fetch('/api/eventos', {
+
+        method: 'POST',
+
+        headers: {
+
+          'Content-Type':
+            'application/json',
+
+          Authorization:
+            `Bearer ${session.access_token}`
+
+        },
+
+        body: JSON.stringify({
+
+          titulo: data.titulo,
+
+          descripcion: data.descripcion,
+
+          categoria: data.categoria,
+
+          fecha: data.fecha,
+
+          ubicacion: data.ubicacion,
+
+          precio: data.precio,
+
+          imagen: uploadData.url,
+
+        })
+
+      })
+
+    if (!response.ok) {
+
+      throw new Error(
+        'No se pudo crear el evento'
+      )
+
+    }
+
+    // ===== 3. Cerrar modal =====
+
+    setShowCreateModal(false)
+
+    // ===== 4. Recargar =====
+
+    await loadEvents()
+
+  } catch (error) {
+
+    console.error(error)
+
+    alert(
+      'Error al crear el evento'
+    )
+
+  }
+
+}
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
@@ -563,12 +697,53 @@ export function EventsSection() {
 
             {/* Category dropdown */}
             <CategoryDropdown
+              categories={categories}
               activeFilters={activeFilters}
               onToggle={toggleFilter}
               onClear={clearAll}
             />
+            {isMentor && (
+              <div className="flex justify-center">
+
+                <button
+
+                  type="button"
+
+                  className="border-2 border-[#E63946]
+                            bg-[#E63946]
+                            px-6
+                            py-3
+                            text-xs
+                            font-bold
+                            tracking-widest
+                            text-white
+                            uppercase
+                            transition-all
+                            duration-150
+                            hover:bg-white
+                            hover:text-[#E63946]
+                            hover:shadow-[4px_4px_0_#353535]"
+                            onClick={() => setShowCreateModal(true)}
+
+                >
+
+                  + Crear evento
+
+                </button>
+
+              </div>
+            )}
           </div>
+          
         </div>
+
+
+        {/*--- modal de crear evento ---*/}
+        <CreateEventModal
+  open={showCreateModal}
+  onClose={() => setShowCreateModal(false)}
+  onSubmit={createEvent}
+/>
 
         {/* -- Events -- */}
         {filteredEvents.length === 0 ? (
@@ -652,6 +827,12 @@ export function EventsSection() {
             {!hasMore && <div className="h-12 border-b-2 border-zinc-200" />}
           </>
         )}
+
+
+        {/* -- Calendario -- */}
+        <MonthCalendar
+  events={events}
+/>
 
         {/* Mobile CTA */}
         <div className="px-8 py-8 lg:hidden">

@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Usuario" ALTER COLUMN "countryCode" DROP NOT NULL,
+ALTER COLUMN "phone" DROP NOT NULL;

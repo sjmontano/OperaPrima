@@ -4,6 +4,7 @@ import type { LocalUser } from '@/lib/localUsers'
 import { AnimatePresence, motion } from 'motion/react'
 import { createContext, useCallback, useContext, useEffect, useState } from 'react'
 import { FlipAuthCard } from './FlipAuthCard'
+import { createClient } from '@/lib/supabaseClient'
 
 // -- Types --
 type AuthMode = 'login' | 'registro'
@@ -35,6 +36,35 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   })
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(null)
 
+  useEffect(() => {
+  const supabase = createClient()
+
+  const { data: listener } = supabase.auth.onAuthStateChange(
+    async (_event, session) => {
+      if (!session) {
+        setCurrentUser(null)
+        return
+      }
+
+      const response = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${session.access_token}`,
+        },
+      })
+
+      if (!response.ok) return
+
+      const data = await response.json()
+
+      setCurrentUser(data.usuario)
+    }
+  )
+
+  return () => {
+    listener.subscription.unsubscribe()
+  }
+}, [])
+
   const open = useCallback((mode: AuthMode = 'login') => {
     setState({ isOpen: true, mode })
   }, [])
@@ -44,12 +74,20 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const login = useCallback((user: LocalUser) => {
-    setCurrentUser(user)
-  }, [])
+  setCurrentUser(user);
 
-  const logout = useCallback(() => {
-    setCurrentUser(null)
-  }, [])
+  localStorage.setItem(
+    "user",
+    JSON.stringify(user)
+  );
+}, []);
+
+  const logout = useCallback(async () => {
+  const supabase = createClient()
+  await supabase.auth.signOut()
+
+  setCurrentUser(null)
+}, [])
 
   // Scroll lock
   useEffect(() => {
@@ -68,6 +106,12 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     document.addEventListener('keydown', handler)
     return () => document.removeEventListener('keydown', handler)
   }, [state.isOpen, close])
+
+
+  
+
+
+
 
   return (
     <AuthModalContext.Provider value={{ ...state, open, close, currentUser, login, logout }}>

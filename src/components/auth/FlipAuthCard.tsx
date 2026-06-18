@@ -1,11 +1,11 @@
 ﻿'use client'
 
 import type { LocalUser } from '@/lib/localUsers'
-import { createUser, findUserByCredential, isFieldTaken } from '@/lib/localUsers'
-import { createClient } from '@/lib/supabase/client'
+import {  isFieldTaken } from '@/lib/localUsers'
 import Link from 'next/link'
 import { Eye, EyeOff } from 'lucide-react'
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
+import { createClient } from "@/lib/supabaseClient";
 
 // ── Password requirements ──────────────────────────────────────────────────
 const REQUISITOS = [
@@ -287,6 +287,9 @@ export function FlipAuthCard({
     }
   }, [isSignUp])
 
+
+  
+
   // ── Handlers ──────────────────────────────────────────────────────────
 
   function handleStep1Submit(e: React.FormEvent) {
@@ -337,11 +340,6 @@ export function FlipAuthCard({
       errors.phone = 'Este número ya está registrado'
     }
 
-    if (!s2DocNumber.trim()) {
-      errors.docNumber = 'Ingresa tu número de documento'
-    } else if (isFieldTaken('document', s2DocNumber.trim())) {
-      errors.docNumber = 'Este documento ya está registrado'
-    }
 
     if (!s2BirthDate) errors.birthDate = 'Selecciona tu fecha de nacimiento'
     if (!s2Gender) errors.gender = 'Selecciona una opción'
@@ -352,20 +350,41 @@ export function FlipAuthCard({
 
     setS2Submitting(true)
     try {
-      await createUser({
-        username: s1Username.trim(),
-        email: s1Email.trim().toLowerCase(),
-        password: s1Password,
-        firstName: s2FirstName.trim(),
-        lastName: s2LastName.trim(),
-        countryCode: s2CountryCode,
-        phone: s2Phone.trim(),
-        documentType: s2DocType as LocalUser['documentType'],
-        document: s2DocNumber.trim(),
-        birthDate: s2BirthDate,
-        gender: s2Gender,
-        newsletter: s2Newsletter,
-      })
+      
+      const response = await fetch("/api/auth/register", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    username: s1Username.trim(),
+
+    email: s1Email.trim().toLowerCase(),
+
+    password: s1Password,
+
+    firstName: s2FirstName.trim(),
+
+    lastName: s2LastName.trim(),
+
+    countryCode: s2CountryCode,
+
+    phone: s2Phone.trim(),
+
+    birthDate: s2BirthDate,
+
+    gender: s2Gender.trim().toUpperCase(),
+
+    rol: "USUARIO",
+  }),
+})
+
+const data = await response.json()
+
+if (!response.ok) {
+  throw new Error(data.error)
+}
+
       setRegSuccess(true)
     } catch {
       setS2Errors({ general: 'Ocurrió un error. Intenta de nuevo.' })
@@ -374,26 +393,55 @@ export function FlipAuthCard({
     }
   }
 
-  function handleLoginSubmit(e: React.FormEvent) {
-    e.preventDefault()
-    setLoginError(null)
-    if (!loginId.trim() || !loginPw) {
-      setLoginError('Ingresa tus credenciales')
-      return
-    }
-    setLoginLoading(true)
-    void (async () => {
-      const user = await findUserByCredential(loginId.trim(), loginPw)
-      setLoginLoading(false)
-      if (!user) {
-        setLoginError('Usuario o contraseña incorrectos')
-      } else {
-        setLoginSuccess(`¡Bienvenido/a de nuevo, ${user.firstName}!`)
-        onLoginSuccess?.(user)
-        if (onClose) setTimeout(onClose, 1400)
+  async function handleLoginSubmit(
+  e: React.FormEvent
+) {
+  e.preventDefault();
+
+  setLoginError(null);
+  setLoginLoading(true);
+
+  try {
+    const response = await fetch(
+      "/api/auth/login",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type":
+            "application/json",
+        },
+        body: JSON.stringify({
+          email: loginId,
+          password: loginPw,
+        }),
       }
-    })()
+    );
+
+    const data =
+      await response.json();
+      console.log(data);
+
+    if (!response.ok) {
+      throw new Error(
+        data.error
+      );
+    }
+
+    setLoginSuccess(
+      `¡Bienvenido ${data.usuario.firstName}!`
+    );
+
+    onLoginSuccess?.(
+      data.usuario
+    );
+  } catch (error: any) {
+    setLoginError(
+      error.message
+    );
+  } finally {
+    setLoginLoading(false);
   }
+}
 
   async function handleSocialLogin(provider: 'google' | 'facebook' | 'apple') {
     setSocialError(null)
@@ -401,11 +449,14 @@ export function FlipAuthCard({
       setSocialError('Social login no disponible aún — configura Supabase en .env.local')
       return
     }
-    setSocialLoading(provider)
-    const supabase = createClient()
+    setSocialLoading(provider);
+    const supabase = createClient();
     const { error } = await supabase.auth.signInWithOAuth({
       provider,
-      options: { redirectTo: `${window.location.origin}/api/auth/callback` },
+      options: { redirectTo:  `${window.location.origin}/auth/callback`, 
+      queryParams: {
+      prompt: "consent select_account",
+    },},
     })
     if (error) {
       setSocialError(error.message)
@@ -796,45 +847,7 @@ export function FlipAuthCard({
                   )}
                 </div>
 
-                {/* Documento */}
-                <div className="flip-auth-two-col">
-                  <div className="flip-auth-field">
-                    <label htmlFor="s2-dtype" className="flip-auth-label">
-                      Tipo doc.
-                    </label>
-                    <select
-                      id="s2-dtype"
-                      className="flip-auth-select"
-                      value={s2DocType}
-                      onChange={(e) => setS2DocType(e.target.value)}
-                      tabIndex={hidden('back') ? -1 : 0}
-                    >
-                      <option value="cedula">CC — Cédula</option>
-                      <option value="cedula_ext">CE — Cédula ext.</option>
-                      <option value="pasaporte">Pasaporte</option>
-                      <option value="dni">DNI</option>
-                      <option value="nie">NIE</option>
-                      <option value="tarjeta_id">Tarjeta ID</option>
-                    </select>
-                  </div>
-                  <div className="flip-auth-field">
-                    <label htmlFor="s2-dnum" className="flip-auth-label">
-                      Número
-                    </label>
-                    <input
-                      id="s2-dnum"
-                      type="text"
-                      placeholder="12345678"
-                      className={`flip-auth-input${s2Errors.docNumber ? 'has-error' : ''}`}
-                      value={s2DocNumber}
-                      onChange={(e) => setS2DocNumber(e.target.value)}
-                      tabIndex={hidden('back') ? -1 : 0}
-                    />
-                    {s2Errors.docNumber && (
-                      <span className="flip-auth-field-error">{s2Errors.docNumber}</span>
-                    )}
-                  </div>
-                </div>
+                
 
                 {/* Fecha de nacimiento */}
                 <div className="flip-auth-field">

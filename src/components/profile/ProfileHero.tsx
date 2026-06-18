@@ -4,10 +4,12 @@ import { Camera, ImageIcon } from 'lucide-react'
 import { useRef, useState } from 'react'
 
 export interface ProfileHeroUser {
+  id:string
   artisticName: string
   realName: string
   username: string
   avatar: string
+  banner: string
   tags: string[]
 }
 
@@ -15,9 +17,31 @@ interface ProfileHeroProps {
   user: ProfileHeroUser
 }
 
+async function uploadImage(file: File) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const res = await fetch("/api/upload/image", {
+    method: "POST",
+    body: formData,
+  });
+
+  return await res.json(); // { url }
+}
+
+async function updateProfile(data: any) {
+  await fetch("/api/perfil", {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+}
+
 export function ProfileHero({ user }: ProfileHeroProps) {
   const [avatarSrc, setAvatarSrc] = useState(user.avatar)
-  const [bannerSrc, setBannerSrc] = useState<string | null>(null)
+  const [bannerSrc, setBannerSrc] = useState<string | null>(user.banner)
   const [avatarHover, setAvatarHover] = useState(false)
   const [bannerHover, setBannerHover] = useState(false)
 
@@ -98,7 +122,21 @@ export function ProfileHero({ user }: ProfileHeroProps) {
           type="file"
           accept="image/*"
           className="hidden"
-          onChange={(e) => handleFileChange(e, setBannerSrc)}
+          onChange={async (e) => {
+              const file = e.target.files?.[0];
+              if (!file) return;
+
+              const { url } = await uploadImage(file);
+
+              setBannerSrc(url);
+
+              await updateProfile({
+                usuarioId: user.id,
+                banner: url,
+              });
+
+              e.target.value = '';
+            }}
         />
 
         {/* Bottom fade */}
@@ -199,7 +237,21 @@ export function ProfileHero({ user }: ProfileHeroProps) {
               type="file"
               accept="image/*"
               className="hidden"
-              onChange={(e) => handleFileChange(e, setAvatarSrc)}
+              onChange={async (e) => {
+                      const file = e.target.files?.[0];
+                      if (!file) return;
+                      
+                      const { url } = await uploadImage(file);
+
+                      setAvatarSrc(url);
+
+                      await updateProfile({
+                        usuarioId: user.id, // IMPORTANTE
+                        avatar: url,
+                      });
+
+                      e.target.value = '';
+                    }}
             />
           </div>
         </div>

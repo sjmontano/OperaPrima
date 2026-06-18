@@ -1,7 +1,11 @@
+'use client'
 import { Footer } from '@/components/layout/Footer'
 import { GalleryMasonry, type GalleryItem } from '@/components/profile/GalleryMasonry'
 import { MemberGrid, type Member } from '@/components/profile/MemberGrid'
 import { ProfileHero } from '@/components/profile/ProfileHero'
+import { createClient } from '@/lib/supabaseClient'
+import { useEffect, useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 // ── Mock data ──────────────────────────────────────────────────────────────────
 
@@ -25,6 +29,35 @@ const USER = {
     { label: 'TikTok', handle: '@valentinacruze', href: '#' },
     { label: 'Web', handle: 'valentinacruz.co', href: '#' },
   ],
+}
+
+function mapUser(usuario: any) {
+  console.log(usuario)
+  return {
+    id:  usuario.id ??'',
+    artisticName: usuario.perfil?.artisticName ?? '',
+    realName:
+      usuario.perfil?.realName ??
+      `${usuario.firstName ?? ''} ${usuario.lastName ?? ''}`.trim(),
+
+    username: usuario.username,
+
+    bio: usuario.perfil?.bio ?? '',
+
+    tags: usuario.perfil?.tags ?? [],
+
+    interests: usuario.perfil?.interests ?? [],
+
+    avatar: usuario.perfil?.avatar ?? null,
+    banner: usuario.perfil?.banner ?? null,
+
+    socials:
+      usuario.perfil?.redes?.map((r: any) => ({
+        label: r.label,
+        handle: r.handle,
+        href: r.href,
+      })) ?? [],
+  }
 }
 
 const GALLERY_ITEMS: GalleryItem[] = [
@@ -145,6 +178,60 @@ const INTEREST_COLORS = [
 
 // ── Page ──────────────────────────────────────────────────────────────────────
 export default function PerfilPage() {
+
+  const [user, setUser] = useState<any>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+
+    async function loadUser() {
+
+      try {
+
+        const supabase =
+                createClient();
+
+        const {
+        data: { session },
+      } = await supabase.auth.getSession();
+
+        if (!session) {
+          router.replace('http://localhost:3000/') ;
+          return;
+        }
+
+        const { access_token } = session;
+
+        const response =
+          await fetch("/api/auth/me", {
+            headers: {
+              Authorization: `Bearer ${access_token}`
+            }
+          })
+
+        if (!response.ok) return
+
+        const data =
+          await response.json()
+
+        setUser(mapUser(data.usuario))
+        
+
+      } catch (error) {
+
+        console.error(error)
+
+      }
+
+    }
+
+    loadUser()
+
+  }, [])
+  console.log(user)
+  
+  if (!user) return <div>Cargando perfil...</div>
+
   return (
     <main
       style={{
@@ -154,7 +241,7 @@ export default function PerfilPage() {
       }}
     >
       {/* ── HERO ── */}
-      <ProfileHero user={USER} />
+      <ProfileHero user={user} />
 
       {/* ── BIO + TAGS ── */}
       <section
@@ -171,7 +258,7 @@ export default function PerfilPage() {
               className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
               style={{ color: 'oklch(0.40 0.008 350)' }}
             >
-              Sobre @{USER.username}
+              Sobre @{user.username}
             </p>
             <p
               style={{
@@ -181,7 +268,7 @@ export default function PerfilPage() {
                 maxWidth: '58ch',
               }}
             >
-              {USER.bio}
+              {user.bio}
             </p>
 
             {/* Interests */}
@@ -193,7 +280,7 @@ export default function PerfilPage() {
                 Intereses creativos
               </p>
               <div className="flex flex-wrap gap-2">
-                {USER.interests.map((interest, idx) => {
+                {user.interests.map((interest, idx) => {
                   const c = INTEREST_COLORS[idx % INTEREST_COLORS.length]
                   return (
                     <span
@@ -218,7 +305,7 @@ export default function PerfilPage() {
               Tags
             </p>
             <ul className="space-y-1.5">
-              {USER.tags.map((tag) => (
+              {user.tags.map((tag) => (
                 <li key={tag}>
                   <a
                     href="#"
@@ -266,7 +353,7 @@ export default function PerfilPage() {
           Sígueme
         </p>
         <div className="flex flex-wrap gap-6">
-          {USER.socials.map((s) => (
+          {user.socials.map((s) => (
             <a
               key={s.label}
               href={s.href}

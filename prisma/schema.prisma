@@ -1,0 +1,141 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Rol {
+  USUARIO
+  MENTOR
+}
+
+enum Gender {
+  MASCULINO
+  FEMENINO
+  NO_BINARIO
+  GENERO_FLUIDO
+  TRANSGENERO
+  OTRO
+  NO_ESPECIFICAR
+}
+
+model Usuario {
+  id            String   @id @default(uuid())
+
+  supabaseId    String   @unique
+
+  username      String   @unique
+  email         String   @unique
+
+  firstName     String
+  lastName      String
+
+  countryCode   String
+  phone         String
+
+  birthDate     DateTime?
+
+  gender        Gender?
+
+  rol           Rol
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  perfil        Perfil?
+
+  eventos       Evento[]
+
+  inscripciones Inscripcion[]
+}
+
+model Perfil {
+  id            String   @id @default(uuid())
+
+  usuarioId     String   @unique
+
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  artisticName  String?
+  realName      String?
+
+  bio           String?  @db.Text
+
+  avatar        String?
+  banner        String?
+
+  tags          String[]
+  interests     String[]
+
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  redes         Social[]
+}
+
+model Social {
+  id            String  @id @default(uuid())
+
+  perfilId      String
+
+  perfil        Perfil  @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+
+  label         String
+  handle        String
+  href          String
+}
+
+model Evento {
+  id            String   @id @default(uuid())
+
+  titulo        String
+
+  descripcion   String   @db.Text
+
+  categoria     String
+
+  fecha         DateTime
+
+  ubicacion     String
+
+  imagen        String?
+
+  precio        String
+
+  agotado       Boolean  @default(false)
+
+  likes         Int      @default(0)
+
+  comentarios   Int      @default(0)
+
+  vistas        Int      @default(0)
+
+  usuarioId     String
+
+  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+
+  inscripciones Inscripcion[]
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+}
+
+model Inscripcion {
+  id            String   @id @default(uuid())
+
+  usuarioId     String
+
+  eventoId      String
+
+  usuario       Usuario @relation(fields: [usuarioId], references: [id])
+
+  evento        Evento @relation(fields: [eventoId], references: [id])
+
+  createdAt     DateTime @default(now())
+
+  @@unique([usuarioId, eventoId])
+}

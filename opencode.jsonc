@@ -1,0 +1,18 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+
+  "command": {
+    "diseno": {
+      "description": "Flujo completo de diseño: paleta, tokens, componentes y auditoría. Solo para tareas GRANDES."
+    }
+  },
+
+  "permission": {
+    "tool": {
+      "*": "allow"
+    },
+    "skill": {
+      "*": "allow"
+    }
+  }
+}

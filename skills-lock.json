@@ -71,6 +71,12 @@
       "sourceType": "github",
       "computedHash": "ee8377c523a911be41c31037b477805773ca5ab5ade181e44ca7dd3cd8df6692"
     },
+    "ui-ux-pro-max": {
+      "source": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "sourceType": "github",
+      "skillPath": ".claude/skills/ui-ux-pro-max/SKILL.md",
+      "computedHash": "76af54973de6a9c37658bfd4f66f8a0806e94f4b9ac46f4d09e02de1454d5589"
+    },
     "upgrade-stripe": {
       "source": "stripe/ai",
       "sourceType": "github",

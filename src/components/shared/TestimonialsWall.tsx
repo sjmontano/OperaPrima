@@ -83,7 +83,7 @@ export function TestimonialsWall({
       ref={sectionRef}
       className={`testimonial-wall border-b-2 border-zinc-200 ${className}`}
     >
-      <div className="mx-auto max-w-420 border-zinc-200 px-8 py-24 sm:border-x">
+      <div className="mx-[100px] border-zinc-200 px-8 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="mb-12 text-center">
           <TimelineAnimation
             as="p"

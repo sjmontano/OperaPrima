@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { ChevronDown, LogOut, Menu, User, X } from 'lucide-react'
@@ -77,7 +77,7 @@ export function Navbar() {
       ].join(' ')}
     >
       <div
-        className={`mx-auto max-w-420 px-4 sm:border-x sm:px-6 ${
+        className={`mx-[100px] px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 ${
           scrolled ? 'border-white/10' : 'border-zinc-200'
         }`}
       >
@@ -248,7 +248,7 @@ export function Navbar() {
             }`}
           >
             <div
-              className={`mx-auto flex max-w-420 flex-col gap-1 px-4 py-4 sm:border-x ${
+              className={`mx-[100px] flex flex-col gap-1 px-4 py-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 ${
                 scrolled ? 'border-white/10' : 'border-zinc-200'
               }`}
             >

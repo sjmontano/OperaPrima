@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { createClient } from '@/lib/supabaseClient'
@@ -578,7 +578,7 @@ export function EventsSection() {
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
-      <div className="mx-auto max-w-420 border-zinc-200 sm:border-x">
+      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {/* -- Header -- */}
         <div className="border-b-2 border-zinc-200 px-8 pt-20 pb-12 text-center">
           <TimelineAnimation

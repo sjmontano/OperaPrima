@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -140,7 +140,7 @@ export function HeroCarousel() {
           />
 
           {/* Content */}
-          <div className="relative mx-auto flex h-full max-w-420 flex-col justify-end border-white/10 px-6 pb-25 sm:border-x sm:px-40 sm:pb-25">
+          <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
             {/* Tag */}
             <motion.span
               key={`tag-${current}`}

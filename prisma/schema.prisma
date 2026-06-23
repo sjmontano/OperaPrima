@@ -12,6 +12,11 @@ enum Rol {
   MENTOR
 }
 
+enum TipoEvento {
+  OPEAR_PRIMA
+  COMUNIDAD
+}
+
 enum Gender {
   MASCULINO
   FEMENINO

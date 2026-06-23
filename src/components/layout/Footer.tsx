@@ -1,4 +1,4 @@
-﻿'use client'
+'use client'
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Link2, Mail, PlayCircle } from 'lucide-react'
@@ -60,7 +60,7 @@ export function Footer() {
       </div>
 
       {/* Contenido principal */}
-      <div className="relative z-10 mx-auto max-w-420 border-white/10 px-8 pt-20 pb-16 sm:border-x">
+      <div className="relative z-10 mx-[100px] border-white/10 px-8 pt-20 pb-16 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {/* Grid 3 columnas */}
         <div className="mb-14 grid grid-cols-1 gap-16 md:grid-cols-3">
           {/* -- Brand -- */}

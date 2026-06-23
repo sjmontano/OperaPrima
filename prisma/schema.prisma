@@ -22,34 +22,46 @@ enum Gender {
   NO_ESPECIFICAR
 }
 
+enum EstadoPago {
+  PENDIENTE
+  APROBADO
+  RECHAZADO
+  EXPIRADO
+  REEMBOLSADO
+}
+
 model Usuario {
-  id            String   @id @default(uuid())
+  id          String   @id @default(uuid())
 
-  supabaseId    String   @unique
+  supabaseId  String   @unique
 
-  username      String   @unique
-  email         String   @unique
+  username    String   @unique
 
-  firstName     String
-  lastName      String
+  email       String   @unique
 
-  countryCode   String
-  phone         String
+  firstName   String
 
-  birthDate     DateTime?
+  lastName    String
 
-  gender        Gender?
+  countryCode String
 
-  rol           Rol
+  phone       String
 
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  birthDate   DateTime?
 
-  perfil        Perfil?
+  gender      Gender?
 
-  eventos       Evento[]
+  rol         Rol
 
-  inscripciones Inscripcion[]
+  createdAt   DateTime @default(now())
+
+  updatedAt   DateTime @updatedAt
+
+  perfil      Perfil?
+
+  eventos     Evento[]
+
+  entradas    Entrada[]
 }
 
 model Perfil {
@@ -60,82 +72,120 @@ model Perfil {
   usuario       Usuario  @relation(fields: [usuarioId], references: [id])
 
   artisticName  String?
+
   realName      String?
 
-  bio           String?  @db.Text
+  bio           String? @db.Text
 
   avatar        String?
+
   banner        String?
 
   tags          String[]
+
   interests     String[]
 
   createdAt     DateTime @default(now())
+
   updatedAt     DateTime @updatedAt
 
   redes         Social[]
 }
 
 model Social {
-  id            String  @id @default(uuid())
+  id        String @id @default(uuid())
 
-  perfilId      String
+  perfilId  String
 
-  perfil        Perfil  @relation(fields: [perfilId], references: [id], onDelete: Cascade)
+  perfil    Perfil @relation(fields: [perfilId], references: [id], onDelete: Cascade)
 
-  label         String
-  handle        String
-  href          String
+  label     String
+
+  handle    String
+
+  href      String
 }
 
 model Evento {
-  id            String   @id @default(uuid())
+  id               String   @id @default(uuid())
 
-  titulo        String
+  titulo           String
 
-  descripcion   String   @db.Text
+  descripcion      String   @db.Text
 
-  categoria     String
+  categoria        String
 
-  fecha         DateTime
+  fecha            DateTime
 
-  ubicacion     String
+  ubicacion        String
 
-  imagen        String?
+  imagen           String?
 
-  precio        String
+  urlPago           String?
 
-  agotado       Boolean  @default(false)
+  precio           Int
 
-  likes         Int      @default(0)
+  cuposTotales     Int
 
-  comentarios   Int      @default(0)
+  cuposDisponibles Int
 
-  vistas        Int      @default(0)
+  agotado          Boolean  @default(false)
 
-  usuarioId     String
+  likes            Int      @default(0)
 
-  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+  comentarios      Int      @default(0)
 
-  inscripciones Inscripcion[]
+  vistas           Int      @default(0)
 
-  createdAt     DateTime @default(now())
+  usuarioId        String
 
-  updatedAt     DateTime @updatedAt
+  usuario          Usuario @relation(fields: [usuarioId], references: [id])
+
+  entradas         Entrada[]
+
+  createdAt        DateTime @default(now())
+
+  updatedAt        DateTime @updatedAt
 }
 
-model Inscripcion {
-  id            String   @id @default(uuid())
+model Entrada {
+  id         String   @id @default(uuid())
 
-  usuarioId     String
+  usuarioId  String
 
-  eventoId      String
+  eventoId   String
 
-  usuario       Usuario @relation(fields: [usuarioId], references: [id])
+  qrCode     String?
 
-  evento        Evento @relation(fields: [eventoId], references: [id])
+  usuario    Usuario @relation(fields: [usuarioId], references: [id])
 
-  createdAt     DateTime @default(now())
+  evento     Evento @relation(fields: [eventoId], references: [id])
+
+  pago       Pago?
+
+  createdAt  DateTime @default(now())
+
+  updatedAt  DateTime @updatedAt
 
   @@unique([usuarioId, eventoId])
+}
+
+model Pago {
+  id                 String   @id @default(uuid())
+
+  entradaId          String   @unique
+
+  referencia         String   @unique
+
+  transaccionWompiId String?  @unique
+
+  monto              Int
+
+  estado             EstadoPago @default(PENDIENTE)
+
+  entrada            Entrada @relation(fields: [entradaId], references: [id], onDelete: Cascade)
+
+  createdAt          DateTime @default(now())
+
+  updatedAt          DateTime @updatedAt
 }

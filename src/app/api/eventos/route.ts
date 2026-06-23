@@ -44,6 +44,7 @@ export async function GET() {
 
 }
 
+
 export async function POST(req: Request) {
 
   try {
@@ -107,63 +108,174 @@ export async function POST(req: Request) {
 
     const body = await req.json();
 
-    const evento = await prisma.evento.create({
+    const {
+      titulo,
+      descripcion,
+      categoria,
+      fecha,
+      ubicacion,
+      imagen,
+      precio,
+      cuposTotales,
+      urlPago,
+    } = body;
 
-  data: {
+    // Validaciones
 
-    titulo: body.titulo,
+    if (!titulo?.trim()) {
 
-    descripcion: body.descripcion,
+      return Response.json(
+        { error: "El título es obligatorio" },
+        { status: 400 }
+      );
 
-    categoria: body.categoria,
+    }
 
-    fecha: new Date(body.fecha),
+    if (!descripcion?.trim()) {
 
-    ubicacion: body.ubicacion,
+      return Response.json(
+        { error: "La descripción es obligatoria" },
+        { status: 400 }
+      );
 
-    imagen: body.imagen,
+    }
 
-    precio: body.precio,
+    if (!categoria?.trim()) {
 
-    usuarioId: usuario.id,
+      return Response.json(
+        { error: "La categoría es obligatoria" },
+        { status: 400 }
+      );
 
-    likes: 0,
+    }
 
-    comentarios: 0,
+    if (!fecha) {
 
-    vistas: 0,
+      return Response.json(
+        { error: "La fecha es obligatoria" },
+        { status: 400 }
+      );
 
-    agotado: false,
+    }
 
-  },
+    if (!ubicacion?.trim()) {
 
-  include: {
+      return Response.json(
+        { error: "La ubicación es obligatoria" },
+        { status: 400 }
+      );
 
-    usuario: {
+    }
 
-      include: {
+    const precioNumerico = Number(precio);
 
-        perfil: true
+    if (isNaN(precioNumerico) || precioNumerico < 0) {
+
+      return Response.json(
+        { error: "El precio no es válido" },
+        { status: 400 }
+      );
+
+    }
+
+    const cupos = Number(cuposTotales);
+
+    if (isNaN(cupos) || cupos < 1) {
+
+      return Response.json(
+        { error: "Debe haber al menos un cupo" },
+        { status: 400 }
+      );
+
+    }
+
+    // Validar URL de pago si existe
+
+    if (urlPago) {
+
+      try {
+
+        new URL(urlPago);
+
+      } catch {
+
+        return Response.json(
+          { error: "La URL de pago no es válida" },
+          { status: 400 }
+        );
 
       }
 
     }
 
-  }
+    const evento = await prisma.evento.create({
 
-})
+      data: {
 
-return Response.json({
-  evento
-})
+        titulo: titulo.trim(),
+
+        descripcion: descripcion.trim(),
+
+        categoria: categoria.trim(),
+
+        fecha: new Date(fecha),
+
+        ubicacion: ubicacion.trim(),
+
+        imagen: imagen || null,
+
+        precio: precioNumerico,
+
+        urlPago: urlPago || null,
+
+        cuposTotales: cupos,
+
+        cuposDisponibles: cupos,
+
+        usuarioId: usuario.id,
+
+        likes: 0,
+
+        comentarios: 0,
+
+        vistas: 0,
+
+        agotado: false,
+
+      },
+
+      include: {
+
+        usuario: {
+
+          include: {
+
+            perfil: true,
+
+          },
+
+        },
+
+      },
+
+    });
+
+    return Response.json({
+
+      evento,
+
+    });
 
   } catch (error) {
 
     console.error(error);
 
     return Response.json(
+
       { error: "Error al crear el evento" },
+
       { status: 500 }
+
     );
 
   }

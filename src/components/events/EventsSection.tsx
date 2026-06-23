@@ -18,23 +18,40 @@ import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
 import { CreateEventModal, EventFormData } from './CreateEventModal'
 import { MonthCalendar } from './MonthCalendar'
 import { Session } from '@supabase/supabase-js'
+import { EventModal } from './EventModal'
 
 // -- Types --
 export interface CalendarEvent {
   id: string
+
   title: string
+
   artist: string
+
   category: string
+
   categoryVariant: 'terracota' | 'selva' | 'lavanda'
+
   date: string
+
   location: string
+
   image: string
+
   price: string
+
   soldOut?: boolean
+
   likes: number
+
   comments: number
   views: number
   eventDate: Date
+  cuposTotales: number
+  cuposDisponibles: number
+  urlPago?: string | null
+  description?: string
+
 }
 
 interface DbEvent {
@@ -50,6 +67,9 @@ interface DbEvent {
   likes?: number
   comentarios?: number
   vistas?: number
+  cuposTotales: number
+  cuposDisponibles: number
+  urlPago:  string | null
 
   usuario: {
     username: string
@@ -102,6 +122,9 @@ function mapEvent(evento: DbEvent): CalendarEvent {
 
     eventDate: new Date(evento.fecha),
 
+    cuposDisponibles: evento.cuposDisponibles ?? 0,
+    cuposTotales: evento.cuposTotales ?? 0,
+
     location: evento.ubicacion,
 
     image: evento.imagen ?? '/default-event.jpg',
@@ -115,6 +138,8 @@ function mapEvent(evento: DbEvent): CalendarEvent {
     comments: evento.comentarios ?? 0,
 
     views: evento.vistas ?? 0,
+    description: evento.descripcion ?? '',
+    urlPago: evento.urlPago ?? null,
   }
 }
 
@@ -237,9 +262,11 @@ function CategoryDropdown({
 function EventCard({
   event,
   animationIndex = 0,
+  onClick
 }: {
   event: CalendarEvent
   animationIndex?: number
+  onClick?: () => void
 }) {
   const c = CAT_STYLES[event.categoryVariant]
   const delay = (animationIndex % LOAD_MORE_STEP) * 0.07
@@ -247,6 +274,7 @@ function EventCard({
   return (
     <motion.article
       layout
+      onClick={onClick}
       initial={{ opacity: 0, filter: 'blur(8px)', y: 20 }}
       animate={{ opacity: 1, filter: 'blur(0px)', y: 0 }}
       exit={{ opacity: 0, filter: 'blur(4px)', y: -10, transition: { duration: 0.2 } }}
@@ -309,7 +337,7 @@ function EventCard({
           >
             {event.price}
           </span>
-          {event.price.startsWith('$') && (
+          {String(event.price).startsWith('$') && (
             <span className="mt-1 block text-[0.6rem] tracking-widest text-zinc-400 uppercase">
               COP
             </span>
@@ -353,6 +381,11 @@ function EmptyState() {
 
 // -- EventsSection --
 export function EventsSection() {
+
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+
+  const [formError, setFormError] = useState('')
+
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
 
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
@@ -437,7 +470,6 @@ export function EventsSection() {
       } = await response.json()
 
       setDbEvents(data.eventos)
-      setDbEvents(data.eventos)
     } catch (error: unknown) {
       console.error(error)
     }
@@ -492,93 +524,157 @@ export function EventsSection() {
     }
   }, [])
 
+  
   async function createEvent(data: EventFormData) {
-    try {
-      const supabase = createClient()
+  try {
+    setFormError('')
 
-      const {
-        data: { session },
-      } = await supabase.auth.getSession()
+    const supabase = createClient()
 
-      if (!session) {
-        alert('Debes iniciar sesión')
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
 
-        return
-      }
-
-      if (!data.imagen) {
-        alert('Debes seleccionar una imagen')
-
-        return
-      }
-
-      // ===== 1. Subir imagen =====
-
-      const imageForm = new FormData()
-
-      imageForm.append('file', data.imagen)
-
-      const uploadResponse = await fetch('/api/upload/image', {
-        method: 'POST',
-
-        body: imageForm,
-      })
-
-      if (!uploadResponse.ok) {
-        throw new Error('Error al subir imagen')
-      }
-
-      const uploadData = await uploadResponse.json()
-
-      // ===== 2. Crear evento =====
-
-      const response = await fetch('/api/eventos', {
-        method: 'POST',
-
-        headers: {
-          'Content-Type': 'application/json',
-
-          Authorization: `Bearer ${session.access_token}`,
-        },
-
-        body: JSON.stringify({
-          titulo: data.titulo,
-
-          descripcion: data.descripcion,
-
-          categoria: data.categoria,
-
-          fecha: data.fecha,
-
-          ubicacion: data.ubicacion,
-
-          precio: data.precio,
-
-          imagen: uploadData.url,
-        }),
-      })
-
-      if (!response.ok) {
-        throw new Error('No se pudo crear el evento')
-      }
-
-      // ===== 3. Cerrar modal =====
-
-      setShowCreateModal(false)
-
-      // ===== 4. Recargar =====
-
-      await loadEvents()
-    } catch (error: unknown) {
-      console.error(error)
-
-      alert('Error al crear el evento')
+    if (!session) {
+      setFormError('Debes iniciar sesión')
+      return
     }
+
+    // Validaciones frontend
+
+    if (!data.titulo.trim()) {
+      setFormError('El título es obligatorio')
+      return
+    }
+
+    if (!data.descripcion.trim()) {
+      setFormError('La descripción es obligatoria')
+      return
+    }
+
+    if (!data.categoria.trim()) {
+      setFormError('La categoría es obligatoria')
+      return
+    }
+
+    if (!data.fecha) {
+      setFormError('La fecha es obligatoria')
+      return
+    }
+
+    if (!data.ubicacion.trim()) {
+      setFormError('La ubicación es obligatoria')
+      return
+    }
+
+    if (Number(data.precio) < 0) {
+      setFormError('El precio no es válido')
+      return
+    }
+
+    if (Number(data.cuposTotales) < 1) {
+      setFormError('Debe haber al menos un cupo')
+      return
+    }
+
+    if (data.urlPago) {
+      try {
+        new URL(data.urlPago)
+      } catch {
+        setFormError('La URL de pago no es válida')
+        return
+      }
+    }
+
+    if (!data.imagen) {
+      setFormError('Debes seleccionar una imagen')
+      return
+    }
+
+    // ===== Subir imagen =====
+
+    const imageForm = new FormData()
+
+    imageForm.append('file', data.imagen)
+
+    const uploadResponse = await fetch('/api/upload/image', {
+      method: 'POST',
+      body: imageForm,
+    })
+
+    if (!uploadResponse.ok) {
+      setFormError('No se pudo subir la imagen')
+      return
+    }
+
+    const uploadData = await uploadResponse.json()
+
+    // ===== Crear evento =====
+
+    const response = await fetch('/api/eventos', {
+      method: 'POST',
+
+      headers: {
+        'Content-Type': 'application/json',
+
+        Authorization: `Bearer ${session.access_token}`,
+      },
+
+      body: JSON.stringify({
+        titulo: data.titulo,
+
+        descripcion: data.descripcion,
+
+        categoria: data.categoria,
+
+        fecha: data.fecha,
+
+        ubicacion: data.ubicacion,
+
+        precio: Number(data.precio),
+
+        cuposTotales: Number(data.cuposTotales),
+
+        urlPago: data.urlPago || null,
+
+        imagen: uploadData.url,
+      }),
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+
+      setFormError(
+        error.error || 'No se pudo crear el evento'
+      )
+
+      return
+    }
+
+    setFormError('')
+
+    setShowCreateModal(false)
+
+    await loadEvents()
+
+  } catch (error) {
+    console.error(error)
+
+    setFormError('Error al crear el evento')
   }
+}
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
       <div className="mx-auto max-w-420 border-zinc-200 sm:border-x">
+
+        {selectedEvent && (
+          <EventModal
+            event={selectedEvent}
+            onClose={() => setSelectedEvent(null)}
+          />
+        )}
+
         {/* -- Header -- */}
         <div className="border-b-2 border-zinc-200 px-8 pt-20 pb-12 text-center">
           <TimelineAnimation
@@ -645,8 +741,12 @@ export function EventsSection() {
         {/*--- modal de crear evento ---*/}
         <CreateEventModal
           open={showCreateModal}
-          onClose={() => setShowCreateModal(false)}
+          onClose={() => {
+            setFormError('')
+            setShowCreateModal(false)
+          }}
           onSubmit={createEvent}
+          error={formError}
         />
 
         {/* -- Events -- */}
@@ -669,7 +769,7 @@ export function EventsSection() {
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colLeft.map((event, i) => (
-                      <EventCard key={event.id} event={event} animationIndex={i * 3} />
+                      <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} animationIndex={i * 3} />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -678,7 +778,7 @@ export function EventsSection() {
                 <div className="flex flex-col gap-8 px-5 py-10">
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colCenter.map((event, i) => (
-                      <EventCard key={event.id} event={event} animationIndex={i * 3 + 1} />
+                      <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} animationIndex={i * 3 + 1} />
                     ))}
                   </AnimatePresence>
                 </div>
@@ -690,7 +790,7 @@ export function EventsSection() {
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colRight.map((event, i) => (
-                      <EventCard key={event.id} event={event} animationIndex={i * 3 + 2} />
+                      <EventCard key={event.id} event={event}  onClick={() => setSelectedEvent(event)} animationIndex={i * 3 + 2} />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -700,7 +800,7 @@ export function EventsSection() {
               <div className="flex flex-col divide-y-2 divide-zinc-200 lg:hidden">
                 <AnimatePresence mode="popLayout" initial={false}>
                   {visibleEvents.map((event, i) => (
-                    <EventCard key={event.id} event={event} animationIndex={i} />
+                    <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)}  animationIndex={i} />
                   ))}
                 </AnimatePresence>
               </div>

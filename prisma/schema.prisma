@@ -12,6 +12,11 @@ enum Rol {
   MENTOR
 }
 
+enum TipoEvento {
+  OPEAR_PRIMA
+  COMUNIDAD
+}
+
 enum Gender {
   MASCULINO
   FEMENINO
@@ -48,6 +53,8 @@ model Usuario {
   perfil        Perfil?
 
   eventos       Evento[]
+
+  proyectos     Proyecto[]
 
   inscripciones Inscripcion[]
 }
@@ -89,13 +96,19 @@ model Social {
 }
 
 model Evento {
-  id            String   @id @default(uuid())
+  id            String     @id @default(uuid())
 
   titulo        String
 
-  descripcion   String   @db.Text
+  descripcion   String     @db.Text
 
   categoria     String
+
+  tipo          TipoEvento @default(OPEAR_PRIMA)
+
+  disciplinas   String[]
+
+  link          String?
 
   fecha         DateTime
 
@@ -105,23 +118,67 @@ model Evento {
 
   precio        String
 
-  agotado       Boolean  @default(false)
+  agotado       Boolean    @default(false)
 
-  likes         Int      @default(0)
+  likes         Int        @default(0)
 
-  comentarios   Int      @default(0)
+  comentarios   Int        @default(0)
 
-  vistas        Int      @default(0)
+  vistas        Int        @default(0)
 
   usuarioId     String
 
-  usuario       Usuario  @relation(fields: [usuarioId], references: [id])
+  usuario       Usuario    @relation(fields: [usuarioId], references: [id])
 
   inscripciones Inscripcion[]
 
-  createdAt     DateTime @default(now())
+  createdAt     DateTime   @default(now())
 
-  updatedAt     DateTime @updatedAt
+  updatedAt     DateTime   @updatedAt
+}
+
+enum TipoProyecto {
+  OPERA_PRIMA
+  COMUNIDAD
+  ENTIDAD
+}
+
+model Proyecto {
+  id            String       @id @default(uuid())
+
+  tipo          TipoProyecto @default(COMUNIDAD)
+
+  nombre        String
+
+  representante String
+
+  descripcion   String       @db.Text
+
+  queBuscan     String       @db.Text
+
+  requisitos    String       @db.Text
+
+  proceso       String       @db.Text
+
+  imagen        String?
+
+  contacto      String
+
+  disciplinas   String[]
+
+  ubicacion     String
+
+  destacado     Boolean      @default(false)
+
+  fechaLimite   DateTime
+
+  usuarioId     String?
+
+  usuario       Usuario?     @relation(fields: [usuarioId], references: [id])
+
+  createdAt     DateTime     @default(now())
+
+  updatedAt     DateTime     @updatedAt
 }
 
 model Inscripcion {

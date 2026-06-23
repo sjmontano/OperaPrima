@@ -16,7 +16,6 @@ import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import Image from 'next/image'
 import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
 import { CreateEventModal, EventFormData } from './CreateEventModal'
-import { MonthCalendar } from './MonthCalendar'
 import { Session } from '@supabase/supabase-js'
 
 // -- Types --
@@ -731,9 +730,6 @@ export function EventsSection() {
             {!hasMore && <div className="h-12 border-b-2 border-zinc-200" />}
           </>
         )}
-
-        {/* -- Calendario -- */}
-        <MonthCalendar events={events} />
 
         {/* Mobile CTA */}
         <div className="px-8 py-8 lg:hidden">

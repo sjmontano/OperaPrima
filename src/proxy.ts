@@ -1,13 +1,82 @@
-import { updateSession } from '@/lib/supabase/middleware'
-import type { NextRequest } from 'next/server'
+import { createServerClient } from '@supabase/ssr'
+import { NextResponse, type NextRequest } from 'next/server'
+
+const PUBLIC_ROUTES = [
+  '/',
+  '/sobre',
+  '/mentorias',
+  '/eventos',
+  '/tablero',
+  '/auth',
+  '/terminos',
+  '/privacidad',
+  '/cookies',
+  '/diseno',
+  '/muestra',
+  '/comunidad',
+]
 
 export default async function proxy(request: NextRequest) {
-  return await updateSession(request)
+  if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+    return NextResponse.next({ request })
+  }
+
+  const { pathname } = request.nextUrl
+
+  const isPublic = PUBLIC_ROUTES.some((route) => pathname === route || pathname.startsWith(route))
+
+  const isApiPublic =
+    pathname.startsWith('/api/auth') ||
+    pathname.startsWith('/api/eventos') ||
+    pathname.startsWith('/api/proyectos') ||
+    pathname.startsWith('/api/upload')
+
+  const isStaticFile =
+    pathname.startsWith('/_next') ||
+    pathname.startsWith('/svg') ||
+    pathname.startsWith('/OperaPrima') ||
+    pathname === '/icon.svg' ||
+    pathname === '/favicon.ico'
+
+  if (isPublic || isApiPublic || isStaticFile) {
+    return NextResponse.next({ request })
+  }
+
+  let supabaseResponse = NextResponse.next({ request })
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll()
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value))
+          supabaseResponse = NextResponse.next({ request })
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          )
+        },
+      },
+    }
+  )
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    const url = request.nextUrl.clone()
+    url.pathname = '/auth'
+    url.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(url)
+  }
+
+  return supabaseResponse
 }
 
 export const config = {
-  matcher: [
-    // Excluye archivos estáticos y rutas internas de Next.js
-    '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
-  ],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)'],
 }

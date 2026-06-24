@@ -60,7 +60,12 @@ const privacySections = [
   },
 ]
 
-const colombiaAnnex = [
+interface AnnexSection {
+  title: string
+  content: string[]
+}
+
+const colombiaAnnex: AnnexSection[] = [
   {
     title: 'ANEXO PARA CIUDADANOS COLOMBIANOS',
     content: [

@@ -1,58 +1,70 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { RotatingText } from '@/components/shared/RotatingText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { ArrowRight, CheckCircle2, Clock3, Compass, FileText, User } from 'lucide-react'
+import {
+  ArrowRight,
+  CheckCircle2,
+  ClipboardList,
+  Compass,
+  FileText,
+  MessageCircle,
+  Search,
+  User,
+} from 'lucide-react'
+import Link from 'next/link'
 import { useRef } from 'react'
 import { ExpandingMentorsGallery } from './ExpandingMentorsGallery'
 
-const INTRO_CARDS = [
+const ROTATING_TOPICS = [
+  'No sabes cómo empezar tu proyecto.',
+  'Quieres aplicar a una convocatoria.',
+  'Quieres estudiar un posgrado y no sabes cuál elegir.',
+  'Necesitas mejorar tu portafolio.',
+  'Tienes dudas sobre tu carrera artística.',
+  'Tienes una idea pero no sabes aterrizarla.',
+  'Quieres planear una gira o exposición.',
+  'Necesitas ayuda con un presupuesto.',
+  'Quieres estructurar un proyecto.',
+  'Necesitas apoyo para tomar decisiones.',
+] as const
+
+const STEPS = [
   {
-    eyebrow: 'Mentorías 1:1',
-    title: 'Sesión privada de 60 minutos',
-    body: 'Un espacio dedicado para que el mentor te escuche, revise tu caso y te entregue acciones concretas.',
-    accent: '#8ECAE6',
-    icon: Clock3,
+    number: 1,
+    title: 'Explora los perfiles',
+    desc: 'Revisa los perfiles de nuestros mentores y elige a la persona que mejor se ajuste a lo que necesitas trabajar.',
+    icon: Search,
   },
   {
-    eyebrow: 'Portafolio & becas',
-    title: 'Revisión de presentación',
-    body: 'Trabaja tu portafolio, cartas y convocatorias con un mentor que conoce el circuito cultural.',
-    accent: '#023047',
-    icon: FileText,
-  },
-  {
-    eyebrow: 'Proyectos con criterio',
-    title: 'Estrategia para tu carrera',
-    body: 'Define un proyecto cultural sólido, planifica una gira o ajusta tu presupuesto con soporte experto.',
-    accent: '#4682B4',
+    number: 2,
+    title: 'Define tu tema',
+    desc: 'Cada mentoría se enfoca en un tema concreto: tu portafolio, una convocatoria, una carta de motivación, un proyecto, una gira, un presupuesto o cualquier reto específico.',
     icon: Compass,
   },
-]
-
-const HOW_IT_WORKS = [
   {
-    title: 'Sesión 1:1 de 60 minutos',
-    description:
-      'Cada mentoría tiene una duración clara y espacio para preguntas, análisis y recomendaciones.',
-    icon: Clock3,
+    number: 3,
+    title: 'Reserva tu sesión',
+    desc: 'Completa el formulario de reserva y cuéntanos qué quieres trabajar. Mientras más claro seas, mejor podrá prepararse tu mentor.',
+    icon: ClipboardList,
   },
   {
-    title: 'Elige el mentor adecuado',
-    description:
-      'Lee el perfil de cada mentor y selecciona a quien mejor se ajuste a tu desafío creativo.',
-    icon: User,
-  },
-  {
-    title: 'Prepara tu tema antes de reservar',
-    description:
-      'Detalla el tema en el formulario y adjunta documentos si crees que ayudarán al mentor.',
+    number: 4,
+    title: 'Adjunta material de apoyo',
+    desc: 'Puedes enviar documentos, enlaces, portafolios, convocatorias o cualquier archivo que ayude a entender mejor tu caso.',
     icon: FileText,
   },
   {
-    title: 'Resumen y feedback final',
-    description:
-      'Recibirás un resumen de la sesión y una encuesta para mejorar nuestro acompañamiento.',
+    number: 5,
+    title: 'Ten tu mentoría 1:1',
+    desc: 'Durante 60 minutos tendrás un espacio privado para conversar, hacer preguntas, recibir orientación y aterrizar acciones concretas.',
+    icon: MessageCircle,
+  },
+  {
+    number: 6,
+    title: 'Recibe tu resumen final',
+    desc: 'Después de la sesión recibirás un resumen con los puntos clave trabajados y recomendaciones para seguir avanzando.',
     icon: CheckCircle2,
   },
 ]
@@ -134,19 +146,12 @@ export function MentoriasLandingSection() {
       ref={sectionRef}
       className="relative w-full overflow-hidden border-b border-white/10 bg-[#0f0f0f]"
     >
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }}
-      />
       <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
+      {/* ═══════════════ HERO ═══════════════ */}
       <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
-        <div className="grid gap-20 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
+        <div className="grid gap-16 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
+          {/* Left: hero text + rotating */}
           <div className="max-w-3xl">
             <TimelineAnimation
               as="div"
@@ -157,11 +162,14 @@ export function MentoriasLandingSection() {
               <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 Mentorías a la medida
               </p>
-              <h1 className="text-5xl leading-[1.2] font-bold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
-                Espacios de trabajo diseñados para que tu práctica artística sea más clara, más
-                estratégica y más efectiva.
+              <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
+                NO ESTÁS SOLO
               </h1>
-              <div className="space-y-6 text-lg leading-relaxed text-white/80">
+              <p className="text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
+                Espacios de acompañamiento personalizados diseñados para que tu práctica artística
+                sea más clara, más estratégica y más efectiva.
+              </p>
+              <div className="space-y-5 text-lg leading-relaxed text-white/75">
                 <p>
                   Cuando eres un artista emergente es común sentirse perdido, por eso hemos creado
                   unos espacios de trabajo personalizados donde podrás conectarte con un mentor que
@@ -179,6 +187,19 @@ export function MentoriasLandingSection() {
                   metas por las que trabajas fuertemente.
                 </p>
               </div>
+
+              {/* Rotating text */}
+              <div className="mt-2 rounded-none border-2 border-[#8ECAE6]/30 bg-white/5 px-6 py-4 text-white/90">
+                <p className="mb-1 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+                  ¿Te identificas con esto?
+                </p>
+                <p className="text-lg font-medium text-white italic">
+                  &ldquo;
+                  <RotatingText words={ROTATING_TOPICS} />
+                  &rdquo;
+                </p>
+              </div>
+
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
                   type="button"
@@ -199,93 +220,38 @@ export function MentoriasLandingSection() {
             </TimelineAnimation>
           </div>
 
-          <div className="grid gap-4 self-start">
-            {INTRO_CARDS.map((card, index) => {
-              const Icon = card.icon
-              return (
-                <TimelineAnimation
-                  key={card.title}
-                  as="article"
-                  animationNum={index + 1}
-                  timelineRef={sectionRef}
-                  className="group relative border-2 border-white/10 bg-white/5 p-6 text-white shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <p
-                        className="text-[0.62rem] font-bold tracking-[0.28em] uppercase"
-                        style={{ color: card.accent }}
-                      >
-                        {card.eyebrow}
-                      </p>
-                      <h2 className="mt-4 text-2xl font-bold tracking-[-0.03em] text-white">
-                        {card.title}
-                      </h2>
-                    </div>
-                    <div
-                      className="flex h-11 w-11 items-center justify-center border-2 border-white/12 text-white/90"
-                      style={{ boxShadow: `3px 3px 0 ${card.accent}` }}
-                    >
-                      <Icon size={18} />
-                    </div>
-                  </div>
-                  <p className="mt-4 text-sm leading-relaxed text-white/70">{card.body}</p>
-                </TimelineAnimation>
-              )
-            })}
-          </div>
-        </div>
-      </div>
-
-      <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
-        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
-          <div className="grid gap-12 lg:grid-cols-[0.95fr_1.05fr] lg:items-center">
-            <div>
-              <TimelineAnimation
-                as="div"
-                animationNum={5}
-                timelineRef={sectionRef}
-                className="max-w-2xl"
-              >
-                <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
-                  ¿Cómo funcionan?
-                </p>
-                <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-zinc-900">
-                  Un proceso claro para que cada sesión tenga foco y resultado.
-                </h2>
-                <p className="mt-6 text-lg leading-relaxed text-zinc-700">
-                  Lee atentamente el perfil de los diferentes mentores para que puedas elegir a
-                  quien mejor pueda ayudarte. En cada mentoría se debe trabajar un tema en
-                  específico, que debes detallar en el formulario de reserva para que el mentor
-                  pueda prepararse con antelación. Allí puedes adjuntar documentos si crees que le
-                  puede ayudar.
-                </p>
-                <p className="mt-6 text-lg leading-relaxed text-zinc-700">
-                  Al final de la sesión recibirás un resumen de lo hablado y una encuesta de
-                  satisfacción que nos permitirá ser cada vez mejores acompañantes en tu proceso al
-                  éxito.
-                </p>
-              </TimelineAnimation>
+          {/* Right: 6 steps */}
+          <div className="self-start">
+            <div className="mb-4">
+              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+                ¿Cómo funcionan?
+              </p>
+              <h2 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white">
+                Un proceso claro para que cada sesión tenga foco y resultado.
+              </h2>
             </div>
-
-            <div className="grid gap-4">
-              {HOW_IT_WORKS.map((item, index) => {
-                const Icon = item.icon
+            <div className="grid gap-3">
+              {STEPS.map((step, index) => {
+                const Icon = step.icon
                 return (
                   <TimelineAnimation
-                    key={item.title}
+                    key={step.title}
                     as="article"
-                    animationNum={6 + index}
+                    animationNum={index + 1}
                     timelineRef={sectionRef}
-                    className="group relative border-2 border-zinc-200 bg-white p-6 text-zinc-900 shadow-[4px_4px_0_rgba(17,17,17,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#353535]"
+                    className="group relative border-2 border-white/10 bg-white/5 p-5 text-white shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
                   >
-                    <div className="flex items-center gap-3 text-[#0f0f0f]">
-                      <span className="flex h-11 w-11 items-center justify-center border-2 border-zinc-200 text-[#023047]">
-                        <Icon size={18} />
+                    <div className="flex items-start gap-4">
+                      <span className="flex h-10 w-10 shrink-0 items-center justify-center border-2 border-[#8ECAE6]/40 bg-[#8ECAE6]/10 text-sm font-bold text-[#8ECAE6]">
+                        {step.number}
                       </span>
-                      <h3 className="text-xl font-bold tracking-[-0.02em]">{item.title}</h3>
+                      <div>
+                        <h3 className="text-base font-bold tracking-[-0.02em] text-white">
+                          {step.title}
+                        </h3>
+                        <p className="mt-1 text-sm leading-relaxed text-white/65">{step.desc}</p>
+                      </div>
                     </div>
-                    <p className="mt-4 text-sm leading-relaxed text-zinc-600">{item.description}</p>
                   </TimelineAnimation>
                 )
               })}
@@ -294,40 +260,58 @@ export function MentoriasLandingSection() {
         </div>
       </div>
 
-      <div className="relative border-t-2 border-white/10 bg-[#0f0f0f]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-          }}
-        />
-        <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
-
-        <div className="relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+      {/* ═══════════════ MENTORES ═══════════════ */}
+      <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
+        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <TimelineAnimation
             as="div"
-            animationNum={10}
+            animationNum={7}
             timelineRef={sectionRef}
             className="max-w-2xl"
           >
-            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
               Nuestros mentores
             </p>
-            <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white">
-              Elige tu mentor como si abrieras un archivo profesional.
+            <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-zinc-900">
+              Conoce a los profesionales que están listos para ayudarte a impulsar tu camino
+              artístico.
             </h2>
-            <p className="mt-6 text-lg leading-relaxed text-white/70">
-              Haz clic en cada carpeta para ver su experiencia, enfoque y los temas que pueden
-              desarrollar contigo. Por ahora contamos con cinco mentores listos para acompañarte.
+            <p className="mt-6 text-lg leading-relaxed text-zinc-700">
+              Contamos con mentores de diferentes áreas para que encuentres a la persona que mejor
+              se adapte a lo que necesitas trabajar.
             </p>
           </TimelineAnimation>
 
           <div className="mt-12">
             <ExpandingMentorsGallery mentors={MENTORS} />
           </div>
+        </div>
+      </div>
+
+      {/* ═══════════════ CTA SER MENTOR ═══════════════ */}
+      <div className="border-t-2 border-white/10 bg-[#0f0f0f]">
+        <div className="mx-[100px] border-white/10 px-4 py-20 text-center max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+          <TimelineAnimation
+            as="div"
+            animationNum={8}
+            timelineRef={sectionRef}
+            className="mx-auto max-w-xl"
+          >
+            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+              ¿Quieres ser mentor?
+            </p>
+            <p className="mt-4 text-lg leading-relaxed text-white/70">
+              Si eres profesional del sector cultural y te gustaría compartir tu experiencia con
+              artistas emergentes, escríbenos.
+            </p>
+            <Link
+              href="mailto:direccion@operaprimacultura.com"
+              className="mt-6 inline-flex items-center gap-2 rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#E63946]"
+            >
+              Escribir a direccion@operaprimacultura.com
+              <ArrowRight size={16} />
+            </Link>
+          </TimelineAnimation>
         </div>
       </div>
     </section>

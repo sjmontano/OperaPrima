@@ -99,9 +99,8 @@ export function ComunidadCTA() {
               timelineRef={ref}
               className="mb-12 max-w-xl text-lg leading-relaxed text-white/60"
             >
-              Opera Prima conecta artistas emergentes colombianos con mentores, talleres,
-              convocatorias y una comunidad que entiende lo que significa construir una carrera
-              artística desde cero.
+              Opera Prima conecta artistas emergentes con mentores, talleres, convocatorias y una
+              comunidad que entiende lo que significa construir una carrera artística desde cero.
             </TimelineAnimation>
 
             <TimelineAnimation

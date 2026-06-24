@@ -17,8 +17,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: 'Opera Prima',
-  description:
-    'Plataforma para artistas emergentes colombianos. Mentorías, eventos y oportunidades.',
+  description: 'Plataforma para artistas emergentes. Mentorías, eventos y oportunidades.',
 }
 
 export default function RootLayout({

@@ -6,7 +6,7 @@ import type { Metadata } from 'next'
 
 export const metadata: Metadata = {
   title: 'Talleres y eventos | Opera Prima',
-  description: 'Talleres prácticos y eventos de networking para artistas emergentes colombianos.',
+  description: 'Talleres prácticos y eventos de networking para artistas emergentes.',
 }
 
 export default function EventosPage() {

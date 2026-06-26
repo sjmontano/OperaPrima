@@ -56,7 +56,7 @@ interface DbEvent {
   vistas?: number
   cuposTotales: number
   cuposDisponibles: number
-  urlPago:  string | null
+  urlPago: string | null
 
   usuario: {
     username: string
@@ -249,7 +249,7 @@ function CategoryDropdown({
 function EventCard({
   event,
   animationIndex = 0,
-  onClick
+  onClick,
 }: {
   event: CalendarEvent
   animationIndex?: number
@@ -368,7 +368,6 @@ function EmptyState() {
 
 // -- EventsSection --
 export function EventsSection() {
-
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
   const [formError, setFormError] = useState('')
@@ -463,6 +462,7 @@ export function EventsSection() {
   }
 
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     loadEvents()
   }, [])
 
@@ -511,173 +511,185 @@ export function EventsSection() {
     }
   }, [])
 
-  
   async function createEvent(data: EventFormData) {
-  try {
-    setFormError('')
+    try {
+      setFormError('')
 
-    const supabase = createClient()
+      const supabase = createClient()
 
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-    if (!session) {
-      setFormError('Debes iniciar sesión')
-      return
-    }
-
-    // Validaciones frontend
-
-    if (!data.titulo.trim()) {
-      setFormError('El título es obligatorio')
-      return
-    }
-
-    if (!data.descripcion.trim()) {
-      setFormError('La descripción es obligatoria')
-      return
-    }
-
-    if (!data.categoria.trim()) {
-      setFormError('La categoría es obligatoria')
-      return
-    }
-
-    if (!data.fecha) {
-      setFormError('La fecha es obligatoria')
-      return
-    }
-
-    if (!data.ubicacion.trim()) {
-      setFormError('La ubicación es obligatoria')
-      return
-    }
-
-    if (Number(data.precio) < 0) {
-      setFormError('El precio no es válido')
-      return
-    }
-
-    if (Number(data.cuposTotales) < 1) {
-      setFormError('Debe haber al menos un cupo')
-      return
-    }
-
-    if (data.urlPago) {
-      try {
-        new URL(data.urlPago)
-      } catch {
-        setFormError('La URL de pago no es válida')
+      if (!session) {
+        setFormError('Debes iniciar sesión')
         return
       }
+
+      // Validaciones frontend
+
+      if (!data.titulo.trim()) {
+        setFormError('El título es obligatorio')
+        return
+      }
+
+      if (!data.descripcion.trim()) {
+        setFormError('La descripción es obligatoria')
+        return
+      }
+
+      if (!data.categoria.trim()) {
+        setFormError('La categoría es obligatoria')
+        return
+      }
+
+      if (!data.fecha) {
+        setFormError('La fecha es obligatoria')
+        return
+      }
+
+      if (!data.ubicacion.trim()) {
+        setFormError('La ubicación es obligatoria')
+        return
+      }
+
+      if (Number(data.precio) < 0) {
+        setFormError('El precio no es válido')
+        return
+      }
+
+      if (Number(data.cuposTotales) < 1) {
+        setFormError('Debe haber al menos un cupo')
+        return
+      }
+
+      if (data.urlPago) {
+        try {
+          new URL(data.urlPago)
+        } catch {
+          setFormError('La URL de pago no es válida')
+          return
+        }
+      }
+
+      if (!data.imagen) {
+        setFormError('Debes seleccionar una imagen')
+        return
+      }
+
+      // ===== Subir imagen =====
+
+      const imageForm = new FormData()
+
+      imageForm.append('file', data.imagen)
+
+      const uploadResponse = await fetch('/api/upload/image', {
+        method: 'POST',
+        body: imageForm,
+      })
+
+      if (!uploadResponse.ok) {
+        setFormError('No se pudo subir la imagen')
+        return
+      }
+
+      const uploadData = await uploadResponse.json()
+
+      // ===== Crear evento =====
+
+      const response = await fetch('/api/eventos', {
+        method: 'POST',
+
+        headers: {
+          'Content-Type': 'application/json',
+
+          Authorization: `Bearer ${session.access_token}`,
+        },
+
+        body: JSON.stringify({
+          titulo: data.titulo,
+
+          descripcion: data.descripcion,
+
+          categoria: data.categoria,
+
+          fecha: data.fecha,
+
+          ubicacion: data.ubicacion,
+
+          precio: Number(data.precio),
+
+          cuposTotales: Number(data.cuposTotales),
+
+          urlPago: data.urlPago || null,
+
+          imagen: uploadData.url,
+        }),
+      })
+
+      if (!response.ok) {
+        const error = await response.json()
+
+        setFormError(error.error || 'No se pudo crear el evento')
+
+        return
+      }
+
+      setFormError('')
+
+      setShowCreateModal(false)
+
+      await loadEvents()
+    } catch (error) {
+      console.error(error)
+
+      setFormError('Error al crear el evento')
     }
-
-    if (!data.imagen) {
-      setFormError('Debes seleccionar una imagen')
-      return
-    }
-
-    // ===== Subir imagen =====
-
-    const imageForm = new FormData()
-
-    imageForm.append('file', data.imagen)
-
-    const uploadResponse = await fetch('/api/upload/image', {
-      method: 'POST',
-      body: imageForm,
-    })
-
-    if (!uploadResponse.ok) {
-      setFormError('No se pudo subir la imagen')
-      return
-    }
-
-    const uploadData = await uploadResponse.json()
-
-    // ===== Crear evento =====
-
-    const response = await fetch('/api/eventos', {
-      method: 'POST',
-
-      headers: {
-        'Content-Type': 'application/json',
-
-        Authorization: `Bearer ${session.access_token}`,
-      },
-
-      body: JSON.stringify({
-        titulo: data.titulo,
-
-        descripcion: data.descripcion,
-
-        categoria: data.categoria,
-
-        fecha: data.fecha,
-
-        ubicacion: data.ubicacion,
-
-        precio: Number(data.precio),
-
-        cuposTotales: Number(data.cuposTotales),
-
-        urlPago: data.urlPago || null,
-
-        imagen: uploadData.url,
-      }),
-    })
-
-    if (!response.ok) {
-      const error = await response.json()
-
-      setFormError(
-        error.error || 'No se pudo crear el evento'
-      )
-
-      return
-    }
-
-    setFormError('')
-
-    setShowCreateModal(false)
-
-    await loadEvents()
-
-  } catch (error) {
-    console.error(error)
-
-    setFormError('Error al crear el evento')
   }
-}
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
-      <div className="mx-auto max-w-420 border-zinc-200 sm:border-x">
-
+      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {selectedEvent && (
-          <EventModal
-            event={selectedEvent}
-            onClose={() => setSelectedEvent(null)}
-          />
+          <EventModal event={selectedEvent} onClose={() => setSelectedEvent(null)} />
         )}
 
         {/* -- Header -- */}
-        <div className="border-b-2 border-zinc-200 px-8 pt-20 pb-12 text-center">
-          <TimelineAnimation
-            as="div"
-            animationNum={0}
-            timelineRef={sectionRef}
-            className="mb-8 flex items-center justify-between gap-4"
-          >
-            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-white/50 uppercase">
-              Explorar agenda
-            </p>
-          </TimelineAnimation>
+        <div className="px-8 pt-20 pb-16">
+          <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.6fr]">
+            <div>
+              <TimelineAnimation
+                as="p"
+                animationNum={0}
+                timelineRef={sectionRef}
+                className="mb-5 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
+              >
+                Talleres y Eventos
+              </TimelineAnimation>
+              <TimelineAnimation
+                as="h2"
+                animationNum={1}
+                timelineRef={sectionRef}
+                className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
+              >
+                Próximos eventos
+              </TimelineAnimation>
+            </div>
+            <div className="lg:pb-1">
+              <TimelineAnimation
+                as="p"
+                animationNum={2}
+                timelineRef={sectionRef}
+                className="max-w-lg text-lg leading-relaxed text-zinc-500"
+              >
+                Talleres, networking y encuentros diseñados para impulsar tu carrera artística.
+              </TimelineAnimation>
+            </div>
+          </div>
         </div>
 
         {/* -- Search + Filters -- */}
-        <div className="border-b-2 border-zinc-200 px-8 py-6">
+        <div className="px-8 py-6">
           <div className="flex items-center gap-3">
             {/* Search bar */}
             <div className="relative flex-1">
@@ -756,7 +768,12 @@ export function EventsSection() {
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colLeft.map((event, i) => (
-                      <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} animationIndex={i * 3} />
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onClick={() => setSelectedEvent(event)}
+                        animationIndex={i * 3}
+                      />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -765,7 +782,12 @@ export function EventsSection() {
                 <div className="flex flex-col gap-8 px-5 py-10">
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colCenter.map((event, i) => (
-                      <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)} animationIndex={i * 3 + 1} />
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onClick={() => setSelectedEvent(event)}
+                        animationIndex={i * 3 + 1}
+                      />
                     ))}
                   </AnimatePresence>
                 </div>
@@ -777,7 +799,12 @@ export function EventsSection() {
                 >
                   <AnimatePresence mode="popLayout" initial={false}>
                     {colRight.map((event, i) => (
-                      <EventCard key={event.id} event={event}  onClick={() => setSelectedEvent(event)} animationIndex={i * 3 + 2} />
+                      <EventCard
+                        key={event.id}
+                        event={event}
+                        onClick={() => setSelectedEvent(event)}
+                        animationIndex={i * 3 + 2}
+                      />
                     ))}
                   </AnimatePresence>
                 </motion.div>
@@ -787,7 +814,12 @@ export function EventsSection() {
               <div className="flex flex-col divide-y-2 divide-zinc-200 lg:hidden">
                 <AnimatePresence mode="popLayout" initial={false}>
                   {visibleEvents.map((event, i) => (
-                    <EventCard key={event.id} event={event} onClick={() => setSelectedEvent(event)}  animationIndex={i} />
+                    <EventCard
+                      key={event.id}
+                      event={event}
+                      onClick={() => setSelectedEvent(event)}
+                      animationIndex={i}
+                    />
                   ))}
                 </AnimatePresence>
               </div>

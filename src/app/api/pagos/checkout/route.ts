@@ -43,12 +43,10 @@ export async function POST(req: NextRequest) {
       return Response.json({ error: 'Evento gratuito — no necesita pago' }, { status: 400 })
     }
 
-    const existing = await prisma.entrada.findUnique({
+    const existing = await prisma.entrada.findFirst({
       where: {
-        usuarioId_eventoId: {
-          usuarioId: usuario.id,
-          eventoId: evento.id,
-        },
+        usuarioId: usuario.id,
+        eventoId: evento.id,
       },
       include: { pago: true },
     })

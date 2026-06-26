@@ -1,5 +1,7 @@
+import { ComunidadEventsSection } from '@/components/comunidad/ComunidadEventsSection'
 import { EventsLandingSection } from '@/components/events/EventsLandingSection'
 import { EventsSection } from '@/components/events/EventsSection'
+import { MentorEventsSection } from '@/components/events/MentorEventsSection'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import type { Metadata } from 'next'
@@ -17,7 +19,8 @@ export default function EventosPage() {
         <EventsLandingSection />
 
         <div id="proximos">
-          <EventsSection />
+          
+          <MentorEventsSection />
         </div>
       </main>
       <Footer />

@@ -22,7 +22,7 @@ export default function Home() {
         <WhatIsSection />
 
         {/* -- Talleres y Eventos -- */}
-        <EventsSection />
+        {/*<EventsSection />*/}
 
         {/* -- CTA Comunidad -- */}
         <ComunidadCTA />

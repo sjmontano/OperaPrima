@@ -8,15 +8,17 @@ import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
-import { ComunidadCreateEventModal, type EventFormData } from './ComunidadCreateEventModal'
+import { ComunidadCreateEventModal, type EventFormData } from '../comunidad/ComunidadCreateEventModal'
 import type { Session } from '@supabase/supabase-js'
-import { EventModal } from '../events/EventModal'
+import { EventModal } from './EventModal'
 
 interface DbEvent {
   id: string
   titulo: string
   descripcion?: string
   categoria: string
+  disciplinas: string[]
+  urlPago?: string | null
   fecha: string
   ubicacion: string
   imagen?: string | null
@@ -25,22 +27,20 @@ interface DbEvent {
   likes?: number
   comentarios?: number
   vistas?: number
-  cuposTotales: number
-  cuposDisponibles: number
-  urlPago:  string | null
-  
-  disciplinas?: string[]
-
   usuarioId: string
+
+  
+  cuposTotales?: number
+  cuposDisponibles?: number
+
+
   usuario: {
     username: string
-
-    perfil?: {
-      artisticName?: string | null
-    } | null
+    perfil?: { artisticName?: string | null } | null
   }
 }
-interface CalendarEvent {
+
+export interface CalendarEvent {
   id: string
   title: string
   artist: string
@@ -54,12 +54,14 @@ interface CalendarEvent {
   comments: number
   views: number
   eventDate: Date
+
   
-  cuposTotales: number
-  cuposDisponibles: number
+  cuposTotales?: number
+  cuposDisponibles?: number
   urlPago?: string | null
   description?: string
 }
+
 
 interface CurrentUser {
   id: string
@@ -96,14 +98,15 @@ function mapEvent(evento: DbEvent): CalendarEvent {
     comments: evento.comentarios ?? 0,
     views: evento.vistas ?? 0,
     
-    cuposDisponibles: evento.cuposDisponibles ?? 0,
-    cuposTotales: evento.cuposTotales ?? 0,
     description: evento.descripcion ?? '',
     urlPago: evento.urlPago ?? null,
+    
+    cuposDisponibles: evento.cuposDisponibles ?? 0,
+    cuposTotales: evento.cuposTotales ?? 0,
   }
 }
 
-export function ComunidadEventsSection() {
+export function MentorEventsSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
@@ -113,6 +116,8 @@ export function ComunidadEventsSection() {
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
   const [editData, setEditData] = useState<Partial<EventFormData> | undefined>(undefined)
+
+  
   
     const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
@@ -132,10 +137,9 @@ export function ComunidadEventsSection() {
 
   const loadEvents = useCallback(async () => {
     try {
-      const res = await fetch('/api/eventos?rol=USUARIO')
+      const res = await fetch('/api/eventos?rol=MENTOR')
       if (!res.ok) return
       const data: { eventos: DbEvent[] } = await res.json()
-      console.log(data.eventos)
       setDbEvents(data.eventos)
     } catch {
       /* ignore */
@@ -143,7 +147,7 @@ export function ComunidadEventsSection() {
   }, [])
 
   useEffect(() => {
-    fetch('/api/eventos?rol=USUARIO')
+    fetch('/api/eventos?rol=MENTOR')
       .then((r) => r.ok && r.json())
       .then((d) => d && setDbEvents(d.eventos))
       .catch(() => {})
@@ -320,23 +324,21 @@ export function ComunidadEventsSection() {
       className="bg-background w-full border-b-2 border-zinc-200"
     >
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
-
         {selectedEvent && (
                   <EventModal
                     event={selectedEvent}
                     onClose={() => setSelectedEvent(null)}
-                    tipo="COMUNIDAD"
+                    tipo='MENTOR'
                   />
                 )}
-
         {/* Header */}
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
           <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
-              Eventos de la comunidad
+              Eventos de Ópera Prima
             </p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
-              {currentUser ? '¿Qué está pasando?' : 'Explora la comunidad'}
+              {currentUser ? '¿Qué está pasando?' : 'Explora Ópera Prima'}
             </h2>
             <p className="mt-2 text-sm text-zinc-500">
               {dbEvents.length} evento{dbEvents.length !== 1 ? 's' : ''} registrado
@@ -437,39 +439,11 @@ export function ComunidadEventsSection() {
         {/* Events content */}
         <div className="relative">
           {/* Blur overlay for non-auth */}
-          {!currentUser && (
-            <div className="absolute inset-0 z-30 flex flex-col items-center justify-center gap-4 px-6 py-20">
-              <div className="absolute inset-0 backdrop-blur-md" />
-              <div className="relative z-10 flex flex-col items-center gap-4 text-center">
-                <span className="text-4xl select-none">🔒</span>
-                <p className="text-lg font-bold text-zinc-900">Para ver eventos, registrate</p>
-                <p className="max-w-xs text-sm text-zinc-500">
-                  Crea una cuenta o inicia sesión para ver el calendario y los eventos de la
-                  comunidad.
-                </p>
-                <div className="flex gap-3 pt-2">
-                  <button
-                    type="button"
-                    onClick={() => authModal.open('registro')}
-                    className="border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition hover:bg-white hover:text-[#E63946]"
-                  >
-                    Crear cuenta
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => authModal.open('login')}
-                    className="border-2 border-zinc-900 px-6 py-3 text-xs font-bold tracking-widest text-zinc-900 uppercase transition hover:bg-zinc-900 hover:text-white"
-                  >
-                    Iniciar sesión
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
+          
 
           {/* Cards View */}
           {viewMode === 'cards' && (
-            <div className={!currentUser ? 'pointer-events-none opacity-30 select-none' : ''}>
+            <div className={!currentUser ? '' : ''}>
               {filteredEvents.length === 0 ? (
                 <div className="flex flex-col items-center gap-4 py-24 text-center">
                   <span className="text-5xl select-none" aria-hidden>
@@ -506,7 +480,7 @@ export function ComunidadEventsSection() {
                           className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 ease-out hover:shadow-[4px_4px_0_#023047] hover:ring-[#023047]"
                         >
 
-                          
+                          <div >
                             <div onClick={() => setSelectedEvent(event)}>
                           <div className="relative h-48 overflow-hidden">
                             <Image
@@ -543,8 +517,6 @@ export function ComunidadEventsSection() {
                             </div>
                           </div>
                           </div>
-
-
                           <div className="mt-auto flex items-center justify-between border-t border-zinc-200 px-5 py-3">
                             <span className="text-sm font-bold text-zinc-900">{event.price}</span>
                             {isOwn && (
@@ -557,6 +529,8 @@ export function ComunidadEventsSection() {
                               </button>
                             )}
                           </div>
+
+                          </div>
                         </motion.article>
                       )
                     })}
@@ -568,7 +542,7 @@ export function ComunidadEventsSection() {
 
           {/* Calendar View */}
           {viewMode === 'calendar' && (
-            <div className={!currentUser ? 'pointer-events-none opacity-30 select-none' : ''}>
+            <div className={!currentUser ? '' : ''}>
               <MonthCalendar events={filteredEvents} />
             </div>
           )}

@@ -1,17 +1,26 @@
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabaseClient'
+import { Rol } from '@prisma/client'
 
-export async function GET() {
+export async function GET(req: Request) {
 
   try {
+
+    const { searchParams } = new URL(req.url)
+
+    const rolParam = searchParams.get('rol')
+
+    const rol: Rol =
+      rolParam === Rol.MENTOR
+        ? Rol.MENTOR
+        : Rol.USUARIO
 
     const eventos = await prisma.evento.findMany({
 
       where: {
         usuario: {
-          rol: 'MENTOR'
+          rol
         }
-
       },
 
       include: {
@@ -97,7 +106,7 @@ export async function POST(req: Request) {
 
     }
 
-    if (usuario.rol !== "MENTOR") {
+    if (!['MENTOR', 'USUARIO'].includes(usuario.rol)) {
 
       return Response.json(
         { error: "No autorizado" },
@@ -107,7 +116,6 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json();
-
     const {
       titulo,
       descripcion,
@@ -179,6 +187,7 @@ export async function POST(req: Request) {
     }
 
     const cupos = Number(cuposTotales);
+    console.log(body)
 
     if (isNaN(cupos) || cupos < 1) {
 
@@ -188,6 +197,7 @@ export async function POST(req: Request) {
       );
 
     }
+    console.log("si")
 
     // Validar URL de pago si existe
 
@@ -207,6 +217,7 @@ export async function POST(req: Request) {
       }
 
     }
+    console.log("si")
 
     const evento = await prisma.evento.create({
 
@@ -259,6 +270,8 @@ export async function POST(req: Request) {
       },
 
     });
+    
+    console.log("si")
 
     return Response.json({
 

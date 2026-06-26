@@ -3,36 +3,38 @@
 import { X } from 'lucide-react'
 import { useState } from 'react'
 
-export interface ComunidadEventFormData {
+export interface EventFormData {
   titulo: string
   descripcion: string
   categoria: string
   disciplinas: string[]
-  link: string
   fecha: string
   ubicacion: string
   precio: string
+  cuposTotales: string
+  urlPago: string
   imagen: File | null
 }
 
 interface Props {
   open: boolean
   editing?: boolean
-  initial?: Partial<ComunidadEventFormData>
+  initial?: Partial<EventFormData>
   onClose: () => void
-  onSubmit: (data: ComunidadEventFormData) => Promise<void>
+  onSubmit: (data: EventFormData) => Promise<void>
   onDelete?: () => Promise<void>
 }
 
-const INITIAL_FORM: ComunidadEventFormData = {
+const INITIAL_FORM: EventFormData = {
   titulo: '',
   descripcion: '',
   categoria: '',
   disciplinas: [],
-  link: '',
   fecha: '',
   ubicacion: '',
   precio: '',
+  cuposTotales: '',
+  urlPago: '',
   imagen: null,
 }
 
@@ -46,8 +48,11 @@ export function ComunidadCreateEventModal({
   onSubmit,
   onDelete,
 }: Props) {
+
+  
+  const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
-  const [form, setForm] = useState<ComunidadEventFormData>({ ...INITIAL_FORM, ...initial })
+  const [form, setForm] = useState<EventFormData>({ ...INITIAL_FORM, ...initial })
   if (!open) return null
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -72,7 +77,9 @@ export function ComunidadCreateEventModal({
   }
 
   async function handleSubmit(e: React.FormEvent) {
+    
     e.preventDefault()
+    if (!validate()) return
     try {
       setLoading(true)
       await onSubmit(form)
@@ -88,6 +95,66 @@ export function ComunidadCreateEventModal({
     setForm(INITIAL_FORM)
     onClose()
   }
+
+  function validate() {
+  const newErrors: Record<string, string> = {}
+
+  const today = new Date()
+  today.setHours(0, 0, 0, 0)
+
+  const eventDate = form.fecha ? new Date(form.fecha) : null
+
+  const price = Number(form.precio)
+  const cupos = Number(form.cuposTotales)
+
+  if (!form.titulo.trim()) newErrors.titulo = 'El título es obligatorio'
+
+  if (!form.descripcion.trim())
+    newErrors.descripcion = 'La descripción es obligatoria'
+
+  if (!form.categoria.trim())
+    newErrors.categoria = 'La categoría es obligatoria'
+
+  if (!form.fecha) {
+    newErrors.fecha = 'La fecha es obligatoria'
+  } else if (eventDate && eventDate < today) {
+    newErrors.fecha = 'La fecha no puede ser menor a hoy'
+  }
+
+  if (!form.ubicacion.trim())
+    newErrors.ubicacion = 'La ubicación es obligatoria'
+
+  if (form.precio === '') {
+    newErrors.precio = 'El precio es obligatorio'
+  } else if (isNaN(price)) {
+    newErrors.precio = 'El precio debe ser un número'
+  } else if (price < 0) {
+    newErrors.precio = 'El precio no puede ser negativo'
+  }
+
+  if (form.cuposTotales === '') {
+    newErrors.cuposTotales = 'Los cupos son obligatorios'
+  } else if (isNaN(cupos)) {
+    newErrors.cuposTotales = 'Los cupos deben ser un número'
+  } else if (cupos < 1) {
+    newErrors.cuposTotales = 'Debe haber al menos 1 cupo'
+  }
+
+  if (!form.imagen) {
+    newErrors.imagen = 'Debes seleccionar una imagen'
+  }
+
+  if (form.urlPago) {
+    try {
+      new URL(form.urlPago)
+    } catch {
+      newErrors.urlPago = 'La URL no es válida'
+    }
+  }
+
+  setErrors(newErrors)
+  return Object.keys(newErrors).length === 0
+}
 
   return (
     <div
@@ -123,9 +190,15 @@ export function ComunidadCreateEventModal({
                 accept="image/*"
                 onChange={handleImage}
                 className="hidden"
-                required={!editing}
               />
+
+              
             </label>
+            {(errors.imagen) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.imagen}
+              </p>
+            )}
           </div>
 
           {/* Titulo */}
@@ -134,12 +207,16 @@ export function ComunidadCreateEventModal({
               Nombre del evento
             </label>
             <input
-              required
               name="titulo"
               value={form.titulo}
               onChange={handleChange}
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+            {(errors.titulo) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.titulo}
+              </p>
+            )}
           </div>
 
           {/* Descripcion */}
@@ -148,13 +225,17 @@ export function ComunidadCreateEventModal({
               Descripción
             </label>
             <textarea
-              required
               rows={5}
               name="descripcion"
               value={form.descripcion}
               onChange={handleChange}
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+            {(errors.descripcion) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.descripcion}
+              </p>
+            )}
           </div>
 
           {/* Categoria / Tipo de evento */}
@@ -163,13 +244,19 @@ export function ComunidadCreateEventModal({
               Tipo de evento
             </label>
             <input
-              required
               name="categoria"
               value={form.categoria}
               onChange={handleChange}
               placeholder="Taller, Concierto, Exposición…"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+
+            {(errors.categoria) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.categoria}
+              </p>
+            )}
+            
           </div>
 
           {/* Disciplinas asociadas */}
@@ -208,6 +295,8 @@ export function ComunidadCreateEventModal({
                 ))}
               </div>
             )}
+
+            
           </div>
 
           {/* Fecha */}
@@ -216,13 +305,18 @@ export function ComunidadCreateEventModal({
               Fecha
             </label>
             <input
-              required
               type="date"
               name="fecha"
               value={form.fecha}
               onChange={handleChange}
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+
+            {(errors.fecha) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.fecha}
+              </p>
+            )}
           </div>
 
           {/* Ubicacion */}
@@ -231,14 +325,40 @@ export function ComunidadCreateEventModal({
               Ubicación
             </label>
             <input
-              required
               name="ubicacion"
               value={form.ubicacion}
               onChange={handleChange}
               placeholder="Bogotá"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+            {(errors.ubicacion) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.ubicacion}
+              </p>
+            )}
           </div>
+
+          {/* CUPOS */}
+          <div>
+            <label className="mb-2 block text-xs font-bold uppercase text-zinc-500">
+              Cupos totales
+            </label>
+
+            <input
+              type="number"
+              name="cuposTotales"
+              value={form.cuposTotales}
+              onChange={handleChange}
+              className="w-full border-2 border-zinc-200 px-4 py-3"
+            />
+
+            {errors.cuposTotales && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.cuposTotales}
+              </p>
+            )}
+          </div>
+
 
           {/* Precio */}
           <div>
@@ -246,13 +366,18 @@ export function ComunidadCreateEventModal({
               Precio
             </label>
             <input
-              required
               name="precio"
               value={form.precio}
               onChange={handleChange}
               placeholder="$120.000"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+
+            {(errors.precio) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.precio}
+              </p>
+            )}
           </div>
 
           {/* Link */}
@@ -261,12 +386,18 @@ export function ComunidadCreateEventModal({
               Link
             </label>
             <input
-              name="link"
-              value={form.link}
+              name="urlPago"
+              value={form.urlPago}
               onChange={handleChange}
               placeholder="https://"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
+
+            {(errors.urlPago) && (
+              <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
+                {errors.urlPago}
+              </p>
+            )}
           </div>
 
           {/* Botones */}
@@ -304,3 +435,5 @@ export function ComunidadCreateEventModal({
     </div>
   )
 }
+
+

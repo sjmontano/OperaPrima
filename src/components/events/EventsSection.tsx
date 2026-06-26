@@ -22,27 +22,16 @@ import { EventModal } from './EventModal'
 // -- Types --
 export interface CalendarEvent {
   id: string
-
   title: string
-
   artist: string
-
   category: string
-
   categoryVariant: 'terracota' | 'selva' | 'lavanda'
-
   date: string
-
   location: string
-
   image: string
-
   price: string
-
   soldOut?: boolean
-
   likes: number
-
   comments: number
   views: number
   eventDate: Date
@@ -50,7 +39,6 @@ export interface CalendarEvent {
   cuposDisponibles: number
   urlPago?: string | null
   description?: string
-
 }
 
 interface DbEvent {
@@ -460,7 +448,7 @@ export function EventsSection() {
 
   async function loadEvents() {
     try {
-      const response = await fetch('/api/eventos')
+      const response = await fetch('/api/eventos?rol=MENTOR')
 
       if (!response.ok) return
 

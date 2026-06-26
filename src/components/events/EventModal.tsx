@@ -1,13 +1,18 @@
-import { CalendarEvent } from './EventsSection'
+import { CalendarEvent } from './MentorEventsSection'
+import { useState } from 'react'
+import { PurchaseModal } from './PurchaseModal'
 
 export function EventModal({
   event,
   onClose,
+  tipo
 }: {
   event: CalendarEvent
   onClose: () => void
+  tipo?: string
 }) {
-  const isSoldOut = event.cuposDisponibles <= 0
+  const isSoldOut = (event.cuposDisponibles ? event.cuposDisponibles :0)  <= 0
+  const [showPurchaseModal, setShowPurchaseModal] = useState(false)
 
   return (
     <div
@@ -102,7 +107,9 @@ export function EventModal({
               </div>
             )}
 
-            <div>
+            {/** CUPOS DISPONIBLES */}
+            {tipo=="MENTOR" && (
+              <div>
               <p className="text-xs font-bold tracking-widest uppercase text-zinc-500">
                 Cupos disponibles
               </p>
@@ -111,9 +118,14 @@ export function EventModal({
                 {event.cuposDisponibles} / {event.cuposTotales}
               </p>
             </div>
+            )}
+            
 
             {/* URL */}
-            {event.urlPago && (
+
+            {tipo=="COMUNIDAD" && (
+              <>
+                {event.urlPago && (
               <div className="pt-2">
                 <p className="text-xs font-bold tracking-widest uppercase text-zinc-500">
                   Enlace de pago
@@ -129,10 +141,15 @@ export function EventModal({
                 </a>
               </div>
             )}
+              </>
+            )}
+            
           </div>
 
           {/* Botón */}
-          {isSoldOut ? (
+          
+            {tipo=="MENTOR" && (<>
+              {isSoldOut ? (
             <div className="pt-2">
               <button
                 disabled
@@ -149,7 +166,11 @@ export function EventModal({
             <button className="w-full border-2 border-[#E63946] bg-[#E63946] py-3 text-xs font-bold uppercase text-white transition hover:bg-white hover:text-[#E63946]">
               Comprar entradas
             </button>
-          )}
+          )}</>
+
+            )}
+
+          
         </div>
       </div>
     </div>

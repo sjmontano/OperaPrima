@@ -172,7 +172,6 @@ model Entrada {
 
   updatedAt  DateTime @updatedAt
 
-  @@unique([usuarioId, eventoId])
 }
 
 model Pago {

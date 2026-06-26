@@ -163,7 +163,9 @@ export function EventModal({
               </p>
             </div>
           ) : (
-            <button className="w-full border-2 border-[#E63946] bg-[#E63946] py-3 text-xs font-bold uppercase text-white transition hover:bg-white hover:text-[#E63946]">
+            <button 
+              onClick={() => setShowPurchaseModal(true)}
+              className="w-full border-2 border-[#E63946] bg-[#E63946] py-3 text-xs font-bold uppercase text-white transition hover:bg-white hover:text-[#E63946]">
               Comprar entradas
             </button>
           )}</>

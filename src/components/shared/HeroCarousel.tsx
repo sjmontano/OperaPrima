@@ -13,7 +13,7 @@ const HERO_CAROUSEL_CONFIG = {
   slides: [
     {
       id: 1,
-      headline: 'El arte colombiano\nnecesita tu voz.',
+      headline: 'El arte emergente\nnecesita tu voz.',
       subtext:
         'Conecta con mentores que ya recorrieron el camino. Aprende, crece y haz que tu obra llegue más lejos.',
       cta: { label: 'Explorar mentores', href: '/mentorias' },
@@ -47,8 +47,7 @@ const HERO_CAROUSEL_CONFIG = {
     {
       id: 4,
       headline: 'Tu próximo paso\nempieza aquí.',
-      subtext:
-        'Plataforma de membresía para artistas emergentes colombianos. Acceso a contenido exclusivo, mentores y más.',
+      subtext: 'Plataforma para artistas emergentes. Acceso a contenido exclusivo, mentores y más.',
       cta: { label: 'Comenzar ahora', href: '/registro' },
       secondaryCta: { label: 'Iniciar sesión', href: '/login' },
       bg: 'from-[#353535] to-[#1c1c1c]',

@@ -34,21 +34,14 @@ const INITIAL_FORM: EventFormData = {
   imagen: null,
 }
 
-export function CreateEventModal({
-  open,
-  onClose,
-  onSubmit,
-  error,
-}: Props) {
+export function CreateEventModal({ open, onClose, onSubmit, error }: Props) {
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<EventFormData>(INITIAL_FORM)
   const [errors, setErrors] = useState<Record<string, string>>({})
 
   if (!open) return null
 
-  function handleChange(
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) {
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
     const { name, value } = e.target
 
     setForm((prev) => ({
@@ -68,64 +61,61 @@ export function CreateEventModal({
   }
 
   function validate() {
-  const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {}
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-  const eventDate = form.fecha ? new Date(form.fecha) : null
+    const eventDate = form.fecha ? new Date(form.fecha) : null
 
-  const price = Number(form.precio)
-  const cupos = Number(form.cuposTotales)
+    const price = Number(form.precio)
+    const cupos = Number(form.cuposTotales)
 
-  if (!form.titulo.trim()) newErrors.titulo = 'El título es obligatorio'
+    if (!form.titulo.trim()) newErrors.titulo = 'El título es obligatorio'
 
-  if (!form.descripcion.trim())
-    newErrors.descripcion = 'La descripción es obligatoria'
+    if (!form.descripcion.trim()) newErrors.descripcion = 'La descripción es obligatoria'
 
-  if (!form.categoria.trim())
-    newErrors.categoria = 'La categoría es obligatoria'
+    if (!form.categoria.trim()) newErrors.categoria = 'La categoría es obligatoria'
 
-  if (!form.fecha) {
-    newErrors.fecha = 'La fecha es obligatoria'
-  } else if (eventDate && eventDate < today) {
-    newErrors.fecha = 'La fecha no puede ser menor a hoy'
-  }
-
-  if (!form.ubicacion.trim())
-    newErrors.ubicacion = 'La ubicación es obligatoria'
-
-  if (form.precio === '') {
-    newErrors.precio = 'El precio es obligatorio'
-  } else if (isNaN(price)) {
-    newErrors.precio = 'El precio debe ser un número'
-  } else if (price < 0) {
-    newErrors.precio = 'El precio no puede ser negativo'
-  }
-
-  if (form.cuposTotales === '') {
-    newErrors.cuposTotales = 'Los cupos son obligatorios'
-  } else if (isNaN(cupos)) {
-    newErrors.cuposTotales = 'Los cupos deben ser un número'
-  } else if (cupos < 1) {
-    newErrors.cuposTotales = 'Debe haber al menos 1 cupo'
-  }
-
-  if (!form.imagen) {
-    newErrors.imagen = 'Debes seleccionar una imagen'
-  }
-
-  if (form.urlPago) {
-    try {
-      new URL(form.urlPago)
-    } catch {
-      newErrors.urlPago = 'La URL no es válida'
+    if (!form.fecha) {
+      newErrors.fecha = 'La fecha es obligatoria'
+    } else if (eventDate && eventDate < today) {
+      newErrors.fecha = 'La fecha no puede ser menor a hoy'
     }
-  }
 
-  setErrors(newErrors)
-  return Object.keys(newErrors).length === 0
-}
+    if (!form.ubicacion.trim()) newErrors.ubicacion = 'La ubicación es obligatoria'
+
+    if (form.precio === '') {
+      newErrors.precio = 'El precio es obligatorio'
+    } else if (isNaN(price)) {
+      newErrors.precio = 'El precio debe ser un número'
+    } else if (price < 0) {
+      newErrors.precio = 'El precio no puede ser negativo'
+    }
+
+    if (form.cuposTotales === '') {
+      newErrors.cuposTotales = 'Los cupos son obligatorios'
+    } else if (isNaN(cupos)) {
+      newErrors.cuposTotales = 'Los cupos deben ser un número'
+    } else if (cupos < 1) {
+      newErrors.cuposTotales = 'Debe haber al menos 1 cupo'
+    }
+
+    if (!form.imagen) {
+      newErrors.imagen = 'Debes seleccionar una imagen'
+    }
+
+    if (form.urlPago) {
+      try {
+        new URL(form.urlPago)
+      } catch {
+        newErrors.urlPago = 'La URL no es válida'
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
@@ -161,17 +151,11 @@ export function CreateEventModal({
         {/* HEADER */}
         <div className="flex items-center justify-between border-b-2 border-zinc-200 px-8 py-6">
           <div>
-            <p className="text-xs font-bold tracking-[0.25em] text-zinc-500 uppercase">
-              Mentor
-            </p>
+            <p className="text-xs font-bold tracking-[0.25em] text-zinc-500 uppercase">Mentor</p>
             <h2 className="mt-1 text-2xl font-bold">Crear evento</h2>
           </div>
 
-          <button
-            type="button"
-            onClick={handleClose}
-            className="transition hover:text-[#E63946]"
-          >
+          <button type="button" onClick={handleClose} className="transition hover:text-[#E63946]">
             <X />
           </button>
         </div>
@@ -187,7 +171,7 @@ export function CreateEventModal({
 
           {/* TITULO */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
               Título
             </label>
 
@@ -207,7 +191,7 @@ export function CreateEventModal({
 
           {/* DESCRIPCIÓN */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
               Descripción
             </label>
 
@@ -226,16 +210,17 @@ export function CreateEventModal({
             )}
           </div>
 
-          {/* CATEGORIA */}
+          {/* #PALABRAS CLAVE */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
-              Categoría
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
+              #palabras clave
             </label>
 
             <input
               name="categoria"
               value={form.categoria}
               onChange={handleChange}
+              placeholder="ej: networking, portfolio, becas"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
@@ -248,7 +233,7 @@ export function CreateEventModal({
 
           {/* FECHA */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
               Fecha
             </label>
 
@@ -269,7 +254,7 @@ export function CreateEventModal({
 
           {/* UBICACIÓN */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
               Ubicación
             </label>
 
@@ -289,7 +274,7 @@ export function CreateEventModal({
 
           {/* PRECIO */}
           <div>
-            <label className="mb-2 block text-xs font-bold tracking-widest uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
               Precio
             </label>
 
@@ -297,7 +282,7 @@ export function CreateEventModal({
               name="precio"
               value={form.precio}
               onChange={handleChange}
-              type='number'
+              type="number"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
@@ -310,7 +295,7 @@ export function CreateEventModal({
 
           {/* CUPOS */}
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold text-zinc-500 uppercase">
               Cupos totales
             </label>
 
@@ -331,19 +316,12 @@ export function CreateEventModal({
 
           {/* IMAGEN */}
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-zinc-500">
-              Imagen
-            </label>
+            <label className="mb-2 block text-xs font-bold text-zinc-500 uppercase">Imagen</label>
 
             <label className="flex cursor-pointer items-center justify-center border-2 border-zinc-200 px-4 py-3 text-sm font-medium transition hover:border-[#023047]">
               {form.imagen ? form.imagen.name : 'Seleccionar imagen'}
 
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImage}
-                className="hidden"
-              />
+              <input type="file" accept="image/*" onChange={handleImage} className="hidden" />
             </label>
 
             {errors.imagen && (
@@ -356,7 +334,7 @@ export function CreateEventModal({
           {/* URL PAGO */}
 
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold text-zinc-500 uppercase">
               URL de pago (opcional)
             </label>
 
@@ -374,8 +352,6 @@ export function CreateEventModal({
               </p>
             )}
           </div>
-
-
 
           {/* BOTONES */}
           <div className="flex justify-end gap-4 pt-4">

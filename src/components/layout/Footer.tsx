@@ -1,4 +1,4 @@
-'use client'
+﻿'use client'
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Link2, Mail, PlayCircle } from 'lucide-react'
@@ -8,7 +8,7 @@ import { useRef, useState } from 'react'
 // -- Configuración editable --
 const FOOTER_CONFIG = {
   year: 2026,
-  tagline: 'Acompañamos a los artistas emergentes colombianos en cada etapa de su carrera.',
+  tagline: 'Acompañamos a los artistas emergentes en cada etapa de su carrera.',
   watermarkText: 'Ópera Prima',
   email: 'direccion@operaprimacultura.com',
 }

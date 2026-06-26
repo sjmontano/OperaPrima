@@ -773,7 +773,7 @@ export default function DisenoPage() {
               {
                 label: 'Testimonial hover',
                 cls: shadow.testimonialHover,
-                color: colors.legacyRosa,
+                color: colors.pink,
               },
               { label: 'Modal', cls: shadow.modal, color: colors.nearBlack },
               { label: 'Input focus', cls: shadow.inputFocus, color: colors.blueDark },

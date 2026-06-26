@@ -17,7 +17,7 @@ const SERVICES = [
     num: '02',
     icon: CalendarDays,
     title: 'Talleres y Eventos',
-    desc: 'Workshops prácticos, encuentros de networking y residencias. Presenciales y online, pensados para el contexto colombiano.',
+    desc: 'Workshops prácticos, encuentros de networking y residencias. Presenciales y online, pensados para impulsar tu carrera.',
     accent: '#023047',
     href: '/eventos',
   },

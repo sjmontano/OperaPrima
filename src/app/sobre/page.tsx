@@ -7,7 +7,7 @@ import type { Metadata } from 'next'
 export const metadata: Metadata = {
   title: 'Sobre Ópera Prima',
   description:
-    'Conoce la plataforma que acompaña a artistas emergentes colombianos con mentorías, eventos y comunidad.',
+    'Conoce la plataforma que acompaña a artistas emergentes con mentorías, eventos y comunidad.',
 }
 
 export default function SobrePage() {

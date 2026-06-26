@@ -52,7 +52,7 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
   {
     name: 'Mariana Cruz',
     handle: '@mariana.crea',
-    text: 'Me gusta cómo Opera Prima pone el talento colombiano al frente. Los eventos y talleres son justo lo que necesitaba para avanzar con confianza.',
+    text: 'Me gusta cómo Opera Prima pone el talento emergente al frente. Los eventos y talleres son justo lo que necesitaba para avanzar con confianza.',
     avatar: 'https://i.pravatar.cc/150?u=mariana',
   },
   {

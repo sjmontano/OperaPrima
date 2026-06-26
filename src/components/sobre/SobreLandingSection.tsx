@@ -7,6 +7,7 @@ import { TestimonialsWall, type Testimonial } from '@/components/shared/Testimon
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Heart, Target } from 'lucide-react'
 import Image from 'next/image'
+import Link from 'next/link'
 import { useRef } from 'react'
 
 const VALORES = [
@@ -37,8 +38,53 @@ const VALORES = [
   },
   {
     name: 'Internacionalización',
-    desc: 'Conectamos el talento colombiano con oportunidades globales. Pensamos local, actuamos sin fronteras.',
+    desc: 'Conectamos el talento emergente con oportunidades globales. Pensamos local, actuamos sin fronteras.',
     accent: '#4682B4',
+  },
+]
+
+const SERVICIOS = [
+  {
+    eyebrow: 'Calendario de la comunidad',
+    title: 'Descubre lo que otros artistas están creando',
+    desc: 'Un espacio para compartir y descubrir lo que otros artistas emergentes están creando cerca de ti: obras, exposiciones, estrenos, conciertos, muestras, procesos y mucho más.',
+    href: '/comunidad',
+    color: '#8ECAE6',
+  },
+  {
+    eyebrow: 'Tablero de Oportunidades',
+    title: 'Prácticas, convocatorias y proyectos',
+    desc: 'Prácticas, voluntariados, convocatorias, proyectos colaborativos y experiencias para empezar a ganar recorrido en el sector cultural. También puedes publicar tus propios proyectos.',
+    href: '/tablero',
+    color: '#023047',
+  },
+  {
+    eyebrow: 'Networking Sessions',
+    title: 'Conecta con artistas de otros países',
+    desc: 'Eventos online para conectar con artistas emergentes de diferentes países, compartir experiencias, crear redes y abrir nuevas posibilidades de colaboración.',
+    href: '/eventos',
+    color: '#4682B4',
+  },
+  {
+    eyebrow: 'Mentorías Online',
+    title: 'Sesiones personalizadas con profesionales',
+    desc: 'Sesiones personalizadas con profesionales del sector que te ayudarán a resolver dudas, orientar tu camino y aterrizar tus ideas.',
+    href: '/mentorias',
+    color: '#8ECAE6',
+  },
+  {
+    eyebrow: 'Talleres',
+    title: 'Herramientas reales para vivir del arte',
+    desc: 'Espacios formativos sobre herramientas reales para vivir del arte: convocatorias, portafolio, gestión cultural, visibilidad, proyectos, bienestar creativo y mucho más.',
+    href: '/eventos',
+    color: '#023047',
+  },
+  {
+    eyebrow: 'Proyectos',
+    title: 'Alianzas con entidades',
+    desc: 'Nos aliamos con diferentes entidades para desarrollar proyectos con artistas de nuestra comunidad, creando oportunidades para que puedan ganar experiencia real.',
+    href: '/tablero',
+    color: '#4682B4',
   },
 ]
 
@@ -71,6 +117,7 @@ const COMUNIDAD_TESTIMONIALS: Testimonial[] = [
 
 const TEAM = [
   {
+    id: 'angela-rodriguez',
     name: 'Ángela Rodríguez',
     role: 'Fundadora',
     bio: 'Gestora cultural con más de una década impulsando proyectos artísticos en Colombia y América Latina. Su visión: que ningún artista emergente camine solo en su desarrollo profesional.',
@@ -78,6 +125,7 @@ const TEAM = [
       'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&auto=format&fit=crop&q=80',
   },
   {
+    id: 'catalina-cruz',
     name: 'Catalina Cruz',
     role: 'Coordinadora',
     bio: 'Artista visual y productora cultural. Coordina la agenda de mentorías, talleres y eventos, asegurando que cada experiencia tenga calidad, foco y calidez editorial.',
@@ -95,20 +143,10 @@ export function SobreLandingSection() {
       ref={sectionRef}
       className="relative w-full overflow-hidden border-b border-white/10 bg-[#0f0f0f]"
     >
-      {/* ── Grid overlay ── */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
-        style={{
-          backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-          backgroundSize: '80px 80px',
-        }}
-      />
       {/* ── Pink accent strip top ── */}
       <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
-      {/* ═══════════════ HERO + VALORES ═══════════════ */}
+      {/* ═══════════════ HERO ═══════════════ */}
       <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
         <div className="grid gap-16 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
           {/* Left: texto */}
@@ -123,24 +161,17 @@ export function SobreLandingSection() {
                 Sobre la plataforma
               </p>
               <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
-                Ópera Prima
+                Òpera Prima
               </h1>
               <p className="text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
-                La plataforma
+                Es una plataforma internacional que acompaña a artistas emergentes en sus primeros
+                pasos hacia la vida profesional.
               </p>
               <div className="space-y-5 text-lg leading-relaxed text-white/75">
                 <p>
-                  Una plataforma digital que acompaña a artistas emergentes con herramientas reales
-                  para dar sus primeros pasos profesionales.
-                </p>
-                <p>
-                  Aquí encuentras herramientas, oportunidades y una comunidad que te ayuda a
-                  construir tu camino profesional con estrategia, no con suerte.
-                </p>
-                <p>
-                  Ópera Prima es una plataforma digital creada para acompañar a estudiantes y
-                  egresados de carreras artísticas en su transición al mundo profesional. Bienvenido
-                  a Ópera Prima.
+                  Aquí encontrarás herramientas, oportunidades y una comunidad que impulsa tu
+                  desarrollo artístico y profesional, para que construyas tu camino con estrategia,
+                  acompañamiento y propósito.
                 </p>
               </div>
               <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center">
@@ -163,27 +194,65 @@ export function SobreLandingSection() {
             </TimelineAnimation>
           </div>
 
-          {/* Right: espacio visual */}
+          {/* Right: negro plano (sin logo, sin grid) */}
           <div className="hidden items-start justify-end lg:flex">
-            <div
-              className="relative aspect-square w-full max-w-[320px] border-2 border-white/10 shadow-[6px_6px_0_rgba(142,202,230,0.35)]"
-              style={{ background: 'oklch(0.30 0.07 165)' }}
-            >
-              <Image
-                src="/OperaPrima_Imagotipo_Color.svg"
-                alt="Ópera Prima"
-                width={240}
-                height={72}
-                unoptimized
-                className="absolute inset-0 m-auto w-3/4 opacity-90"
-              />
-            </div>
+            <div className="relative aspect-square w-full max-w-[320px] border-2 border-white/10 bg-[#0f0f0f] shadow-[6px_6px_0_rgba(142,202,230,0.35)]" />
           </div>
         </div>
+      </div>
 
-        {/* ── Valores grid ── */}
-        <div className="border-t-2 border-white/10 px-4 pb-24 sm:px-2 lg:pb-28">
-          <TimelineAnimation as="div" animationNum={6} timelineRef={sectionRef} className="mb-10">
+      {/* ═══════════════ NUESTROS SERVICIOS ═══════════════ */}
+      <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
+        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+          <TimelineAnimation as="div" animationNum={6} timelineRef={sectionRef} className="mb-14">
+            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
+              La plataforma
+            </p>
+            <h2 className="mt-3 max-w-3xl text-4xl font-bold tracking-[-0.03em] text-[#353535] lg:text-5xl">
+              Más que una plataforma, nuestra web es un espacio para artistas emergentes que
+              comparten un mismo deseo: vivir creando.
+            </h2>
+            <p className="mt-4 max-w-2xl text-lg leading-relaxed text-zinc-600">
+              Aquí puedes conectar con otros artistas, descubrir oportunidades y empezar a mover tus
+              proyectos. Registrarte es totalmente gratuito.
+            </p>
+          </TimelineAnimation>
+
+          <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {SERVICIOS.map((svc, i) => (
+              <Link key={svc.eyebrow} href={svc.href}>
+                <TimelineAnimation
+                  as="article"
+                  animationNum={7 + i}
+                  timelineRef={sectionRef}
+                  className="group flex h-full flex-col border-2 border-zinc-200 bg-white p-6 shadow-[4px_4px_0_rgba(17,17,17,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#353535]"
+                >
+                  <p
+                    className="text-[0.62rem] font-bold tracking-[0.28em] uppercase"
+                    style={{ color: svc.color }}
+                  >
+                    {svc.eyebrow}
+                  </p>
+                  <h3 className="mt-3 text-lg font-bold tracking-[-0.02em] text-zinc-900">
+                    {svc.title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-zinc-600">{svc.desc}</p>
+                  <div className="mt-auto pt-4">
+                    <span className="inline-flex items-center gap-1 text-[0.6rem] font-bold tracking-widest text-[#023047] uppercase transition-all group-hover:gap-2">
+                      Explorar <ArrowRight size={12} />
+                    </span>
+                  </div>
+                </TimelineAnimation>
+              </Link>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* ═══════════════ VALORES ═══════════════ */}
+      <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+        <div className="border-t-2 border-white/10 px-4 py-24 sm:px-2 lg:py-28">
+          <TimelineAnimation as="div" animationNum={13} timelineRef={sectionRef} className="mb-10">
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
               Nuestros valores
             </p>
@@ -197,7 +266,7 @@ export function SobreLandingSection() {
               <TimelineAnimation
                 key={valor.name}
                 as="article"
-                animationNum={7 + i}
+                animationNum={14 + i}
                 timelineRef={sectionRef}
                 className="group border-2 border-white/10 bg-white/5 p-6 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6]"
               >
@@ -218,19 +287,12 @@ export function SobreLandingSection() {
       <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
         <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
-            {/* Misión */}
             <TimelineAnimation
               as="article"
-              animationNum={13}
+              animationNum={20}
               timelineRef={sectionRef}
               className="group relative flex flex-col border-2 border-[#353535] bg-white p-8 shadow-[4px_4px_0_#353535] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#023047] lg:p-10"
             >
-              <div
-                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#353535]"
-                style={{ boxShadow: '3px 3px 0 #023047' }}
-              >
-                <Target size={22} style={{ color: '#023047' }} />
-              </div>
               <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
                 Nuestra Misión
               </p>
@@ -243,19 +305,12 @@ export function SobreLandingSection() {
               </p>
             </TimelineAnimation>
 
-            {/* Visión */}
             <TimelineAnimation
               as="article"
-              animationNum={14}
+              animationNum={21}
               timelineRef={sectionRef}
               className="group relative flex flex-col border-2 border-[#353535] bg-white p-8 shadow-[4px_4px_0_#353535] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#023047] lg:p-10"
             >
-              <div
-                className="mb-6 flex h-14 w-14 items-center justify-center border-2 border-[#353535]"
-                style={{ boxShadow: '3px 3px 0 #023047' }}
-              >
-                <Heart size={22} style={{ color: '#023047' }} />
-              </div>
               <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
                 Nuestra Visión
               </p>
@@ -285,22 +340,13 @@ export function SobreLandingSection() {
 
       {/* ═══════════════ EQUIPO ═══════════════ */}
       <div className="relative border-t-2 border-white/10 bg-[#0f0f0f]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-          }}
-        />
         <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
         <div className="relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="mb-14">
             <TimelineAnimation
               as="p"
-              animationNum={15}
+              animationNum={22}
               timelineRef={sectionRef}
               className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
@@ -308,7 +354,7 @@ export function SobreLandingSection() {
             </TimelineAnimation>
             <TimelineAnimation
               as="h2"
-              animationNum={16}
+              animationNum={23}
               timelineRef={sectionRef}
               className="mt-3 text-4xl font-bold tracking-[-0.03em] text-white lg:text-5xl"
             >
@@ -316,42 +362,43 @@ export function SobreLandingSection() {
             </TimelineAnimation>
             <TimelineAnimation
               as="p"
-              animationNum={17}
+              animationNum={24}
               timelineRef={sectionRef}
               className="mt-4 max-w-2xl text-lg leading-relaxed text-white/65"
             >
-              Un equipo pequeño con una convicción grande: el talento colombiano merece mejores
+              Un equipo pequeño con una convicción grande: el talento emergente merece mejores
               condiciones para crecer.
             </TimelineAnimation>
           </div>
 
           <div className="grid grid-cols-1 gap-10 lg:grid-cols-2 lg:gap-16">
             {TEAM.map((member, i) => (
-              <TimelineAnimation
-                key={member.name}
-                as="article"
-                animationNum={18 + i}
-                timelineRef={sectionRef}
-                className="group flex flex-col gap-6 border-2 border-white/10 bg-white/5 p-8 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6] sm:flex-row lg:p-10"
-              >
-                <Image
-                  src={member.image}
-                  alt={member.name}
-                  width={120}
-                  height={120}
-                  unoptimized
-                  className="h-28 w-28 shrink-0 rounded-full border-2 border-white/20 object-cover transition-colors duration-200 group-hover:border-[#8ECAE6]"
-                />
-                <div className="flex flex-col justify-center">
-                  <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
-                    {member.role}
-                  </p>
-                  <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white">
-                    {member.name}
-                  </h3>
-                  <p className="mt-3 text-sm leading-relaxed text-white/65">{member.bio}</p>
-                </div>
-              </TimelineAnimation>
+              <Link key={member.id} href={`/perfil/${member.id}`}>
+                <TimelineAnimation
+                  as="article"
+                  animationNum={25 + i}
+                  timelineRef={sectionRef}
+                  className="group flex flex-col gap-6 border-2 border-white/10 bg-white/5 p-8 shadow-[4px_4px_0_rgba(255,255,255,0.08)] transition-all duration-200 hover:-translate-x-1 hover:-translate-y-1 hover:shadow-[6px_6px_0_#8ECAE6] sm:flex-row lg:p-10"
+                >
+                  <Image
+                    src={member.image}
+                    alt={member.name}
+                    width={120}
+                    height={120}
+                    unoptimized
+                    className="h-28 w-28 shrink-0 rounded-full border-2 border-white/20 object-cover transition-colors duration-200 group-hover:border-[#8ECAE6]"
+                  />
+                  <div className="flex flex-col justify-center">
+                    <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+                      {member.role}
+                    </p>
+                    <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white">
+                      {member.name}
+                    </h3>
+                    <p className="mt-3 text-sm leading-relaxed text-white/65">{member.bio}</p>
+                  </div>
+                </TimelineAnimation>
+              </Link>
             ))}
           </div>
         </div>
@@ -359,22 +406,13 @@ export function SobreLandingSection() {
 
       {/* ═══════════════ MENTORES ═══════════════ */}
       <div className="relative border-t-2 border-white/10 bg-[#0f0f0f]">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-0 opacity-[0.05]"
-          style={{
-            backgroundImage:
-              'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-            backgroundSize: '80px 80px',
-          }}
-        />
         <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
         <div className="relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="mb-12 max-w-2xl">
             <TimelineAnimation
               as="p"
-              animationNum={20}
+              animationNum={27}
               timelineRef={sectionRef}
               className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
@@ -382,7 +420,7 @@ export function SobreLandingSection() {
             </TimelineAnimation>
             <TimelineAnimation
               as="h2"
-              animationNum={21}
+              animationNum={28}
               timelineRef={sectionRef}
               className="mt-3 text-4xl font-bold tracking-[-0.03em] text-white lg:text-5xl"
             >
@@ -390,7 +428,7 @@ export function SobreLandingSection() {
             </TimelineAnimation>
             <TimelineAnimation
               as="p"
-              animationNum={22}
+              animationNum={29}
               timelineRef={sectionRef}
               className="mt-4 text-lg leading-relaxed text-white/65"
             >
@@ -399,7 +437,7 @@ export function SobreLandingSection() {
             </TimelineAnimation>
           </div>
 
-          <TimelineAnimation as="div" animationNum={23} timelineRef={sectionRef}>
+          <TimelineAnimation as="div" animationNum={30} timelineRef={sectionRef}>
             <ExpandingMentorsGallery mentors={MENTORS} />
           </TimelineAnimation>
         </div>

@@ -225,7 +225,7 @@ export function EventsLandingSection() {
             <InfoCard
               eyebrow="Networking"
               title="Conectar con propósito"
-              body="Encuentros pensados para que conozcas a otros artistas, gestores y profesionales del sector cultural colombiano."
+              body="Encuentros pensados para que conozcas a otros artistas, gestores y profesionales del sector cultural."
               accent="#023047"
               icon={Users}
               animationNum={5}

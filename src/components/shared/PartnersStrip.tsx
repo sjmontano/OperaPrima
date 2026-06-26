@@ -49,7 +49,7 @@ export function PartnersStrip() {
             timelineRef={sectionRef}
             className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
-            03 — Aliados y Red
+            Aliados y Red
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"

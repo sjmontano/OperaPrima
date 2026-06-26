@@ -66,7 +66,7 @@ const DEFAULT_TESTIMONIALS: Testimonial[] = [
 export function TestimonialsWall({
   className = '',
   headline = 'Esto dicen los artistas de nuestra comunidad',
-  testimonialEyebrow = '02 — Comunidad Opera Prima',
+  testimonialEyebrow = 'Comunidad Opera Prima',
   testimonials = DEFAULT_TESTIMONIALS,
   animationDuration = TESTIMONIAL_WALL_CONFIG.animationDuration,
   cardWidth = TESTIMONIAL_WALL_CONFIG.cardWidth,

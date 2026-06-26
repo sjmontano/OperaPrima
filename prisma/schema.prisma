@@ -17,12 +17,6 @@ enum TipoEvento {
   COMUNIDAD
 }
 
-enum TipoProyecto {
-  OPERA_PRIMA
-  COMUNIDAD
-  ENTIDAD
-}
-
 enum Gender {
   MASCULINO
   FEMENINO
@@ -73,8 +67,6 @@ model Usuario {
   eventos     Evento[]
 
   entradas    Entrada[]
-
-  proyectos   Proyecto[]
 }
 
 model Perfil {
@@ -156,9 +148,6 @@ model Evento {
 
   entradas         Entrada[]
 
-  tipo             TipoEvento @default(OPEAR_PRIMA)
-  disciplinas      String[]
-  link             String?
   createdAt        DateTime @default(now())
 
   updatedAt        DateTime @updatedAt
@@ -203,25 +192,4 @@ model Pago {
   createdAt          DateTime @default(now())
 
   updatedAt          DateTime @updatedAt
-}
-
-model Proyecto {
-  id            String       @id @default(uuid())
-  tipo          TipoProyecto @default(COMUNIDAD)
-  nombre        String
-  representante String
-  descripcion   String       @db.Text
-  queBuscan     String       @db.Text
-  requisitos    String       @db.Text
-  proceso       String       @db.Text
-  imagen        String?
-  contacto      String
-  disciplinas   String[]
-  ubicacion     String
-  destacado     Boolean      @default(false)
-  fechaLimite   DateTime
-  usuarioId     String?
-  usuario       Usuario?     @relation(fields: [usuarioId], references: [id])
-  createdAt     DateTime     @default(now())
-  updatedAt     DateTime     @updatedAt
-}
+  }

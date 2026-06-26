@@ -49,7 +49,7 @@ export function Footer() {
         aria-hidden="true"
         className="pointer-events-none absolute right-0 bottom-0 left-0 flex items-end justify-center leading-none select-none"
         style={{
-          fontSize: 'clamp(4rem, 18vw, 17rem)',
+          fontSize: 'clamp(4rem, 14vw, 17rem)',
           fontWeight: 700,
           color: 'rgba(255,255,255,0.04)',
           lineHeight: 0.85,
@@ -65,14 +65,17 @@ export function Footer() {
         <div className="mb-14 grid grid-cols-1 gap-16 md:grid-cols-3">
           {/* -- Brand -- */}
           <div className="space-y-4">
-            <Image
-              src="/OperaPrima_Imagotipo_Color.svg"
-              alt="Opera Prima"
-              width={160}
-              height={48}
-              unoptimized
-              className="w-36"
-            />
+            <div className="flex items-center gap-2.5">
+              <Image
+                src="/OperaPrima_Isotipo.svg"
+                alt="Opera Prima"
+                width={34}
+                height={34}
+                unoptimized
+                className="shrink-0"
+              />
+              <span className="text-lg font-semibold tracking-tight text-white">Ópera Prima</span>
+            </div>
             <TimelineAnimation
               as="p"
               animationNum={0}

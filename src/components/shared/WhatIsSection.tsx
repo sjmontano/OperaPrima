@@ -48,7 +48,6 @@ export function WhatIsSection() {
         {/* -- Intro block -- */}
         <div className="border-b border-zinc-200 px-8 pt-20 pb-16">
           <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.6fr]">
-            {/* Label + headline */}
             <div>
               <TimelineAnimation
                 as="p"
@@ -56,10 +55,9 @@ export function WhatIsSection() {
                 timelineRef={ref}
                 className="mb-5 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
               >
-                02 -- ¿Qué es Opera Prima?
+                ¿Qué es Opera Prima?
               </TimelineAnimation>
 
-              {/* Headline grande con la palabra destacada */}
               <TimelineAnimation
                 as="h2"
                 animationNum={1}
@@ -79,7 +77,6 @@ export function WhatIsSection() {
               </TimelineAnimation>
             </div>
 
-            {/* Description */}
             <div className="flex flex-col gap-6 lg:pb-1">
               <TimelineAnimation
                 as="p"
@@ -104,16 +101,23 @@ export function WhatIsSection() {
         </div>
 
         {/* -- Services tagline -- */}
-        <div className="flex items-center justify-between gap-8 border-b border-zinc-200 px-8 py-8">
+        <div className="px-8 pt-16 pb-6">
           <TimelineAnimation
             as="p"
             animationNum={4}
             timelineRef={ref}
-            className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
+            className="mb-3 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
             Nuestros servicios
           </TimelineAnimation>
-          <div className="h-px flex-1 bg-zinc-200" aria-hidden />
+          <TimelineAnimation
+            as="h2"
+            animationNum={5}
+            timelineRef={ref}
+            className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
+          >
+            Todo lo que necesitas para crecer
+          </TimelineAnimation>
         </div>
 
         {/* -- Services grid -- */}
@@ -125,7 +129,7 @@ export function WhatIsSection() {
                 key={s.num}
                 as="a"
                 href={s.href}
-                animationNum={i + 5}
+                animationNum={i + 6}
                 timelineRef={ref}
                 className={`group flex flex-col gap-6 border-zinc-200 px-8 py-12 transition-all duration-200 hover:bg-zinc-50 ${i % 2 === 0 ? 'md:border-r' : ''} ${i < 2 ? 'border-b' : ''}`}
               >

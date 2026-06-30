@@ -1,115 +1,94 @@
-'use client'
-
-import { CalendarEvent } from './MentorEventsSection'
-import { Minus, Plus } from 'lucide-react'
 import { useState } from 'react'
+import { CalendarEvent } from './MentorEventsSection'
 
-interface Props {
-  open: boolean
+interface PurchaseModalProps {
   event: CalendarEvent
   onClose: () => void
 }
 
-export function PurchaseModal({
-  open,
-  event,
-  onClose,
-}: Props) {
+export function PurchaseModal({ event, onClose }: PurchaseModalProps) {
   const [quantity, setQuantity] = useState(1)
+  const [loading, setLoading] = useState(false)
 
-  if (!open) return null
+  const max = event.cuposDisponibles && event.cuposDisponibles > 0 ? event.cuposDisponibles : 1
 
-  const max = event.cuposDisponibles ?? 1
+  const unitPrice = Number(event.price)
+  const total = unitPrice * quantity
 
-  const total = Number(event.price) * quantity
+  async function handleCheckout() {
+    try {
+      setLoading(true)
+
+      const res = await fetch('/api/stripe/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          eventoId: event.id,
+          cantidad: quantity,
+        }),
+      })
+
+      const data = await res.json()
+
+      if (!res.ok) {
+        throw new Error(data.error)
+      }
+
+      window.location.href = data.url
+    } catch (err) {
+      alert(err instanceof Error ? err.message : 'Error al iniciar el pago.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
     <div
-      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm"
+      className="fixed inset-0 z-[60] flex items-center justify-center bg-black/60 p-4"
       onClick={onClose}
     >
       <div
-        className="w-full max-w-md border-2 border-zinc-900 bg-white shadow-[8px_8px_0_#111]"
+        className="w-full max-w-md border-2 border-zinc-900 bg-white p-6 shadow-[8px_8px_0_#111]"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="border-b-2 border-zinc-900 p-6">
-          <h2 className="text-xl font-bold">
-            Comprar entradas
-          </h2>
+        <h2 className="text-xl font-bold">{event.title}</h2>
 
-          <p className="mt-1 text-sm text-zinc-500">
-            {event.title}
-          </p>
+        <p className="mt-2 text-sm text-zinc-600">{event.artist}</p>
+
+        <div className="mt-6">
+          <label className="mb-2 block text-sm font-semibold">Cantidad</label>
+
+          <input
+            type="number"
+            min={1}
+            max={max}
+            value={quantity}
+            onChange={(e) => setQuantity(Math.max(1, Math.min(max, Number(e.target.value))))}
+            className="w-full border p-2"
+          />
         </div>
 
-        <div className="space-y-6 p-6">
-
-          <div>
-            <p className="text-xs font-bold uppercase tracking-widest text-zinc-500">
-              Precio por entrada
-            </p>
-
-            <p className="mt-1 text-lg font-bold">
-              ${Number(event.price).toLocaleString('es-CO')}
-            </p>
+        <div className="mt-6 space-y-2 text-sm">
+          <div className="flex justify-between">
+            <span>Precio</span>
+            <span>${unitPrice.toLocaleString()}</span>
           </div>
 
-          <div>
-            <p className="mb-3 text-xs font-bold uppercase tracking-widest text-zinc-500">
-              Cantidad
-            </p>
-
-            <div className="flex items-center justify-center gap-5">
-
-              <button
-                onClick={() =>
-                  setQuantity((q) => Math.max(1, q - 1))
-                }
-                className="border-2 border-zinc-900 p-2"
-              >
-                <Minus size={16} />
-              </button>
-
-              <span className="text-2xl font-bold">
-                {quantity}
-              </span>
-
-              <button
-                onClick={() =>
-                  setQuantity((q) => Math.min(max, q + 1))
-                }
-                className="border-2 border-zinc-900 p-2"
-              >
-                <Plus size={16} />
-              </button>
-
-            </div>
-
-            <p className="mt-3 text-center text-xs text-zinc-500">
-              Cupos disponibles: {max}
-            </p>
-
+          <div className="flex justify-between">
+            <span>Total</span>
+            <span className="font-bold">${total.toLocaleString()}</span>
           </div>
-
-          <div className="border-t pt-5">
-
-            <div className="flex justify-between text-sm">
-              <span>Total</span>
-
-              <span className="text-lg font-bold">
-                ${total.toLocaleString('es-CO')}
-              </span>
-            </div>
-
-          </div>
-
-          <button
-            className="w-full border-2 border-[#E63946] bg-[#E63946] py-3 text-xs font-bold uppercase text-white transition hover:bg-white hover:text-[#E63946]"
-          >
-            Continuar
-          </button>
-
         </div>
+
+        <button
+          onClick={handleCheckout}
+          disabled={loading}
+          className="mt-6 w-full border-2 border-[#E63946] bg-[#E63946] py-3 font-bold text-white uppercase hover:bg-white hover:text-[#E63946]"
+        >
+          {loading ? 'Redirigiendo...' : 'Pagar con Stripe'}
+        </button>
       </div>
     </div>
   )

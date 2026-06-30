@@ -160,36 +160,38 @@ model Entrada {
 
   eventoId   String
 
+  pagoId     String?
+
   qrCode     String?
 
   usuario    Usuario @relation(fields: [usuarioId], references: [id])
 
   evento     Evento @relation(fields: [eventoId], references: [id])
 
-  pago       Pago?
+  pago       Pago? @relation(fields: [pagoId], references: [id])
 
   createdAt  DateTime @default(now())
 
   updatedAt  DateTime @updatedAt
-
 }
 
+
 model Pago {
-  id                 String   @id @default(uuid())
+  id                      String   @id @default(uuid())
 
-  entradaId          String   @unique
+  referencia              String   @unique
 
-  referencia         String   @unique
+  stripeSessionId         String?  @unique
 
-  transaccionWompiId String?  @unique
+  stripePaymentIntentId   String?  @unique
 
-  monto              Int
+  monto                   Int
 
-  estado             EstadoPago @default(PENDIENTE)
+  estado                  EstadoPago @default(PENDIENTE)
 
-  entrada            Entrada @relation(fields: [entradaId], references: [id], onDelete: Cascade)
+  entradas                Entrada[]
 
-  createdAt          DateTime @default(now())
+  createdAt               DateTime @default(now())
 
-  updatedAt          DateTime @updatedAt
-  }
+  updatedAt               DateTime @updatedAt
+}

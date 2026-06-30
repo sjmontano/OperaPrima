@@ -8,7 +8,10 @@ import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
-import { ComunidadCreateEventModal, type EventFormData } from '../comunidad/ComunidadCreateEventModal'
+import {
+  ComunidadCreateEventModal,
+  type EventFormData,
+} from '../comunidad/ComunidadCreateEventModal'
 import type { Session } from '@supabase/supabase-js'
 import { EventModal } from './EventModal'
 
@@ -29,10 +32,8 @@ interface DbEvent {
   vistas?: number
   usuarioId: string
 
-  
   cuposTotales?: number
   cuposDisponibles?: number
-
 
   usuario: {
     username: string
@@ -55,13 +56,11 @@ export interface CalendarEvent {
   views: number
   eventDate: Date
 
-  
   cuposTotales?: number
   cuposDisponibles?: number
   urlPago?: string | null
   description?: string
 }
-
 
 interface CurrentUser {
   id: string
@@ -97,10 +96,10 @@ function mapEvent(evento: DbEvent): CalendarEvent {
     likes: evento.likes ?? 0,
     comments: evento.comentarios ?? 0,
     views: evento.vistas ?? 0,
-    
+
     description: evento.descripcion ?? '',
     urlPago: evento.urlPago ?? null,
-    
+
     cuposDisponibles: evento.cuposDisponibles ?? 0,
     cuposTotales: evento.cuposTotales ?? 0,
   }
@@ -117,9 +116,7 @@ export function MentorEventsSection() {
   const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
   const [editData, setEditData] = useState<Partial<EventFormData> | undefined>(undefined)
 
-  
-  
-    const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
+  const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
   const events = useMemo(() => dbEvents.map(mapEvent), [dbEvents])
 
@@ -182,7 +179,6 @@ export function MentorEventsSection() {
   }, [])
 
   async function createEvent(data: EventFormData) {
-    
     const supabase = createClient()
     const {
       data: { session },
@@ -222,7 +218,7 @@ export function MentorEventsSection() {
         imagen: imageUrl,
       }),
     })
-    
+
     if (!res.ok) throw new Error('No se pudo crear el evento')
     await loadEvents()
   }
@@ -246,7 +242,7 @@ export function MentorEventsSection() {
       }
     }
 
-     const res = await fetch(`/api/eventos/${editingEvent.id}`, {
+    const res = await fetch(`/api/eventos/${editingEvent.id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
@@ -325,12 +321,13 @@ export function MentorEventsSection() {
     >
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {selectedEvent && (
-                  <EventModal
-                    event={selectedEvent}
-                    onClose={() => setSelectedEvent(null)}
-                    tipo='MENTOR'
-                  />
-                )}
+          <EventModal
+            event={selectedEvent}
+            onClose={() => setSelectedEvent(null)}
+            tipo="MENTOR"
+            currentUser={currentUser}
+          />
+        )}
         {/* Header */}
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
           <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>
@@ -439,7 +436,6 @@ export function MentorEventsSection() {
         {/* Events content */}
         <div className="relative">
           {/* Blur overlay for non-auth */}
-          
 
           {/* Cards View */}
           {viewMode === 'cards' && (
@@ -479,57 +475,55 @@ export function MentorEventsSection() {
                           }}
                           className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 ease-out hover:shadow-[4px_4px_0_#023047] hover:ring-[#023047]"
                         >
-
-                          <div >
+                          <div>
                             <div onClick={() => setSelectedEvent(event)}>
-                          <div className="relative h-48 overflow-hidden">
-                            <Image
-                              src={event.image}
-                              alt={event.title}
-                              fill
-                              sizes="(max-width: 768px) 100vw, 33vw"
-                              className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                              unoptimized
-                            />
-                          </div>
-                          <div className="flex flex-col gap-2 border-t border-zinc-200 px-5 pt-4 pb-3">
-                            <span
-                              className="self-start px-2 py-0.5 text-[0.6rem] font-bold tracking-[0.18em] uppercase"
-                              style={{
-                                color: c.fg,
-                                backgroundColor: c.bg,
-                                outline: `1px solid ${c.border}`,
-                              }}
-                            >
-                              {event.category}
-                            </span>
-                            <h3 className="text-sm leading-snug font-semibold tracking-tight text-zinc-900">
-                              {event.title}
-                            </h3>
-                            <p className="text-xs text-zinc-400">{event.artist}</p>
-                            <div className="flex items-center gap-2">
-                              <CalendarDays size={11} className="shrink-0 text-zinc-400" />
-                              <span className="text-xs text-zinc-500">{event.date}</span>
+                              <div className="relative h-48 overflow-hidden">
+                                <Image
+                                  src={event.image}
+                                  alt={event.title}
+                                  fill
+                                  sizes="(max-width: 768px) 100vw, 33vw"
+                                  className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                                  unoptimized
+                                />
+                              </div>
+                              <div className="flex flex-col gap-2 border-t border-zinc-200 px-5 pt-4 pb-3">
+                                <span
+                                  className="self-start px-2 py-0.5 text-[0.6rem] font-bold tracking-[0.18em] uppercase"
+                                  style={{
+                                    color: c.fg,
+                                    backgroundColor: c.bg,
+                                    outline: `1px solid ${c.border}`,
+                                  }}
+                                >
+                                  {event.category}
+                                </span>
+                                <h3 className="text-sm leading-snug font-semibold tracking-tight text-zinc-900">
+                                  {event.title}
+                                </h3>
+                                <p className="text-xs text-zinc-400">{event.artist}</p>
+                                <div className="flex items-center gap-2">
+                                  <CalendarDays size={11} className="shrink-0 text-zinc-400" />
+                                  <span className="text-xs text-zinc-500">{event.date}</span>
+                                </div>
+                                <div className="flex items-center gap-2">
+                                  <MapPin size={11} className="shrink-0 text-zinc-400" />
+                                  <span className="text-xs text-zinc-500">{event.location}</span>
+                                </div>
+                              </div>
                             </div>
-                            <div className="flex items-center gap-2">
-                              <MapPin size={11} className="shrink-0 text-zinc-400" />
-                              <span className="text-xs text-zinc-500">{event.location}</span>
+                            <div className="mt-auto flex items-center justify-between border-t border-zinc-200 px-5 py-3">
+                              <span className="text-sm font-bold text-zinc-900">{event.price}</span>
+                              {isOwn && (
+                                <button
+                                  type="button"
+                                  onClick={() => dbEvent && openEdit(dbEvent)}
+                                  className="text-[0.55rem] font-bold tracking-widest text-zinc-400 uppercase underline underline-offset-2 transition hover:text-[#023047]"
+                                >
+                                  Editar
+                                </button>
+                              )}
                             </div>
-                          </div>
-                          </div>
-                          <div className="mt-auto flex items-center justify-between border-t border-zinc-200 px-5 py-3">
-                            <span className="text-sm font-bold text-zinc-900">{event.price}</span>
-                            {isOwn && (
-                              <button
-                                type="button"
-                                onClick={() => dbEvent && openEdit(dbEvent)}
-                                className="text-[0.55rem] font-bold tracking-widest text-zinc-400 uppercase underline underline-offset-2 transition hover:text-[#023047]"
-                              >
-                                Editar
-                              </button>
-                            )}
-                          </div>
-
                           </div>
                         </motion.article>
                       )

@@ -13,13 +13,21 @@ export async function POST(req: Request) {
     })
 
     if (!exists) {
+      const base = email.split('@')[0]
+      let username = base
+      let suffix = 1
+      while (await prisma.usuario.findUnique({ where: { username } })) {
+        username = `${base}${suffix}`
+        suffix++
+      }
+
       await prisma.usuario.create({
         data: {
           supabaseId: id,
 
           email,
 
-          username: email.split('@')[0],
+          username,
 
           firstName: fullName ?? '',
 

@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@base-ui/react": "^1.4.0",
+    "@dicebear/collection": "^9.4.2",
+    "@dicebear/core": "^9.4.2",
     "@prisma/client": "^6.19.3",
     "@stripe/stripe-js": "^9.2.0",
     "@supabase/ssr": "^0.10.3",
@@ -20,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "cloudinary": "^2.10.0",
     "clsx": "^2.1.1",
+    "lottie-react": "^2.4.1",
     "lucide-react": "^1.8.0",
     "motion": "^12.38.0",
     "next": "16.2.4",

@@ -1,17 +1,13 @@
-import { prisma } from "@/lib/prisma";
+import { prisma } from '@/lib/prisma'
 
 export async function PATCH(req: Request) {
   try {
-    const body = await req.json();
-    console.log(body)
+    const body = await req.json()
 
-    const { usuarioId, avatar, banner } = body;
+    const { usuarioId, avatar, banner, artisticName, realName, bio, tags, interests } = body
 
     if (!usuarioId) {
-      return Response.json(
-        { error: "usuarioId required" },
-        { status: 400 }
-      );
+      return Response.json({ error: 'usuarioId required' }, { status: 400 })
     }
 
     const updated = await prisma.perfil.update({
@@ -19,22 +15,23 @@ export async function PATCH(req: Request) {
         usuarioId,
       },
       data: {
-        ...(avatar && { avatar }),
-        ...(banner && { banner }),
+        ...(avatar !== undefined && { avatar }),
+        ...(banner !== undefined && { banner }),
+        ...(artisticName !== undefined && { artisticName }),
+        ...(realName !== undefined && { realName }),
+        ...(bio !== undefined && { bio }),
+        ...(tags !== undefined && { tags }),
+        ...(interests !== undefined && { interests }),
       },
-    });
+    })
 
     return Response.json({
       ok: true,
       perfil: updated,
-    });
-
+    })
   } catch (error) {
-    console.error(error);
+    console.error(error)
 
-    return Response.json(
-      { error: "Update failed" },
-      { status: 500 }
-    );
+    return Response.json({ error: 'Update failed' }, { status: 500 })
   }
 }

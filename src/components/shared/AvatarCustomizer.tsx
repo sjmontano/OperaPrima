@@ -74,8 +74,14 @@ const LORELEI_PARTS: PartDef[] = [
     key: 'mouthVariant',
     label: 'Boca',
     variants: [
-      ...Array.from({ length: 18 }, (_, i) => ({ value: `happy${i + 1}`, label: `H${i + 1}` })),
-      ...Array.from({ length: 9 }, (_, i) => ({ value: `sad${i + 1}`, label: `S${i + 1}` })),
+      ...Array.from({ length: 18 }, (_, i) => ({
+        value: `happy${String(i + 1).padStart(2, '0')}`,
+        label: `H${i + 1}`,
+      })),
+      ...Array.from({ length: 9 }, (_, i) => ({
+        value: `sad${String(i + 1).padStart(2, '0')}`,
+        label: `S${i + 1}`,
+      })),
     ],
   },
   {
@@ -363,8 +369,23 @@ export function AvatarCustomizer({
   const config: AvatarConfig = useMemo(() => ({ style, seed, ...options }), [style, seed, options])
   const previewUrl = useMemo(() => buildUrl(config), [config])
 
+  const OPTIONAL_COMPONENTS = new Set([
+    'glasses',
+    'beard',
+    'earrings',
+    'freckles',
+    'hairAccessories',
+    'accessories',
+    'facialHair',
+    'mask',
+  ])
+
   function updateOption(key: string, value: string) {
+    const base = key.replace(/Variant$/, '')
     const next = { ...options, [key]: value }
+    if (OPTIONAL_COMPONENTS.has(base)) {
+      next[`${base}Probability`] = '100'
+    }
     setOptions(next)
     onChange({ style, seed, ...next })
   }
@@ -420,33 +441,6 @@ export function AvatarCustomizer({
               className="size-full"
               unoptimized
             />
-          </div>
-
-          <div className="flex gap-1.5">
-            <button
-              type="button"
-              onClick={() => handleStyleChange('lorelei')}
-              className="border-2 px-3 py-1 text-[0.55rem] font-bold tracking-wider uppercase transition-all"
-              style={{
-                borderColor: style === 'lorelei' ? '#023047' : '#E4E4E7',
-                backgroundColor: style === 'lorelei' ? '#023047' : 'transparent',
-                color: style === 'lorelei' ? '#fff' : '#353535',
-              }}
-            >
-              Lorelei
-            </button>
-            <button
-              type="button"
-              onClick={() => handleStyleChange('open-peeps')}
-              className="border-2 px-3 py-1 text-[0.55rem] font-bold tracking-wider uppercase transition-all"
-              style={{
-                borderColor: style === 'open-peeps' ? '#023047' : '#E4E4E7',
-                backgroundColor: style === 'open-peeps' ? '#023047' : 'transparent',
-                color: style === 'open-peeps' ? '#fff' : '#353535',
-              }}
-            >
-              Open Peeps
-            </button>
           </div>
         </div>
 
@@ -523,6 +517,41 @@ export function AvatarCustomizer({
               </div>
               {/* Accordion - scrollable independently on desktop */}
               <div className="flex flex-col gap-2 lg:order-1 lg:max-h-[420px] lg:flex-1 lg:overflow-y-auto">
+                {/* Style selector */}
+                <div className="border border-[#E4E4E7]">
+                  <p
+                    className="px-3 py-2 text-[0.6rem] font-bold tracking-wider uppercase"
+                    style={{ color: '#353535' }}
+                  >
+                    Estilo
+                  </p>
+                  <div className="flex gap-1.5 border-t border-[#E4E4E7] px-3 py-2">
+                    <button
+                      type="button"
+                      onClick={() => handleStyleChange('lorelei')}
+                      className="border-2 px-3 py-1 text-[0.55rem] font-bold tracking-wider uppercase transition-all"
+                      style={{
+                        borderColor: style === 'lorelei' ? '#023047' : '#E4E4E7',
+                        backgroundColor: style === 'lorelei' ? '#023047' : 'transparent',
+                        color: style === 'lorelei' ? '#fff' : '#353535',
+                      }}
+                    >
+                      Lorelei
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleStyleChange('open-peeps')}
+                      className="border-2 px-3 py-1 text-[0.55rem] font-bold tracking-wider uppercase transition-all"
+                      style={{
+                        borderColor: style === 'open-peeps' ? '#023047' : '#E4E4E7',
+                        backgroundColor: style === 'open-peeps' ? '#023047' : 'transparent',
+                        color: style === 'open-peeps' ? '#fff' : '#353535',
+                      }}
+                    >
+                      Open Peeps
+                    </button>
+                  </div>
+                </div>
                 {parts.map((part) => {
                   const isOpen = expandedSection === part.key
                   const currentValue = options[part.key]

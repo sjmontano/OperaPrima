@@ -37,6 +37,8 @@ export function Navbar() {
   const authModal = useAuthModal()
   const { currentUser, logout } = authModal
 
+  const userAvatarUrl = (currentUser as unknown as { perfil?: { avatar?: string } })?.perfil?.avatar
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > NAVBAR_CONFIG.scrollThreshold)
     window.addEventListener('scroll', onScroll, { passive: true })
@@ -131,14 +133,25 @@ export function Navbar() {
                       : 'border-zinc-300 text-zinc-800 hover:border-zinc-900 hover:shadow-[3px_3px_0_#111]'
                   }`}
                 >
-                  {/* Avatar initials */}
-                  <span
-                    className="flex h-6 w-6 shrink-0 items-center justify-center text-[10px] font-bold text-white"
-                    style={{ background: '#023047' }}
-                  >
-                    {currentUser.firstName[0]}
-                    {currentUser.lastName[0]}
-                  </span>
+                  {/* Avatar */}
+                  {userAvatarUrl ? (
+                    <Image
+                      src={userAvatarUrl}
+                      alt="Avatar"
+                      width={24}
+                      height={24}
+                      className="size-6 shrink-0 rounded-full object-cover"
+                      unoptimized
+                    />
+                  ) : (
+                    <span
+                      className="flex h-6 w-6 shrink-0 items-center justify-center text-[10px] font-bold text-white"
+                      style={{ background: '#023047' }}
+                    >
+                      {currentUser.firstName[0]}
+                      {currentUser.lastName[0]}
+                    </span>
+                  )}
                   <span className="max-w-30 truncate text-xs font-bold tracking-widest uppercase">
                     {currentUser.firstName}
                   </span>
@@ -280,13 +293,24 @@ export function Navbar() {
                 {currentUser ? (
                   <>
                     <div className="flex items-center gap-2 px-3 py-2">
-                      <span
-                        className="flex h-7 w-7 shrink-0 items-center justify-center text-[11px] font-bold text-white"
-                        style={{ background: '#023047' }}
-                      >
-                        {currentUser.firstName[0]}
-                        {currentUser.lastName[0]}
-                      </span>
+                      {userAvatarUrl ? (
+                        <Image
+                          src={userAvatarUrl}
+                          alt="Avatar"
+                          width={28}
+                          height={28}
+                          className="size-7 shrink-0 rounded-full object-cover"
+                          unoptimized
+                        />
+                      ) : (
+                        <span
+                          className="flex h-7 w-7 shrink-0 items-center justify-center text-[11px] font-bold text-white"
+                          style={{ background: '#023047' }}
+                        >
+                          {currentUser.firstName[0]}
+                          {currentUser.lastName[0]}
+                        </span>
+                      )}
                       <div className="min-w-0">
                         <p
                           className={`truncate text-xs font-bold ${scrolled ? 'text-white' : 'text-zinc-900'}`}

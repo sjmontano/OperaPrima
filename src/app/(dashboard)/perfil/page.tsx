@@ -1,9 +1,12 @@
 'use client'
 import { Footer } from '@/components/layout/Footer'
+import { Navbar } from '@/components/layout/Navbar'
+import { AdBar } from '@/components/layout/AdBar'
 import { GalleryMasonry, type GalleryItem } from '@/components/profile/GalleryMasonry'
 import { MemberGrid, type Member } from '@/components/profile/MemberGrid'
 import { ProfileHero } from '@/components/profile/ProfileHero'
 import { createClient } from '@/lib/supabaseClient'
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MyTickets from '@/components/profile/MyTickets'
@@ -239,165 +242,181 @@ export default function PerfilPage() {
   if (!user) return <div>Cargando perfil...</div>
 
   return (
-    <main
-      style={{
-        minHeight: '100vh',
-        background: 'oklch(0.98 0.005 350)',
-        fontFamily: 'var(--font-poppins)',
-      }}
-    >
-      {/* ── HERO ── */}
-      <ProfileHero user={user} />
-
-      {/* ── BIO + TAGS ── */}
-      <section
-        className="mx-auto px-6 py-10"
+    <>
+      <AdBar />
+      <Navbar />
+      <main
         style={{
-          maxWidth: '1024px',
-          borderBottom: '1px solid oklch(0.88 0.010 350)',
+          minHeight: '100vh',
+          background: 'oklch(0.98 0.005 350)',
+          fontFamily: 'var(--font-poppins)',
         }}
       >
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-16">
-          {/* Bio (2/3) */}
-          <div className="lg:col-span-2">
-            <p
-              className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
-              style={{ color: 'oklch(0.40 0.008 350)' }}
-            >
-              Sobre @{user.username}
-            </p>
-            <p
-              style={{
-                color: 'oklch(0.28 0.008 350)',
-                lineHeight: 1.7,
-                fontSize: '0.9375rem',
-                maxWidth: '58ch',
-              }}
-            >
-              {user.bio}
-            </p>
+        {/* ── HERO ── */}
+        <ProfileHero user={user} />
 
-            {/* Interests */}
-            <div className="mt-8">
-              <p
-                className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
-                style={{ color: 'oklch(0.40 0.008 350)' }}
-              >
-                Intereses creativos
-              </p>
-              <div className="flex flex-wrap gap-2">
-                {user.interests.map((interest, idx) => {
-                  const c = INTEREST_COLORS[idx % INTEREST_COLORS.length]
-                  return (
-                    <span
-                      key={interest}
-                      className="border-2 border-[#353535] px-3 py-1 text-xs font-bold"
-                      style={{ background: c.bg, color: c.text }}
+        {/* ── BORDER CONTAINER ── */}
+        <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+          {/* ── BIO + TAGS ── */}
+          <section className="border-b border-zinc-200 px-8 py-10">
+            <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+              <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-16">
+                {/* Bio (2/3) */}
+                <div className="lg:col-span-2">
+                  <div className="mb-3 flex items-center gap-3">
+                    <p
+                      className="text-xs font-bold tracking-[0.18em] uppercase"
+                      style={{ color: 'oklch(0.40 0.008 350)' }}
                     >
-                      {interest}
-                    </span>
-                  )
-                })}
+                      Sobre @{user.username}
+                    </p>
+                    <Link
+                      href="/perfil/editar"
+                      className="border-2 border-[#023047] px-2.5 py-1 text-[0.5rem] font-bold tracking-widest text-[#023047] uppercase transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-[#023047] hover:text-white hover:shadow-[3px_3px_0_#353535]"
+                    >
+                      Editar perfil
+                    </Link>
+                  </div>
+                  <p
+                    style={{
+                      color: 'oklch(0.28 0.008 350)',
+                      lineHeight: 1.7,
+                      fontSize: '0.9375rem',
+                      maxWidth: '58ch',
+                    }}
+                  >
+                    {user.bio}
+                  </p>
+
+                  {user.interests.length > 0 && (
+                    <div className="mt-8">
+                      <p
+                        className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
+                        style={{ color: 'oklch(0.40 0.008 350)' }}
+                      >
+                        Intereses creativos
+                      </p>
+                      <div className="flex flex-wrap gap-2">
+                        {user.interests.map((interest, idx) => {
+                          const c = INTEREST_COLORS[idx % INTEREST_COLORS.length]
+                          return (
+                            <span
+                              key={interest}
+                              className="border-2 border-[#353535] px-3 py-1 text-xs font-bold"
+                              style={{ background: c.bg, color: c.text }}
+                            >
+                              {interest}
+                            </span>
+                          )
+                        })}
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                {/* Tags (1/3) */}
+                {user.tags.length > 0 && (
+                  <div>
+                    <p
+                      className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
+                      style={{ color: 'oklch(0.40 0.008 350)' }}
+                    >
+                      Tags
+                    </p>
+                    <ul className="space-y-1.5">
+                      {user.tags.map((tag) => (
+                        <li key={tag}>
+                          <a
+                            href="#"
+                            className="text-base font-semibold transition-colors hover:text-[#c8405f] hover:underline"
+                            style={{ color: '#023047' }}
+                          >
+                            #{tag}
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
               </div>
             </div>
-          </div>
+          </section>
 
-          {/* Tags (1/3) */}
-          <div>
-            <p
-              className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
-              style={{ color: 'oklch(0.40 0.008 350)' }}
-            >
-              Tags
-            </p>
-            <ul className="space-y-1.5">
-              {user.tags.map((tag) => (
-                <li key={tag}>
-                  <a
-                    href="#"
-                    className="text-base font-semibold transition-colors hover:text-[#c8405f] hover:underline"
-                    style={{ color: '#023047' }}
-                  >
-                    #{tag}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </section>
+          {/* ── GALERÍA ── */}
+          <section className="border-b border-zinc-200 px-8 py-10">
+            <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+              <div className="mb-6 flex items-baseline gap-3">
+                <h2
+                  className="text-lg font-bold tracking-wide uppercase"
+                  style={{ color: '#353535' }}
+                >
+                  Galería
+                </h2>
+                <span className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  {GALLERY_ITEMS.length} obras
+                </span>
+              </div>
+              <GalleryMasonry items={GALLERY_ITEMS} showUpload />
+            </div>
+          </section>
 
-      {/* ── GALERÍA ── */}
-      <section style={{ borderBottom: '1px solid oklch(0.88 0.010 350)', paddingBottom: '2.5rem' }}>
-        <div className="mx-auto px-6 pt-10 pb-6" style={{ maxWidth: '1024px' }}>
-          <div className="mb-6 flex items-baseline gap-3">
-            <h2 className="text-lg font-bold tracking-wide uppercase" style={{ color: '#353535' }}>
-              Galería
-            </h2>
-            <span className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
-              {GALLERY_ITEMS.length} obras
-            </span>
-          </div>
-        </div>
-        <div className="mx-auto px-6" style={{ maxWidth: '1024px' }}>
-          <GalleryMasonry items={GALLERY_ITEMS} showUpload />
-        </div>
-      </section>
+          {/* ── SÍGUEME ── */}
+          {user.socials.length > 0 && (
+            <section className="border-b border-zinc-200 px-8 py-10">
+              <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+                <p
+                  className="mb-6 text-xs font-bold tracking-[0.18em] uppercase"
+                  style={{ color: 'oklch(0.40 0.008 350)' }}
+                >
+                  Sígueme
+                </p>
+                <div className="flex flex-wrap gap-6">
+                  {user.socials.map((s) => (
+                    <a
+                      key={s.label}
+                      href={s.href}
+                      className="group flex items-baseline gap-2 border-b-2 border-[#353535] pb-0.5 transition-colors duration-150 hover:border-[#023047]"
+                    >
+                      <span
+                        className="text-xs font-medium tracking-widest uppercase"
+                        style={{ color: 'oklch(0.52 0.010 350)' }}
+                      >
+                        {s.label}
+                      </span>
+                      <span
+                        className="text-base font-bold transition-colors duration-150 group-hover:text-[#023047]"
+                        style={{ color: '#353535' }}
+                      >
+                        {s.handle}
+                      </span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            </section>
+          )}
 
-      {/* ── SÍGUEME ── */}
-      <section
-        className="mx-auto px-6 py-10"
-        style={{
-          maxWidth: '1024px',
-          borderBottom: '1px solid oklch(0.88 0.010 350)',
-        }}
-      >
-        <p
-          className="mb-6 text-xs font-bold tracking-[0.18em] uppercase"
-          style={{ color: 'oklch(0.40 0.008 350)' }}
-        >
-          Sígueme
-        </p>
-        <div className="flex flex-wrap gap-6">
-          {user.socials.map((s) => (
-            <a
-              key={s.label}
-              href={s.href}
-              className="group flex items-baseline gap-2 border-b-2 border-[#353535] pb-0.5 transition-colors duration-150 hover:border-[#023047]"
-            >
-              <span
-                className="text-xs font-medium tracking-widest uppercase"
-                style={{ color: 'oklch(0.52 0.010 350)' }}
-              >
-                {s.label}
-              </span>
-              <span
-                className="text-base font-bold transition-colors duration-150 group-hover:text-[#023047]"
-                style={{ color: '#353535' }}
-              >
-                {s.handle}
-              </span>
-            </a>
-          ))}
+          {/* ── COMUNIDAD ── */}
+          <section className="px-8 py-10">
+            <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+              <div className="mb-6">
+                <h2
+                  className="text-lg font-bold tracking-wide uppercase"
+                  style={{ color: '#353535' }}
+                >
+                  Descubre a otros miembros
+                </h2>
+                <p className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  Artistas de tu comunidad — filtra por disciplina
+                </p>
+              </div>
+              <MemberGrid members={COMMUNITY_MEMBERS} disciplines={DISCIPLINES} />
+            </div>
+          </section>
         </div>
-      </section>
 
-      {/* ── COMUNIDAD ── */}
-      <section style={{ borderBottom: '1px solid oklch(0.88 0.010 350)' }}>
-        <div className="mx-auto px-6 py-10" style={{ maxWidth: '1024px' }}>
-          <div className="mb-6">
-            <h2 className="text-lg font-bold tracking-wide uppercase" style={{ color: '#353535' }}>
-              Descubre a otros miembros
-            </h2>
-            <p className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
-              Artistas de tu comunidad — filtra por disciplina
-            </p>
-          </div>
-          <MemberGrid members={COMMUNITY_MEMBERS} disciplines={DISCIPLINES} />
-        </div>
-      </section>
-
-      <Footer />
-    </main>
+        <Footer />
+      </main>
+    </>
   )
 }

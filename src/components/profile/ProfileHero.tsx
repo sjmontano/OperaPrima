@@ -160,7 +160,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
           <div className="min-w-0 flex-1">
             <p
               className="mb-4 text-xs font-bold tracking-[0.25em] uppercase"
-              style={{ color: '#023047' }}
+              style={{ color: '#F65B7F' }}
             >
               Perfil Artístico
             </p>
@@ -188,7 +188,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
             >
               {user.realName}
             </p>
-            <p className="text-sm font-semibold" style={{ color: '#023047' }}>
+            <p className="text-sm font-semibold" style={{ color: '#F65B7F' }}>
               @{user.username}
             </p>
           </div>
@@ -227,7 +227,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
                 <Camera size={22} color="#8ECAE6" strokeWidth={2} />
                 <span
                   className="text-[9px] font-bold tracking-[0.2em] uppercase"
-                  style={{ color: '#023047' }}
+                  style={{ color: '#FAFAF9' }}
                 >
                   Cambiar foto
                 </span>

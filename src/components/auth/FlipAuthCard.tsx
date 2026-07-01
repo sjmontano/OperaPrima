@@ -378,7 +378,29 @@ export function FlipAuthCard({
         throw new Error(data.error)
       }
 
-      setRegSuccess(true)
+      // Auto-login after registration so onboarding triggers immediately
+      localStorage.setItem('justRegistered', 'true')
+      const supabase = createClient()
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email: s1Email.trim().toLowerCase(),
+        password: s1Password,
+      })
+      if (signInError) {
+        // Fallback: show success screen — user clicks "Iniciar sesión" manually
+        setRegSuccess(true)
+      } else {
+        // Fetch user data for global state + redirect to onboarding
+        const meRes = await fetch('/api/auth/me', {
+          headers: {
+            Authorization: `Bearer ${(await supabase.auth.getSession()).data.session?.access_token ?? ''}`,
+          },
+        })
+        if (meRes.ok) {
+          const meData = await meRes.json()
+          onLoginSuccess?.(meData.usuario)
+        }
+        window.location.href = '/onboarding'
+      }
     } catch {
       setS2Errors({ general: 'Ocurrió un error. Intenta de nuevo.' })
     } finally {
@@ -416,6 +438,12 @@ export function FlipAuthCard({
       const usuario: LocalUser = data.usuario
 
       onLoginSuccess?.(usuario)
+
+      // Redirect to onboarding if user just registered
+      if (localStorage.getItem('justRegistered')) {
+        localStorage.removeItem('justRegistered')
+        window.location.href = '/onboarding'
+      }
     } catch (error) {
       setLoginError(error instanceof Error ? error.message : 'Error al iniciar sesión')
     } finally {

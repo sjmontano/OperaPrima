@@ -793,6 +793,8 @@
   font-weight: 500;
   color: oklch(0.6 0 0);
   transition: color 0.2s ease;
+  line-height: 1;
+  min-height: 1em;
 }
 
 .flip-auth-req-item.met {
@@ -800,11 +802,12 @@
 }
 
 .flip-auth-req-icon {
-  font-size: 0.65rem;
+  font-size: 0.58rem;
   font-weight: 700;
-  width: 12px;
+  width: 14px;
   flex-shrink: 0;
   text-align: center;
+  line-height: 1;
 }
 
 .flip-auth-req-item.met .flip-auth-req-icon {

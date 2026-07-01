@@ -88,6 +88,7 @@ export async function POST(req: Request) {
           usuarioId,
           eventoId,
           pagoId: pago.id,
+          qrCode: crypto.randomUUID(),
         },
       })
     }

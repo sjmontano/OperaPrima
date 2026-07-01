@@ -163,6 +163,10 @@ model Entrada {
   pagoId     String?
 
   qrCode     String?
+  
+  usada      Boolean   @default(false)
+
+  usadaEn    DateTime?
 
   usuario    Usuario @relation(fields: [usuarioId], references: [id])
 

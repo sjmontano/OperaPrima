@@ -14,6 +14,7 @@ import {
 } from '../comunidad/ComunidadCreateEventModal'
 import type { Session } from '@supabase/supabase-js'
 import { EventModal } from './EventModal'
+import MyTickets from '../profile/MyTickets'
 
 interface DbEvent {
   id: string
@@ -542,6 +543,20 @@ export function MentorEventsSection() {
           )}
         </div>
       </div>
+
+      {/* ── ENTRADAS HISTORIAL ── */}
+
+      {currentUser && (
+        <section
+          style={{
+            borderBottom: '1px solid oklch(0.88 0.010 350)',
+          }}
+        >
+          <div className="mx-auto px-6 py-10" style={{ maxWidth: '1024px' }}>
+            <MyTickets />
+          </div>
+        </section>
+      )}
     </section>
   )
 }

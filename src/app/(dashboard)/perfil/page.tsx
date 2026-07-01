@@ -6,6 +6,7 @@ import { ProfileHero } from '@/components/profile/ProfileHero'
 import { createClient } from '@/lib/supabaseClient'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
+import MyTickets from '@/components/profile/MyTickets'
 
 interface UsuarioApi {
   id?: string

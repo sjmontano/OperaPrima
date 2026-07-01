@@ -17,6 +17,7 @@ interface AuthModalContextValue {
   currentUser: LocalUser | null
   login: (user: LocalUser) => void
   logout: () => void
+  refreshUser: () => Promise<void>
 }
 
 // -- Context --
@@ -37,10 +38,9 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(null)
 
   useEffect(() => {
-  const supabase = createClient()
+    const supabase = createClient()
 
-  const { data: listener } = supabase.auth.onAuthStateChange(
-    async (_event, session) => {
+    const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
         setCurrentUser(null)
         return
@@ -57,13 +57,12 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json()
 
       setCurrentUser(data.usuario)
-    }
-  )
+    })
 
-  return () => {
-    listener.subscription.unsubscribe()
-  }
-}, [])
+    return () => {
+      listener.subscription.unsubscribe()
+    }
+  }, [])
 
   const open = useCallback((mode: AuthMode = 'login') => {
     setState({ isOpen: true, mode })
@@ -74,20 +73,34 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const login = useCallback((user: LocalUser) => {
-  setCurrentUser(user);
+    setCurrentUser(user)
 
-  localStorage.setItem(
-    "user",
-    JSON.stringify(user)
-  );
-}, []);
+    localStorage.setItem('user', JSON.stringify(user))
+  }, [])
 
   const logout = useCallback(async () => {
-  const supabase = createClient()
-  await supabase.auth.signOut()
+    const supabase = createClient()
+    await supabase.auth.signOut()
 
-  setCurrentUser(null)
-}, [])
+    setCurrentUser(null)
+  }, [])
+
+  const refreshUser = useCallback(async () => {
+    const supabase = createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return
+
+    const response = await fetch('/api/auth/me', {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+    if (!response.ok) return
+
+    const data = await response.json()
+    setCurrentUser(data.usuario)
+    localStorage.setItem('user', JSON.stringify(data.usuario))
+  }, [])
 
   // Scroll lock
   useEffect(() => {
@@ -107,14 +120,10 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     return () => document.removeEventListener('keydown', handler)
   }, [state.isOpen, close])
 
-
-  
-
-
-
-
   return (
-    <AuthModalContext.Provider value={{ ...state, open, close, currentUser, login, logout }}>
+    <AuthModalContext.Provider
+      value={{ ...state, open, close, currentUser, login, logout, refreshUser }}
+    >
       {children}
 
       <AnimatePresence>

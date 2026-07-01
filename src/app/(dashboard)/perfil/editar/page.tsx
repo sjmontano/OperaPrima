@@ -14,6 +14,7 @@ import type { AvatarConfig, AvatarStyle } from '@/components/shared/AvatarCustom
 import { ArrowLeft, Check, Loader, Plus, X, Upload, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 
 const INTEREST_OPTIONS = [
   'Música',
@@ -88,6 +89,7 @@ export default function EditarPerfilPage() {
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const { refreshUser } = useAuthModal()
 
   useEffect(() => {
     async function loadProfile() {
@@ -324,6 +326,7 @@ export default function EditarPerfilPage() {
       }
 
       setSaved(true)
+      refreshUser()
       setTimeout(() => setSaved(false), 3000)
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : 'Error al guardar')

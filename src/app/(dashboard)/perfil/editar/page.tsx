@@ -10,8 +10,8 @@ import {
   AvatarCustomizer,
   buildUrl as buildDicebearUrl,
 } from '@/components/shared/AvatarCustomizer'
-import type { AvatarConfig } from '@/components/shared/AvatarCustomizer'
-import { ArrowLeft, Check, Plus, X, Upload, Sparkles } from 'lucide-react'
+import type { AvatarConfig, AvatarStyle } from '@/components/shared/AvatarCustomizer'
+import { ArrowLeft, Check, Loader, Plus, X, Upload, Sparkles } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
 
@@ -87,6 +87,7 @@ export default function EditarPerfilPage() {
   const [useDicebear, setUseDicebear] = useState(true)
   const [uploadingAvatar, setUploadingAvatar] = useState(false)
   const [uploadingBanner, setUploadingBanner] = useState(false)
+  const [loaded, setLoaded] = useState(false)
 
   useEffect(() => {
     async function loadProfile() {
@@ -113,7 +114,24 @@ export default function EditarPerfilPage() {
         setUsuarioId(u.id)
         setPerfilId(u.perfil?.id ?? null)
         setUsername(u.username)
-        setAvatarConfig((prev) => ({ ...prev, seed: u.username }))
+        const savedAvatar = u.perfil?.avatar
+        if (savedAvatar?.includes('dicebear.com')) {
+          try {
+            const parsedUrl = new URL(savedAvatar)
+            const style = (parsedUrl.pathname.match(/\/(\w+(?:-\w+)*)\/svg/)?.[1] ??
+              'lorelei') as AvatarStyle
+            const seed = parsedUrl.searchParams.get('seed') || u.username
+            const options: Record<string, string> = {}
+            parsedUrl.searchParams.forEach((val, key) => {
+              if (key !== 'seed') options[key] = val
+            })
+            setAvatarConfig({ style, seed, ...options })
+          } catch {
+            setAvatarConfig((prev) => ({ ...prev, seed: u.username }))
+          }
+        } else {
+          setAvatarConfig((prev) => ({ ...prev, seed: u.username }))
+        }
         setUseDicebear(!u.perfil?.avatar || u.perfil.avatar.includes('dicebear.com'))
 
         setForm({
@@ -133,6 +151,7 @@ export default function EditarPerfilPage() {
             })
           ),
         })
+        setLoaded(true)
       } catch {
         router.replace('/auth')
       }
@@ -413,7 +432,7 @@ export default function EditarPerfilPage() {
                 </div>
               </div>
 
-              {useDicebear ? (
+              {useDicebear && loaded ? (
                 <div className="mt-4">
                   <AvatarCustomizer
                     initialStyle={avatarConfig.style}
@@ -422,6 +441,17 @@ export default function EditarPerfilPage() {
                     onChange={handleAvatarCustomizerChange}
                     size={160}
                   />
+                </div>
+              ) : useDicebear ? (
+                <div className="mt-4 flex items-center justify-center py-8">
+                  <button
+                    type="button"
+                    disabled
+                    className="inline-flex cursor-not-allowed items-center gap-2 border-2 border-zinc-200 bg-zinc-100 px-6 py-3 text-xs font-bold tracking-widest text-zinc-400 uppercase"
+                  >
+                    <Loader size={14} className="animate-spin" />
+                    Cargando
+                  </button>
                 </div>
               ) : (
                 <div className="mt-4 flex items-center gap-6">

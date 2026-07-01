@@ -1,4 +1,19 @@
+'use client'
+
+import { useEffect } from 'react'
+import { useRouter } from 'next/navigation'
+
 export default function PaymentCancelPage() {
+  const router = useRouter()
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      router.push('/')
+    }, 3000)
+
+    return () => clearTimeout(timer)
+  }, [router])
+
   return (
     <main className="flex min-h-screen items-center justify-center">
       <div className="text-center">

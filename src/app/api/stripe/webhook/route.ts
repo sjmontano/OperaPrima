@@ -11,7 +11,7 @@ export async function POST(req: Request) {
   const signature = (await headers()).get('stripe-signature')
 
   if (!signature) {
-    return new NextResponse('No signature', {
+    return new NextResponse('Firma inválida', {
       status: 400,
     })
   }
@@ -21,14 +21,20 @@ export async function POST(req: Request) {
   try {
     event = stripe.webhooks.constructEvent(body, signature, process.env.STRIPE_WEBHOOK_SECRET!)
   } catch (err) {
-    console.error(err)
-
-    return new NextResponse('Invalid signature', {
+    return new NextResponse('Webhook inválido', {
       status: 400,
     })
   }
 
-  return NextResponse.json({
-    received: true,
-  })
+  if (event.type !== 'checkout.session.completed') {
+    return NextResponse.json({ received: true })
+  }
+
+  const session = event.data.object as Stripe.Checkout.Session
+
+  console.log(session.id)
+  console.log(session.payment_intent)
+  console.log(session.metadata)
+
+  return NextResponse.json({ received: true })
 }

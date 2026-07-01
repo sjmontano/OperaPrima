@@ -41,6 +41,7 @@ export async function POST(req: NextRequest) {
       mode: 'payment',
 
       payment_method_types: ['card'],
+      client_reference_id: usuario.id,
 
       line_items: [
         {
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
         usuarioId: usuario.id,
         eventoId: evento.id,
         cantidad: cantidad.toString(),
+        precio: evento.precio.toString(),
       },
     })
 

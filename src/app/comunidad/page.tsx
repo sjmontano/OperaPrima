@@ -1,3 +1,4 @@
+import { DbPageServer } from '@/components/shared/DbPageServer'
 import { ComunidadArtistsSection } from '@/components/comunidad/ComunidadArtistsSection'
 import { ComunidadEventsSection } from '@/components/comunidad/ComunidadEventsSection'
 import { ComunidadLandingSection } from '@/components/comunidad/ComunidadLandingSection'
@@ -13,14 +14,19 @@ export const metadata: Metadata = {
 
 export default function ComunidadPage() {
   return (
-    <>
-      <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
-        <ComunidadLandingSection />
-        <ComunidadEventsSection />
-        <ComunidadArtistsSection />
-      </main>
-      <Footer />
-    </>
+    <DbPageServer
+      slug="comunidad"
+      fallback={
+        <>
+          <Navbar />
+          <main className="flex flex-col bg-[#F0F8FF]">
+            <ComunidadLandingSection />
+            <ComunidadEventsSection />
+            <ComunidadArtistsSection />
+          </main>
+          <Footer />
+        </>
+      }
+    />
   )
 }

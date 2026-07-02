@@ -1,3 +1,4 @@
+import { DbPageServer } from '@/components/shared/DbPageServer'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { PartnersStrip } from '@/components/shared/PartnersStrip'
@@ -12,13 +13,18 @@ export const metadata: Metadata = {
 
 export default function SobrePage() {
   return (
-    <>
-      <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
-        <SobreLandingSection />
-        <PartnersStrip />
-      </main>
-      <Footer />
-    </>
+    <DbPageServer
+      slug="sobre"
+      fallback={
+        <>
+          <Navbar />
+          <main className="flex flex-col bg-[#F0F8FF]">
+            <SobreLandingSection />
+            <PartnersStrip />
+          </main>
+          <Footer />
+        </>
+      }
+    />
   )
 }

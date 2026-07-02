@@ -1,3 +1,4 @@
+import { DbPageServer } from '@/components/shared/DbPageServer'
 import { DisclaimerSection } from '@/components/proyectos/DisclaimerSection'
 import { ProyectosDestacados } from '@/components/proyectos/ProyectosDestacados'
 import { ProyectosLandingSection } from '@/components/proyectos/ProyectosLandingSection'
@@ -14,15 +15,20 @@ export const metadata: Metadata = {
 
 export default function ProyectosPage() {
   return (
-    <>
-      <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
-        <ProyectosLandingSection />
-        <ProyectosSection />
-        <ProyectosDestacados />
-        <DisclaimerSection />
-      </main>
-      <Footer />
-    </>
+    <DbPageServer
+      slug="tablero"
+      fallback={
+        <>
+          <Navbar />
+          <main className="flex flex-col bg-[#F0F8FF]">
+            <ProyectosLandingSection />
+            <ProyectosSection />
+            <ProyectosDestacados />
+            <DisclaimerSection />
+          </main>
+          <Footer />
+        </>
+      }
+    />
   )
 }

@@ -1,4 +1,5 @@
-﻿import { EventsSection } from '@/components/events/EventsSection'
+﻿import { DbPageServer } from '@/components/shared/DbPageServer'
+import { EventsSection } from '@/components/events/EventsSection'
 import { AdBar } from '@/components/layout/AdBar'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
@@ -10,32 +11,23 @@ import { WhatIsSection } from '@/components/shared/WhatIsSection'
 
 export default function Home() {
   return (
-    <>
-      {/* -- Ad bar -- */}
-      <AdBar />
-      <Navbar />
-      <main className="flex flex-col">
-        {/* -- Hero -- */}
-        <HeroCarousel />
-
-        {/* -- ¿Qué es Opera Prima? + Servicios -- */}
-        <WhatIsSection />
-
-        {/* -- Talleres y Eventos -- */}
-        <EventsSection />
-
-        {/* -- CTA Comunidad -- */}
-        <ComunidadCTA />
-
-        {/* -- Testimonios -- */}
-        <TestimonialsWall />
-
-        {/* -- Aliados -- */}
-        <PartnersStrip />
-
-        {/* -- Footer -- */}
-        <Footer />
-      </main>
-    </>
+    <DbPageServer
+      slug="inicio"
+      fallback={
+        <>
+          <AdBar />
+          <Navbar />
+          <main className="flex flex-col">
+            <HeroCarousel />
+            <WhatIsSection />
+            <EventsSection />
+            <ComunidadCTA />
+            <TestimonialsWall />
+            <PartnersStrip />
+            <Footer />
+          </main>
+        </>
+      }
+    />
   )
 }

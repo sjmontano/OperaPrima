@@ -1,3 +1,4 @@
+import { DbPageServer } from '@/components/shared/DbPageServer'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { MentoriasLandingSection } from '@/components/mentorias/MentoriasLandingSection'
@@ -11,12 +12,17 @@ export const metadata: Metadata = {
 
 export default function MentoriasPage() {
   return (
-    <>
-      <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
-        <MentoriasLandingSection />
-      </main>
-      <Footer />
-    </>
+    <DbPageServer
+      slug="mentorias"
+      fallback={
+        <>
+          <Navbar />
+          <main className="flex flex-col bg-[#F0F8FF]">
+            <MentoriasLandingSection />
+          </main>
+          <Footer />
+        </>
+      }
+    />
   )
 }

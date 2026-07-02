@@ -613,6 +613,8 @@ export function EventsSection() {
 
           categoria: data.categoria,
 
+          tipo: 'OPEAR_PRIMA',
+
           fecha: data.fecha,
 
           ubicacion: data.ubicacion,

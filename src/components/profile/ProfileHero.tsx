@@ -67,14 +67,23 @@ export function ProfileHero({ user }: ProfileHeroProps) {
         overflow: 'hidden',
       }}
     >
-      {/* Grid overlay — editorial texture */}
+      {/* Grid overlay — editorial texture with stronger vertical lines */}
       <div
         className="pointer-events-none absolute inset-0 z-0"
         style={{
           backgroundImage:
-            'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
+            'linear-gradient(90deg, #fff 1px, transparent 1px), linear-gradient(0deg, #fff 1px, transparent 1px)',
+          backgroundSize: '80px 80px, 80px 80px',
+          opacity: 0.06,
+        }}
+      />
+      {/* Vertical accent lines — denser, more visible */}
+      <div
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{
+          backgroundImage: 'linear-gradient(90deg, transparent 39px, #fff 1px, transparent 40px)',
           backgroundSize: '80px 80px',
-          opacity: 0.04,
+          opacity: 0.08,
         }}
       />
 
@@ -90,7 +99,7 @@ export function ProfileHero({ user }: ProfileHeroProps) {
             src={bannerSrc}
             alt="Banner de perfil"
             className="h-full w-full object-cover"
-            style={{ opacity: 0.65 }}
+            style={{ opacity: 0.82 }}
           />
         ) : (
           <div

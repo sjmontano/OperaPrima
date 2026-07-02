@@ -10,6 +10,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import MyTickets from '@/components/profile/MyTickets'
+import { SkeletonHero, SkeletonText, SkeletonCard } from '@/components/shared/Skeleton'
 
 interface UsuarioApi {
   id?: string
@@ -239,24 +240,64 @@ export default function PerfilPage() {
   }, [router])
   console.log(user)
 
-  if (!user) return <div>Cargando perfil...</div>
+  if (!user)
+    return (
+      <>
+        <AdBar />
+        <Navbar />
+        <main className="min-h-screen bg-[#F0F8FF]">
+          <SkeletonHero />
+          <div className="mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+            <section className="border-b border-zinc-200 px-8 py-10">
+              <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+                <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-16">
+                  <div className="space-y-4 lg:col-span-2">
+                    <div className="h-3 w-32 animate-pulse rounded bg-zinc-200" />
+                    <SkeletonText lines={4} />
+                    <div className="mt-8 flex flex-wrap gap-2">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="h-7 w-24 animate-pulse rounded bg-zinc-200" />
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-3">
+                    <div className="h-3 w-16 animate-pulse rounded bg-zinc-200" />
+                    {[1, 2, 3].map((i) => (
+                      <div key={i} className="h-4 w-24 animate-pulse rounded bg-zinc-200" />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </section>
+            <section className="border-b border-zinc-200 px-8 py-10">
+              <div className="mx-auto" style={{ maxWidth: '1024px' }}>
+                <div className="mb-6 flex items-baseline gap-3">
+                  <div className="h-5 w-20 animate-pulse rounded bg-zinc-200" />
+                  <div className="h-4 w-16 animate-pulse rounded bg-zinc-200" />
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  {[1, 2, 3].map((i) => (
+                    <SkeletonCard key={i} />
+                  ))}
+                </div>
+              </div>
+            </section>
+          </div>
+        </main>
+        <Footer />
+      </>
+    )
 
   return (
     <>
       <AdBar />
       <Navbar />
-      <main
-        style={{
-          minHeight: '100vh',
-          background: 'oklch(0.98 0.005 350)',
-          fontFamily: 'var(--font-poppins)',
-        }}
-      >
+      <main className="min-h-screen bg-[#F0F8FF]">
         {/* ── HERO ── */}
         <ProfileHero user={user} />
 
         {/* ── BORDER CONTAINER ── */}
-        <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+        <div className="mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
           {/* ── BIO + TAGS ── */}
           <section className="border-b border-zinc-200 px-8 py-10">
             <div className="mx-auto" style={{ maxWidth: '1024px' }}>

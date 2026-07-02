@@ -14,6 +14,7 @@ const PUBLIC_ROUTES = [
   '/diseno',
   '/muestra',
   '/comunidad',
+  '/admin/login',
 ]
 
 export default async function proxy(request: NextRequest) {

@@ -20,6 +20,7 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
+import { createClient } from '@/lib/supabaseClient'
 import { GripVertical } from 'lucide-react'
 import { lazy, Suspense, useCallback, useState } from 'react'
 
@@ -660,9 +661,17 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
 
   const handleSave = useCallback(async () => {
     if (!slug) return
+    const supabase = createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    const token = session?.access_token
     const res = await fetch(`/api/pages/${slug}`, {
       method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
       body: JSON.stringify({ blocks }),
     })
     if (!res.ok) throw new Error('Error al guardar')

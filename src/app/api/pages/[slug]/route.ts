@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabaseClient'
+import { createClient } from '@/lib/supabase/server'
 import { Rol } from '@prisma/client'
 
 async function getAdmin(req: Request) {

@@ -6,64 +6,79 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-// -- Config --
-const HERO_CAROUSEL_CONFIG = {
-  autoPlayInterval: 5000,
-  transitionDuration: 0.7,
-  slides: [
-    {
-      id: 1,
-      headline: 'El arte emergente\nnecesita tu voz.',
-      subtext:
-        'Conecta con mentores que ya recorrieron el camino. Aprende, crece y haz que tu obra llegue más lejos.',
-      cta: { label: 'Explorar mentores', href: '/mentorias' },
-      secondaryCta: { label: 'Conocer más', href: '/sobre' },
-      bg: 'from-[#1a1a1a] to-[#2d1a14]',
-      accent: '#8ECAE6',
-      tag: 'Mentorías 1:1',
-    },
-    {
-      id: 2,
-      headline: 'Comunidad que\nimpulsa tu obra.',
-      subtext:
-        'Talleres, eventos y networking con otros artistas emergentes. Tu próximo colaborador está aquí.',
-      cta: { label: 'Ver eventos', href: '/eventos' },
-      secondaryCta: { label: 'Unirte gratis', href: '/registro' },
-      bg: 'from-[#0d2b24] to-[#023047]',
-      accent: '#8ECAE6',
-      tag: 'Talleres y Eventos',
-    },
-    {
-      id: 3,
-      headline: 'Oportunidades\nreales, ahora.',
-      subtext:
-        'Convocatorias, residencias y proyectos que buscan artistas como tú. El tablero que faltaba.',
-      cta: { label: 'Ver tablero', href: '/tablero' },
-      secondaryCta: { label: 'Registrarse', href: '/registro' },
-      bg: 'from-[#1e1228] to-[#4682B4]',
-      accent: '#8ECAE6',
-      tag: 'Tablero de Oportunidades',
-    },
-    {
-      id: 4,
-      headline: 'Tu próximo paso\nempieza aquí.',
-      subtext: 'Plataforma para artistas emergentes. Acceso a contenido exclusivo, mentores y más.',
-      cta: { label: 'Comenzar ahora', href: '/registro' },
-      secondaryCta: { label: 'Iniciar sesión', href: '/login' },
-      bg: 'from-[#353535] to-[#1c1c1c]',
-      accent: '#8ECAE6',
-      tag: 'Ópera Prima',
-    },
-  ],
+export interface HeroSlide {
+  id: number
+  headline: string
+  subtext: string
+  cta: { label: string; href: string }
+  secondaryCta: { label: string; href: string }
+  bg: string
+  accent: string
+  tag: string
 }
 
-// -- Component --
-export function HeroCarousel() {
+const DEFAULT_SLIDES: HeroSlide[] = [
+  {
+    id: 1,
+    headline: 'El arte emergente\nnecesita tu voz.',
+    subtext:
+      'Conecta con mentores que ya recorrieron el camino. Aprende, crece y haz que tu obra llegue más lejos.',
+    cta: { label: 'Explorar mentores', href: '/mentorias' },
+    secondaryCta: { label: 'Conocer más', href: '/sobre' },
+    bg: 'from-[#1a1a1a] to-[#2d1a14]',
+    accent: '#8ECAE6',
+    tag: 'Mentorías 1:1',
+  },
+  {
+    id: 2,
+    headline: 'Comunidad que\nimpulsa tu obra.',
+    subtext:
+      'Talleres, eventos y networking con otros artistas emergentes. Tu próximo colaborador está aquí.',
+    cta: { label: 'Ver eventos', href: '/eventos' },
+    secondaryCta: { label: 'Unirte gratis', href: '/registro' },
+    bg: 'from-[#0d2b24] to-[#023047]',
+    accent: '#8ECAE6',
+    tag: 'Talleres y Eventos',
+  },
+  {
+    id: 3,
+    headline: 'Oportunidades\nreales, ahora.',
+    subtext:
+      'Convocatorias, residencias y proyectos que buscan artistas como tú. El tablero que faltaba.',
+    cta: { label: 'Ver tablero', href: '/tablero' },
+    secondaryCta: { label: 'Registrarse', href: '/registro' },
+    bg: 'from-[#1e1228] to-[#4682B4]',
+    accent: '#8ECAE6',
+    tag: 'Tablero de Oportunidades',
+  },
+  {
+    id: 4,
+    headline: 'Tu próximo paso\nempieza aquí.',
+    subtext: 'Plataforma para artistas emergentes. Acceso a contenido exclusivo, mentores y más.',
+    cta: { label: 'Comenzar ahora', href: '/registro' },
+    secondaryCta: { label: 'Iniciar sesión', href: '/login' },
+    bg: 'from-[#353535] to-[#1c1c1c]',
+    accent: '#8ECAE6',
+    tag: 'Ópera Prima',
+  },
+]
+
+const DEFAULT_AUTO_PLAY_INTERVAL = 5000
+const DEFAULT_TRANSITION_DURATION = 0.7
+
+export function HeroCarousel({
+  slides = DEFAULT_SLIDES,
+  autoPlayInterval = DEFAULT_AUTO_PLAY_INTERVAL,
+  transitionDuration = DEFAULT_TRANSITION_DURATION,
+}: {
+  slides?: HeroSlide[]
+  autoPlayInterval?: number
+  transitionDuration?: number
+}) {
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState<1 | -1>(1)
   const [hovered, setHovered] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const { slides, autoPlayInterval } = HERO_CAROUSEL_CONFIG
 
   const go = useCallback(
     (index: number, dir: 1 | -1) => {
@@ -113,7 +128,6 @@ export function HeroCarousel() {
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      {/* Slides */}
       <AnimatePresence initial={false} custom={direction} mode="popLayout">
         <motion.div
           key={current}
@@ -123,12 +137,11 @@ export function HeroCarousel() {
           animate="center"
           exit="exit"
           transition={{
-            duration: HERO_CAROUSEL_CONFIG.transitionDuration,
+            duration: transitionDuration,
             ease: [0.32, 0.72, 0, 1],
           }}
           className={`absolute inset-0 bg-linear-to-br ${slide.bg}`}
         >
-          {/* Grid overlay — editorial texture */}
           <div
             className="absolute inset-0 opacity-[0.04]"
             style={{
@@ -138,9 +151,7 @@ export function HeroCarousel() {
             }}
           />
 
-          {/* Content */}
           <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
-            {/* Tag */}
             <motion.span
               key={`tag-${current}`}
               custom={0}
@@ -153,7 +164,6 @@ export function HeroCarousel() {
               {slide.tag}
             </motion.span>
 
-            {/* Headline */}
             <motion.h1
               key={`h1-${current}`}
               custom={1}
@@ -166,7 +176,6 @@ export function HeroCarousel() {
               {slide.headline}
             </motion.h1>
 
-            {/* Subtext */}
             <motion.p
               key={`sub-${current}`}
               custom={2}
@@ -179,7 +188,6 @@ export function HeroCarousel() {
               {slide.subtext}
             </motion.p>
 
-            {/* CTAs */}
             <motion.div
               key={`cta-${current}`}
               custom={3}
@@ -203,7 +211,6 @@ export function HeroCarousel() {
               </Link>
             </motion.div>
 
-            {/* Logo watermark */}
             <div className="pointer-events-none absolute right-8 bottom-16 hidden opacity-10 select-none sm:right-16 sm:bottom-20 md:block">
               <Image
                 src="/OperaPrima_Isotipo.svg"
@@ -218,7 +225,6 @@ export function HeroCarousel() {
         </motion.div>
       </AnimatePresence>
 
-      {/* Arrow controls */}
       <button
         type="button"
         onClick={prev}
@@ -236,7 +242,6 @@ export function HeroCarousel() {
         <ChevronRight size={20} />
       </button>
 
-      {/* Dot indicators */}
       <div className="absolute bottom-5 left-1/2 z-10 flex -translate-x-1/2 items-center gap-2">
         {slides.map((s, i) => (
           <button
@@ -261,7 +266,6 @@ export function HeroCarousel() {
         ))}
       </div>
 
-      {/* Slide counter */}
       <div className="absolute top-5 right-6 z-10 font-mono text-xs text-white/40 tabular-nums select-none">
         {String(current + 1).padStart(2, '0')} / {String(slides.length).padStart(2, '0')}
       </div>

@@ -4,24 +4,12 @@ import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import Image from 'next/image'
 import { useRef } from 'react'
 
-// -- Configuración editable --
-export const PARTNERS_STRIP_CONFIG = {
-  logoSize: 120, // Altura en px de los logos (se escala manteniendo proporción)
-  animationDuration: '40s',
-  itemSpacing: '32px',
-  repeatCount: 4,
-}
-
-// -- Tipos --
 export interface Partner {
   name: string
   src: string
 }
 
-// -- Datos --
-// Placeholder: Imagotipo de Opera Prima repetido.
-// Reemplazar con los aliados reales cuando estén disponibles.
-const PARTNERS: Partner[] = [
+const DEFAULT_PARTNERS: Partner[] = [
   { name: 'Opera Prima', src: '/OperaPrima_Imagotipo.svg' },
   { name: 'Opera Prima', src: '/OperaPrima_Imagotipo.svg' },
   { name: 'Opera Prima', src: '/OperaPrima_Imagotipo.svg' },
@@ -29,19 +17,28 @@ const PARTNERS: Partner[] = [
   { name: 'Opera Prima', src: '/OperaPrima_Imagotipo.svg' },
 ]
 
-// Repetir para que el track sea lo suficientemente ancho y el scroll se vea fluido.
-// El @keyframes desplaza -25% del total, así que con 4 copias se avanza exactamente 1 copia.
-const REPEAT_COUNT = PARTNERS_STRIP_CONFIG.repeatCount
-
-// -- Componente --
-export function PartnersStrip() {
+export function PartnersStrip({
+  eyebrow = 'Aliados y Red',
+  heading = 'Nuestros aliados',
+  description = 'instituciones, proyectos y profesionales que creen en el talento emergente.',
+  partners = DEFAULT_PARTNERS,
+  ctaText = '¿Quieres colaborar con nosotros?',
+  ctaEmail = 'direccion@operaprimacultura.com',
+}: {
+  eyebrow?: string
+  heading?: string
+  description?: string
+  partners?: Partner[]
+  ctaText?: string
+  ctaEmail?: string
+}) {
   const sectionRef = useRef<HTMLElement>(null)
-  const items = Array.from({ length: REPEAT_COUNT }, () => PARTNERS).flat()
+  const REPEAT_COUNT = 4
+  const items = Array.from({ length: REPEAT_COUNT }, () => partners).flat()
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
-        {/* Headline */}
         <div className="px-8 pt-20 pb-14 text-center">
           <TimelineAnimation
             as="p"
@@ -49,7 +46,7 @@ export function PartnersStrip() {
             timelineRef={sectionRef}
             className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
-            Aliados y Red
+            {eyebrow}
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"
@@ -57,7 +54,7 @@ export function PartnersStrip() {
             timelineRef={sectionRef}
             className="text-4xl leading-[1.06] font-bold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
-            Nuestros aliados
+            {heading}
           </TimelineAnimation>
           <TimelineAnimation
             as="p"
@@ -65,13 +62,11 @@ export function PartnersStrip() {
             timelineRef={sectionRef}
             className="mx-auto mt-3 max-w-md text-base text-zinc-500"
           >
-            instituciones, proyectos y profesionales que creen en el talento emergente.
+            {description}
           </TimelineAnimation>
         </div>
 
-        {/* Marquee */}
         <div className="relative overflow-hidden">
-          {/* Degradado fade: cubre logos en los bordes del container */}
           <div
             aria-hidden="true"
             className="pointer-events-none absolute inset-y-0 right-0 left-0 z-10"
@@ -81,10 +76,7 @@ export function PartnersStrip() {
             }}
           />
           <div className="ticker-wrap">
-            <div
-              className="ticker-track"
-              style={{ animationDuration: PARTNERS_STRIP_CONFIG.animationDuration }}
-            >
+            <div className="ticker-track" style={{ animationDuration: '40s' }}>
               {items.map((partner, i) => (
                 <PartnerItem key={i} partner={partner} />
               ))}
@@ -92,7 +84,6 @@ export function PartnersStrip() {
           </div>
         </div>
 
-        {/* CTA colaboración */}
         <div className="px-8 pt-16 pb-24 text-center">
           <TimelineAnimation
             as="p"
@@ -100,12 +91,12 @@ export function PartnersStrip() {
             timelineRef={sectionRef}
             className="text-sm text-zinc-500"
           >
-            ¿Quieres colaborar con nosotros?{' '}
+            {ctaText}{' '}
             <a
-              href="mailto:direccion@operaprimacultura.com"
+              href={`mailto:${ctaEmail}`}
               className="font-semibold text-[#023047] underline-offset-4 hover:underline"
             >
-              direccion@operaprimacultura.com
+              {ctaEmail}
             </a>
           </TimelineAnimation>
         </div>
@@ -114,22 +105,21 @@ export function PartnersStrip() {
   )
 }
 
-// -- Sub-componente item --
 function PartnerItem({ partner }: { partner: Partner }) {
   return (
     <div
       className="ticker-item flex shrink-0 items-center justify-center px-8"
       style={{
-        marginRight: PARTNERS_STRIP_CONFIG.itemSpacing,
-        height: `${PARTNERS_STRIP_CONFIG.logoSize}px`,
+        marginRight: '32px',
+        height: '120px',
       }}
     >
       <Image
         src={partner.src}
         alt={partner.name}
-        width={PARTNERS_STRIP_CONFIG.logoSize * 4}
-        height={PARTNERS_STRIP_CONFIG.logoSize}
-        style={{ height: `${PARTNERS_STRIP_CONFIG.logoSize}px`, width: 'auto' }}
+        width={480}
+        height={120}
+        style={{ height: '120px', width: 'auto' }}
         className="opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
         unoptimized
       />

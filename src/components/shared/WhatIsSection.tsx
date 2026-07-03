@@ -1,13 +1,29 @@
 'use client'
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { CalendarDays, Compass, Layers, Users } from 'lucide-react'
+import { CalendarDays, Compass, Layers, Users, type LucideIcon } from 'lucide-react'
 import { useRef } from 'react'
 
-const SERVICES = [
+const ICON_MAP: Record<string, LucideIcon> = {
+  Users,
+  CalendarDays,
+  Compass,
+  Layers,
+}
+
+export interface ServiceCard {
+  num: string
+  icon: string
+  title: string
+  desc: string
+  accent: string
+  href: string
+}
+
+const DEFAULT_CARDS: ServiceCard[] = [
   {
     num: '01',
-    icon: Users,
+    icon: 'Users',
     title: 'Mentorías 1:1',
     desc: 'Sesiones personalizadas con artistas y gestores culturales que ya han recorrido el camino. Aprende directo de quien lo vive.',
     accent: '#8ECAE6',
@@ -15,7 +31,7 @@ const SERVICES = [
   },
   {
     num: '02',
-    icon: CalendarDays,
+    icon: 'CalendarDays',
     title: 'Talleres y Eventos',
     desc: 'Workshops prácticos, encuentros de networking y residencias. Presenciales y online, pensados para impulsar tu carrera.',
     accent: '#023047',
@@ -23,7 +39,7 @@ const SERVICES = [
   },
   {
     num: '03',
-    icon: Compass,
+    icon: 'Compass',
     title: 'Tablero de Oportunidades',
     desc: 'Convocatorias, becas y proyectos que buscan artistas como tú. Actualizado constantemente por nuestro equipo editorial.',
     accent: '#4682B4',
@@ -31,7 +47,7 @@ const SERVICES = [
   },
   {
     num: '04',
-    icon: Layers,
+    icon: 'Layers',
     title: 'Membresía Premium',
     desc: 'Acceso completo a contenido exclusivo, tarifas preferenciales en eventos y visibilidad dentro de la comunidad.',
     accent: '#8ECAE6',
@@ -39,13 +55,28 @@ const SERVICES = [
   },
 ]
 
-export function WhatIsSection() {
+export function WhatIsSection({
+  eyebrow = '¿Qué es Opera Prima?',
+  heading = 'Bienvenido a Ópera Prima',
+  description = 'Una plataforma digital que acompaña a artistas emergentes con herramientas reales para dar sus primeros pasos profesionales.',
+  description2 = 'Aquí encuentras herramientas, oportunidades y una comunidad que te ayuda a construir tu camino profesional con estrategia, no con suerte.',
+  serviceEyebrow = 'Nuestros servicios',
+  serviceHeading = 'Todo lo que necesitas para crecer',
+  cards = DEFAULT_CARDS,
+}: {
+  eyebrow?: string
+  heading?: string
+  description?: string
+  description2?: string
+  serviceEyebrow?: string
+  serviceHeading?: string
+  cards?: ServiceCard[]
+}) {
   const ref = useRef<HTMLElement>(null)
 
   return (
     <section ref={ref} className="bg-background w-full border-b-2 border-zinc-200">
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
-        {/* -- Intro block -- */}
         <div className="border-b border-zinc-200 px-8 pt-20 pb-16">
           <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.6fr]">
             <div>
@@ -55,7 +86,7 @@ export function WhatIsSection() {
                 timelineRef={ref}
                 className="mb-5 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
               >
-                ¿Qué es Opera Prima?
+                {eyebrow}
               </TimelineAnimation>
 
               <TimelineAnimation
@@ -84,8 +115,7 @@ export function WhatIsSection() {
                 timelineRef={ref}
                 className="max-w-lg text-lg leading-relaxed text-zinc-500"
               >
-                Una plataforma digital que acompaña a artistas emergentes con herramientas reales
-                para dar sus primeros pasos profesionales.
+                {description}
               </TimelineAnimation>
               <TimelineAnimation
                 as="p"
@@ -93,14 +123,12 @@ export function WhatIsSection() {
                 timelineRef={ref}
                 className="max-w-lg text-base leading-relaxed text-zinc-400"
               >
-                Aquí encuentras herramientas, oportunidades y una comunidad que te ayuda a construir
-                tu camino profesional con estrategia, no con suerte.
+                {description2}
               </TimelineAnimation>
             </div>
           </div>
         </div>
 
-        {/* -- Services tagline -- */}
         <div className="px-8 pt-16 pb-6">
           <TimelineAnimation
             as="p"
@@ -108,7 +136,7 @@ export function WhatIsSection() {
             timelineRef={ref}
             className="mb-3 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
-            Nuestros servicios
+            {serviceEyebrow}
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"
@@ -116,14 +144,13 @@ export function WhatIsSection() {
             timelineRef={ref}
             className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
           >
-            Todo lo que necesitas para crecer
+            {serviceHeading}
           </TimelineAnimation>
         </div>
 
-        {/* -- Services grid -- */}
         <div className="grid grid-cols-1 divide-y divide-zinc-200 md:grid-cols-2 md:divide-y-0">
-          {SERVICES.map((s, i) => {
-            const Icon = s.icon
+          {cards.map((s, i) => {
+            const Icon = ICON_MAP[s.icon]
             return (
               <TimelineAnimation
                 key={s.num}
@@ -133,7 +160,6 @@ export function WhatIsSection() {
                 timelineRef={ref}
                 className={`group flex flex-col gap-6 border-zinc-200 px-8 py-12 transition-all duration-200 hover:bg-zinc-50 ${i % 2 === 0 ? 'md:border-r' : ''} ${i < 2 ? 'border-b' : ''}`}
               >
-                {/* Num + Icon row */}
                 <div className="flex items-start justify-between">
                   <span
                     className="text-[0.6rem] font-bold tracking-[0.24em] uppercase"
@@ -154,7 +180,7 @@ export function WhatIsSection() {
                       ;(e.currentTarget as HTMLDivElement).style.boxShadow = 'none'
                     }}
                   >
-                    <Icon size={18} />
+                    {Icon && <Icon size={18} />}
                   </div>
                 </div>
 

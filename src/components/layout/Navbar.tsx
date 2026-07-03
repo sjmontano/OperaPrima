@@ -1,7 +1,8 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
-import { ChevronDown, LogOut, Menu, User, X } from 'lucide-react'
+import { useEditMode } from '@/context/EditModeContext'
+import { ChevronDown, LogOut, Menu, Pen, Shield, User, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -36,6 +37,8 @@ export function Navbar() {
   const userMenuRef = useRef<HTMLDivElement>(null)
   const authModal = useAuthModal()
   const { currentUser, logout } = authModal
+  const { isEditMode, toggle: toggleEditMode } = useEditMode()
+  const isAdmin = (currentUser as unknown as { rol?: string })?.rol === 'ADMIN'
 
   const userAvatarUrl = (currentUser as unknown as { perfil?: { avatar?: string } })?.perfil?.avatar
 
@@ -190,6 +193,31 @@ export function Navbar() {
                         <User size={13} />
                         Mi perfil
                       </Link>
+                      {isAdmin && (
+                        <>
+                          <Link
+                            href="/admin"
+                            onClick={() => setUserMenuOpen(false)}
+                            className="flex items-center gap-2 border-t border-zinc-100 px-3 py-2.5 text-xs font-bold tracking-widest text-zinc-700 uppercase transition-colors hover:bg-zinc-100 hover:text-zinc-900"
+                          >
+                            <Shield size={13} />
+                            Panel admin
+                          </Link>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              toggleEditMode()
+                              setUserMenuOpen(false)
+                            }}
+                            className={`flex w-full items-center gap-2 border-t border-zinc-100 px-3 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors hover:bg-zinc-100 hover:text-zinc-900 ${
+                              isEditMode ? 'bg-[#8ECAE6]/20 text-[#023047]' : 'text-zinc-500'
+                            }`}
+                          >
+                            <Pen size={13} />
+                            {isEditMode ? 'Modo edición activo' : 'Modo edición'}
+                          </button>
+                        </>
+                      )}
                       <button
                         type="button"
                         onClick={() => {
@@ -330,6 +358,35 @@ export function Navbar() {
                       <User size={13} />
                       Mi perfil
                     </Link>
+                    {isAdmin && (
+                      <>
+                        <Link
+                          href="/admin"
+                          onClick={() => setMobileOpen(false)}
+                          className={`flex items-center gap-2 border-2 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all ${scrolled ? 'border-white/30 text-white' : 'border-zinc-300 text-zinc-700'}`}
+                        >
+                          <Shield size={13} />
+                          Panel admin
+                        </Link>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            toggleEditMode()
+                            setMobileOpen(false)
+                          }}
+                          className={`flex w-full items-center gap-2 border-2 px-4 py-2.5 text-xs font-bold tracking-widest uppercase transition-all ${
+                            isEditMode
+                              ? 'border-[#8ECAE6] bg-[#8ECAE6]/20 text-[#023047]'
+                              : scrolled
+                                ? 'border-white/30 text-white'
+                                : 'border-zinc-300 text-zinc-700'
+                          }`}
+                        >
+                          <Pen size={13} />
+                          {isEditMode ? 'Modo edición activo' : 'Modo edición'}
+                        </button>
+                      </>
+                    )}
                     <button
                       type="button"
                       onClick={() => {

@@ -1,4 +1,5 @@
 import { AuthModalProvider } from '@/components/auth/AuthModalProvider'
+import { EditModeProvider } from '@/context/EditModeContext'
 import type { Metadata } from 'next'
 import { Geist_Mono, Poppins } from 'next/font/google'
 import './globals.css'
@@ -28,7 +29,9 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
-        <AuthModalProvider>{children}</AuthModalProvider>
+        <AuthModalProvider>
+          <EditModeProvider>{children}</EditModeProvider>
+        </AuthModalProvider>
       </body>
     </html>
   )

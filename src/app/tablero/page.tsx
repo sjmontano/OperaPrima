@@ -15,20 +15,22 @@ export const metadata: Metadata = {
 
 export default function ProyectosPage() {
   return (
-    <DbPageServer
-      slug="tablero"
-      fallback={
-        <>
-          <Navbar />
-          <main className="flex flex-col bg-[#F0F8FF]">
-            <ProyectosLandingSection />
-            <ProyectosSection />
-            <ProyectosDestacados />
-            <DisclaimerSection />
-          </main>
-          <Footer />
-        </>
-      }
-    />
+    <>
+      <Navbar />
+      <main className="flex flex-col bg-[#F0F8FF]">
+        <DbPageServer
+          slug="tablero"
+          fallback={
+            <>
+              <ProyectosLandingSection />
+              <ProyectosSection />
+              <ProyectosDestacados />
+              <DisclaimerSection />
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

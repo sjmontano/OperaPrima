@@ -13,18 +13,20 @@ export const metadata: Metadata = {
 
 export default function SobrePage() {
   return (
-    <DbPageServer
-      slug="sobre"
-      fallback={
-        <>
-          <Navbar />
-          <main className="flex flex-col bg-[#F0F8FF]">
-            <SobreLandingSection />
-            <PartnersStrip />
-          </main>
-          <Footer />
-        </>
-      }
-    />
+    <>
+      <Navbar />
+      <main className="flex flex-col bg-[#F0F8FF]">
+        <DbPageServer
+          slug="sobre"
+          fallback={
+            <>
+              <SobreLandingSection />
+              <PartnersStrip />
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

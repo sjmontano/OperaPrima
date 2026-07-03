@@ -13,20 +13,22 @@ export const metadata: Metadata = {
 
 export default function EventosPage() {
   return (
-    <DbPageServer
-      slug="eventos"
-      fallback={
-        <>
-          <Navbar />
-          <main className="flex flex-col bg-[#F0F8FF]">
-            <EventsLandingSection />
-            <div id="proximos">
-              <MentorEventsSection />
-            </div>
-          </main>
-          <Footer />
-        </>
-      }
-    />
+    <>
+      <Navbar />
+      <main className="flex flex-col bg-[#F0F8FF]">
+        <DbPageServer
+          slug="eventos"
+          fallback={
+            <>
+              <EventsLandingSection />
+              <div id="proximos">
+                <MentorEventsSection />
+              </div>
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

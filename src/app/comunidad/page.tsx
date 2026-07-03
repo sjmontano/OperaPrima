@@ -14,19 +14,21 @@ export const metadata: Metadata = {
 
 export default function ComunidadPage() {
   return (
-    <DbPageServer
-      slug="comunidad"
-      fallback={
-        <>
-          <Navbar />
-          <main className="flex flex-col bg-[#F0F8FF]">
-            <ComunidadLandingSection />
-            <ComunidadEventsSection />
-            <ComunidadArtistsSection />
-          </main>
-          <Footer />
-        </>
-      }
-    />
+    <>
+      <Navbar />
+      <main className="flex flex-col bg-[#F0F8FF]">
+        <DbPageServer
+          slug="comunidad"
+          fallback={
+            <>
+              <ComunidadLandingSection />
+              <ComunidadEventsSection />
+              <ComunidadArtistsSection />
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

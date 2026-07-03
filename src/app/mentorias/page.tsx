@@ -12,17 +12,19 @@ export const metadata: Metadata = {
 
 export default function MentoriasPage() {
   return (
-    <DbPageServer
-      slug="mentorias"
-      fallback={
-        <>
-          <Navbar />
-          <main className="flex flex-col bg-[#F0F8FF]">
-            <MentoriasLandingSection />
-          </main>
-          <Footer />
-        </>
-      }
-    />
+    <>
+      <Navbar />
+      <main className="flex flex-col bg-[#F0F8FF]">
+        <DbPageServer
+          slug="mentorias"
+          fallback={
+            <>
+              <MentoriasLandingSection />
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

@@ -11,23 +11,25 @@ import { WhatIsSection } from '@/components/shared/WhatIsSection'
 
 export default function Home() {
   return (
-    <DbPageServer
-      slug="inicio"
-      fallback={
-        <>
-          <AdBar />
-          <Navbar />
-          <main className="flex flex-col">
-            <HeroCarousel />
-            <WhatIsSection />
-            <EventsSection />
-            <ComunidadCTA />
-            <TestimonialsWall />
-            <PartnersStrip />
-            <Footer />
-          </main>
-        </>
-      }
-    />
+    <>
+      <AdBar />
+      <Navbar />
+      <main className="flex flex-col">
+        <DbPageServer
+          slug="inicio"
+          fallback={
+            <>
+              <HeroCarousel />
+              <WhatIsSection />
+              <EventsSection />
+              <ComunidadCTA />
+              <TestimonialsWall />
+              <PartnersStrip />
+            </>
+          }
+        />
+      </main>
+      <Footer />
+    </>
   )
 }

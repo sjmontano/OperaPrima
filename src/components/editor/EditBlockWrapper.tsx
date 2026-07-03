@@ -1,17 +1,15 @@
 'use client'
 
 import { useEditMode } from '@/context/EditModeContext'
-import { Edit3, ExternalLink } from 'lucide-react'
+import { Edit3, GripVertical } from 'lucide-react'
 import { useState } from 'react'
 
 interface EditBlockWrapperProps {
   blockType: string
   blockIndex: number
   children: React.ReactNode
-  slug?: string
-  isPrimitive: boolean
-  slug?: string
   onStartEdit?: () => void
+  dragHandleProps?: Record<string, unknown>
 }
 
 const TYPE_LABELS: Record<string, string> = {
@@ -42,24 +40,16 @@ export function EditBlockWrapper({
   blockType,
   blockIndex,
   children,
-  isPrimitive,
   slug,
   onStartEdit,
+  dragHandleProps,
 }: EditBlockWrapperProps) {
   const { isEditMode } = useEditMode()
   const [hovered, setHovered] = useState(false)
 
   if (!isEditMode) return <>{children}</>
 
-  const label = `${TYPE_LABELS[blockType] || blockType.replace(/-/g, ' ')} #${blockIndex + 1}`
-
-  const handleEdit = () => {
-    if (isPrimitive && onStartEdit) {
-      onStartEdit()
-    } else if (slug) {
-      window.open(`/admin/pages/${slug}`, '_blank')
-    }
-  }
+  const label = TYPE_LABELS[blockType] || blockType.replace(/-/g, ' ')
 
   return (
     <div
@@ -67,12 +57,28 @@ export function EditBlockWrapper({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Dashed border overlay */}
       <div
         className={`pointer-events-none absolute inset-0 z-10 border-2 border-dashed transition-all duration-200 ${
           hovered ? 'border-[#8ECAE6] bg-[#8ECAE6]/[0.04]' : 'border-transparent'
         }`}
       />
 
+      {/* Drag handle — left side */}
+      {dragHandleProps && (
+        <button
+          type="button"
+          {...(dragHandleProps as React.HTMLAttributes<HTMLButtonElement>)}
+          className={`absolute top-1/2 -left-5 z-20 -translate-y-1/2 rounded-sm p-1 text-zinc-400 transition-all duration-200 hover:bg-zinc-200 hover:text-zinc-700 ${
+            hovered ? 'opacity-100' : 'opacity-0'
+          }`}
+          title="Arrastrar para reordenar"
+        >
+          <GripVertical size={14} />
+        </button>
+      )}
+
+      {/* Block type label */}
       <div
         className={`pointer-events-none absolute top-0 left-0 z-20 rounded-br-md px-2 py-0.5 text-[9px] font-bold tracking-widest uppercase transition-all duration-200 ${
           hovered ? 'bg-[#023047] text-white' : 'bg-zinc-100 text-zinc-400'
@@ -81,22 +87,16 @@ export function EditBlockWrapper({
         {label}
       </div>
 
+      {/* Edit button */}
       <button
         type="button"
-        onClick={handleEdit}
+        onClick={onStartEdit}
         className={`absolute top-0 right-0 z-20 flex items-center gap-1 rounded-bl-md px-2 py-1 text-[9px] font-bold tracking-wider uppercase transition-all duration-200 ${
           hovered ? 'bg-[#8ECAE6] text-[#023047]' : 'bg-zinc-100 text-zinc-400 opacity-0'
         }`}
       >
-        {isPrimitive ? (
-          <>
-            <Edit3 size={10} /> Editar
-          </>
-        ) : (
-          <>
-            <ExternalLink size={10} /> Panel
-          </>
-        )}
+        <Edit3 size={10} />
+        Editar
       </button>
 
       {children}

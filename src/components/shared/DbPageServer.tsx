@@ -11,7 +11,7 @@ export async function DbPageServer({ slug, fallback }: DbPageServerProps) {
     const page = await prisma.pageContent.findUnique({ where: { slug } })
 
     if (page?.published && Array.isArray(page.blocks) && page.blocks.length > 0) {
-      return <PageRenderer blocks={page.blocks as Block[]} />
+      return <PageRenderer blocks={page.blocks as Block[]} slug={slug} />
     }
   } catch {
     // fallback on error

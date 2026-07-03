@@ -661,7 +661,7 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
   const handleSave = useCallback(async () => {
     if (!slug) return
     const res = await fetch(`/api/pages/${slug}`, {
-      method: 'PATCH',
+      method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ blocks }),
     })

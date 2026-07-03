@@ -1,5 +1,7 @@
 'use client'
 
+import { EditableImage } from '@/components/editor/EditableImage'
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -73,7 +75,12 @@ export function TestimonialsWall({
   cardGap = TESTIMONIAL_WALL_CONFIG.cardGap,
   rows = 2,
   fadeColor = 'var(--background)',
-}: TestimonialsWallProps) {
+  isEditMode,
+  __onFieldChange,
+}: TestimonialsWallProps & {
+  isEditMode?: boolean
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const [isCardHovered, setIsCardHovered] = useState(false)
   const sectionRef = useRef<HTMLElement>(null)
   const duplicated = [...testimonials, ...testimonials]
@@ -91,7 +98,13 @@ export function TestimonialsWall({
             timelineRef={sectionRef}
             className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
-            {testimonialEyebrow}
+            <EditableText
+              value={testimonialEyebrow}
+              onSave={(v) => __onFieldChange?.('testimonialEyebrow', v)}
+              as="span"
+              singleLine
+              className=""
+            />
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"
@@ -99,7 +112,12 @@ export function TestimonialsWall({
             timelineRef={sectionRef}
             className="text-4xl leading-[1.06] font-bold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
-            {headline}
+            <EditableText
+              value={headline}
+              onSave={(v) => __onFieldChange?.('headline', v)}
+              as="span"
+              className=""
+            />
           </TimelineAnimation>
         </div>
 
@@ -125,8 +143,10 @@ export function TestimonialsWall({
                   <TestimonialCard
                     key={`left-${index}`}
                     testimonial={testimonial}
+                    testimonialIndex={index % testimonials.length}
                     width={cardWidth}
                     onHoverChange={setIsCardHovered}
+                    __onFieldChange={__onFieldChange}
                   />
                 ))}
               </div>
@@ -145,8 +165,10 @@ export function TestimonialsWall({
                     <TestimonialCard
                       key={`right-${index}`}
                       testimonial={testimonial}
+                      testimonialIndex={index % testimonials.length}
                       width={cardWidth}
                       onHoverChange={setIsCardHovered}
+                      __onFieldChange={__onFieldChange}
                     />
                   ))}
                 </div>
@@ -161,12 +183,16 @@ export function TestimonialsWall({
 
 function TestimonialCard({
   testimonial,
+  testimonialIndex,
   width,
   onHoverChange,
+  __onFieldChange,
 }: {
   testimonial: Testimonial
+  testimonialIndex: number
   width: number
   onHoverChange: React.Dispatch<React.SetStateAction<boolean>>
+  __onFieldChange?: (path: string, value: unknown) => void
 }) {
   return (
     <article
@@ -176,20 +202,44 @@ function TestimonialCard({
       onMouseLeave={() => onHoverChange(false)}
     >
       <div className="testimonial-header">
-        <Image
+        <EditableImage
           src={testimonial.avatar}
           alt={testimonial.name}
+          onSave={(v) => __onFieldChange?.(`testimonials.${testimonialIndex}.avatar`, v)}
+          className="avatar"
           width={48}
           height={48}
-          className="avatar"
-          unoptimized
+          style={{ borderRadius: '50%', objectFit: 'cover' }}
         />
         <div className="author-meta">
-          <p className="author-name">{testimonial.name}</p>
-          <p className="author-handle">{testimonial.handle}</p>
+          <p className="author-name">
+            <EditableText
+              value={testimonial.name}
+              onSave={(v) => __onFieldChange?.(`testimonials.${testimonialIndex}.name`, v)}
+              as="span"
+              singleLine
+              className=""
+            />
+          </p>
+          <p className="author-handle">
+            <EditableText
+              value={testimonial.handle}
+              onSave={(v) => __onFieldChange?.(`testimonials.${testimonialIndex}.handle`, v)}
+              as="span"
+              singleLine
+              className=""
+            />
+          </p>
         </div>
       </div>
-      <p className="testimonial-text">{testimonial.text}</p>
+      <p className="testimonial-text">
+        <EditableText
+          value={testimonial.text}
+          onSave={(v) => __onFieldChange?.(`testimonials.${testimonialIndex}.text`, v)}
+          as="span"
+          className=""
+        />
+      </p>
     </article>
   )
 }

@@ -519,6 +519,28 @@ function SortableBlock({
   )
 }
 
+function deepSet(
+  obj: Record<string, unknown>,
+  path: string,
+  value: unknown
+): Record<string, unknown> {
+  const parts = path.split('.')
+  const result: Record<string, unknown> = Array.isArray(obj) ? [...obj] : { ...obj }
+  let current: Record<string, unknown> | unknown[] = result
+  for (let i = 0; i < parts.length - 1; i++) {
+    const key = parts[i]
+    const idx = Number(key)
+    const k = String(idx) !== key ? key : idx
+    const next = (current as Record<string, unknown>)[k]
+    current[k] = Array.isArray(next) ? [...next] : { ...(next as Record<string, unknown>) }
+    current = current[k] as Record<string, unknown> | unknown[]
+  }
+  const lastKey = parts[parts.length - 1]
+  const lastIdx = Number(lastKey)
+  ;(current as Record<string, unknown>)[String(lastIdx) !== lastKey ? lastKey : lastIdx] = value
+  return result
+}
+
 // ── Insert button between blocks ──
 
 function InsertBetween({
@@ -624,6 +646,18 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
     setComplexEditIndex(null)
   }, [])
 
+  const handleFieldChange = useCallback(
+    (blockIndex: number, fieldPath: string, value: unknown) => {
+      const updated = blocks.map((b, i) => {
+        if (i !== blockIndex) return b
+        return { ...b, props: deepSet(b.props, fieldPath, value) }
+      })
+      setBlocks(updated)
+      pushHistory(updated)
+    },
+    [blocks, pushHistory]
+  )
+
   const handleSave = useCallback(async () => {
     if (!slug) return
     const res = await fetch(`/api/pages/${slug}`, {
@@ -663,7 +697,7 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
                 key={`${block.type}-${i}`}
                 fallback={<div className="h-32 animate-pulse bg-zinc-100" />}
               >
-                <Component {...block.props} />
+                <Component {...block.props} isEditMode={false} __onFieldChange={() => {}} />
               </Suspense>
             )
           }
@@ -689,7 +723,11 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
           const Component = BLOCK_MAP[block.type]
           const content = Component ? (
             <Suspense fallback={<div className="h-32 animate-pulse bg-zinc-100" />}>
-              <Component {...block.props} />
+              <Component
+                {...block.props}
+                isEditMode={true}
+                __onFieldChange={(path: string, val: unknown) => handleFieldChange(i, path, val)}
+              />
             </Suspense>
           ) : (
             <FallbackBlock

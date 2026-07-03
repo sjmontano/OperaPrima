@@ -1,5 +1,7 @@
 'use client'
 
+import { EditableImage } from '@/components/editor/EditableImage'
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import Image from 'next/image'
 import { useRef } from 'react'
@@ -24,6 +26,8 @@ export function PartnersStrip({
   partners = DEFAULT_PARTNERS,
   ctaText = '¿Quieres colaborar con nosotros?',
   ctaEmail = 'direccion@operaprimacultura.com',
+  isEditMode,
+  __onFieldChange,
 }: {
   eyebrow?: string
   heading?: string
@@ -31,6 +35,8 @@ export function PartnersStrip({
   partners?: Partner[]
   ctaText?: string
   ctaEmail?: string
+  isEditMode?: boolean
+  __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
   const REPEAT_COUNT = 4
@@ -46,7 +52,13 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="mb-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
           >
-            {eyebrow}
+            <EditableText
+              value={eyebrow}
+              onSave={(v) => __onFieldChange?.('eyebrow', v)}
+              as="span"
+              singleLine
+              className=""
+            />
           </TimelineAnimation>
           <TimelineAnimation
             as="h2"
@@ -54,7 +66,12 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="text-4xl leading-[1.06] font-bold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
-            {heading}
+            <EditableText
+              value={heading}
+              onSave={(v) => __onFieldChange?.('heading', v)}
+              as="span"
+              className=""
+            />
           </TimelineAnimation>
           <TimelineAnimation
             as="p"
@@ -62,7 +79,12 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="mx-auto mt-3 max-w-md text-base text-zinc-500"
           >
-            {description}
+            <EditableText
+              value={description}
+              onSave={(v) => __onFieldChange?.('description', v)}
+              as="span"
+              className=""
+            />
           </TimelineAnimation>
         </div>
 
@@ -77,9 +99,17 @@ export function PartnersStrip({
           />
           <div className="ticker-wrap">
             <div className="ticker-track" style={{ animationDuration: '40s' }}>
-              {items.map((partner, i) => (
-                <PartnerItem key={i} partner={partner} />
-              ))}
+              {items.map((partner, i) => {
+                const partnerIndex = i % partners.length
+                return (
+                  <PartnerItem
+                    key={i}
+                    partner={partner}
+                    partnerIndex={partnerIndex}
+                    __onFieldChange={__onFieldChange}
+                  />
+                )
+              })}
             </div>
           </div>
         </div>
@@ -91,7 +121,13 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="text-sm text-zinc-500"
           >
-            {ctaText}{' '}
+            <EditableText
+              value={ctaText}
+              onSave={(v) => __onFieldChange?.('ctaText', v)}
+              as="span"
+              singleLine
+              className=""
+            />{' '}
             <a
               href={`mailto:${ctaEmail}`}
               className="font-semibold text-[#023047] underline-offset-4 hover:underline"
@@ -105,7 +141,15 @@ export function PartnersStrip({
   )
 }
 
-function PartnerItem({ partner }: { partner: Partner }) {
+function PartnerItem({
+  partner,
+  partnerIndex,
+  __onFieldChange,
+}: {
+  partner: Partner
+  partnerIndex: number
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   return (
     <div
       className="ticker-item flex shrink-0 items-center justify-center px-8"
@@ -114,14 +158,12 @@ function PartnerItem({ partner }: { partner: Partner }) {
         height: '120px',
       }}
     >
-      <Image
+      <EditableImage
         src={partner.src}
         alt={partner.name}
-        width={480}
-        height={120}
+        onSave={(v) => __onFieldChange?.(`partners.${partnerIndex}.src`, v)}
         style={{ height: '120px', width: 'auto' }}
         className="opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
-        unoptimized
       />
     </div>
   )

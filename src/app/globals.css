@@ -126,6 +126,17 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+.editable-text-ring {
+  outline: 1px solid transparent;
+  transition: outline-color 0.15s ease;
+}
+
+.editable-text-ring:hover {
+  outline-color: #8ecae6;
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;

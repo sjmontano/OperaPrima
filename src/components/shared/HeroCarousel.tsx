@@ -1,5 +1,6 @@
 'use client'
 
+import { EditableText } from '@/components/editor/EditableText'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
@@ -70,10 +71,14 @@ export function HeroCarousel({
   slides = DEFAULT_SLIDES,
   autoPlayInterval = DEFAULT_AUTO_PLAY_INTERVAL,
   transitionDuration = DEFAULT_TRANSITION_DURATION,
+  isEditMode,
+  __onFieldChange,
 }: {
   slides?: HeroSlide[]
   autoPlayInterval?: number
   transitionDuration?: number
+  isEditMode?: boolean
+  __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState<1 | -1>(1)
@@ -92,12 +97,12 @@ export function HeroCarousel({
   const prev = useCallback(() => go(current - 1, -1), [current, go])
 
   useEffect(() => {
-    if (hovered) return
+    if (hovered || isEditMode) return
     intervalRef.current = setInterval(next, autoPlayInterval)
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
-  }, [hovered, next, autoPlayInterval])
+  }, [hovered, isEditMode, next, autoPlayInterval])
 
   const slide = slides[current]
 
@@ -161,7 +166,13 @@ export function HeroCarousel({
               className="mb-6 inline-block self-start rounded-sm px-3 py-1 text-xs font-semibold tracking-widest uppercase"
               style={{ color: slide.accent, borderColor: `${slide.accent}40`, border: `1px solid` }}
             >
-              {slide.tag}
+              <EditableText
+                value={slide.tag}
+                onSave={(v) => __onFieldChange?.(`slides.${current}.tag`, v)}
+                as="span"
+                singleLine
+                className=""
+              />
             </motion.span>
 
             <motion.h1
@@ -173,7 +184,12 @@ export function HeroCarousel({
               className="mb-5 leading-[1.05] font-bold whitespace-pre-line text-white"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
-              {slide.headline}
+              <EditableText
+                value={slide.headline}
+                onSave={(v) => __onFieldChange?.(`slides.${current}.headline`, v)}
+                as="span"
+                className=""
+              />
             </motion.h1>
 
             <motion.p
@@ -185,7 +201,12 @@ export function HeroCarousel({
               className="mb-8 max-w-xl leading-relaxed text-white/70"
               style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)' }}
             >
-              {slide.subtext}
+              <EditableText
+                value={slide.subtext}
+                onSave={(v) => __onFieldChange?.(`slides.${current}.subtext`, v)}
+                as="span"
+                className=""
+              />
             </motion.p>
 
             <motion.div
@@ -201,13 +222,25 @@ export function HeroCarousel({
                 className="inline-flex items-center border-2 border-white/30 px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:border-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.5)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 style={{ backgroundColor: slide.accent, borderColor: slide.accent }}
               >
-                {slide.cta.label}
+                <EditableText
+                  value={slide.cta.label}
+                  onSave={(v) => __onFieldChange?.(`slides.${current}.cta.label`, v)}
+                  as="span"
+                  singleLine
+                  className=""
+                />
               </Link>
               <Link
                 href={slide.secondaryCta.href}
                 className="inline-flex items-center border-2 border-white/20 px-6 py-3 text-sm font-bold tracking-widest text-white/80 uppercase transition-all duration-150 ease-out hover:border-white/50 hover:bg-white/10 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {slide.secondaryCta.label}
+                <EditableText
+                  value={slide.secondaryCta.label}
+                  onSave={(v) => __onFieldChange?.(`slides.${current}.secondaryCta.label`, v)}
+                  as="span"
+                  singleLine
+                  className=""
+                />
               </Link>
             </motion.div>
 

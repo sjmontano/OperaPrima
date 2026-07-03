@@ -1,5 +1,6 @@
 'use client'
 
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Mic, Palette, Users, type LucideIcon } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
@@ -69,6 +70,8 @@ export function ComunidadCTA({
   stats = DEFAULT_STATS,
   primaryCta = { label: 'Comenzar gratis', href: '/registro' },
   secondaryCta = { label: 'Conocer más', href: '/sobre' },
+  isEditMode,
+  __onFieldChange,
 }: {
   eyebrow?: string
   headline?: string
@@ -76,6 +79,8 @@ export function ComunidadCTA({
   stats?: CTAStat[]
   primaryCta?: { label: string; href: string }
   secondaryCta?: { label: string; href: string }
+  isEditMode?: boolean
+  __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const ref = useRef<HTMLElement>(null)
 
@@ -103,7 +108,13 @@ export function ComunidadCTA({
               timelineRef={ref}
               className="mb-6 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
-              {eyebrow}
+              <EditableText
+                value={eyebrow}
+                onSave={(v) => __onFieldChange?.('eyebrow', v)}
+                as="span"
+                singleLine
+                className=""
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -112,22 +123,12 @@ export function ComunidadCTA({
               timelineRef={ref}
               className="mb-8 text-5xl leading-[1.0] font-bold tracking-[-0.03em] text-white lg:text-[4.5rem]"
             >
-              {headline === 'Tu obra merece más público, más oportunidades.' ? (
-                <>
-                  Tu obra merece
-                  <br />
-                  <span className="text-[#8ECAE6]">más público,</span>
-                  <br />
-                  más oportunidades.
-                </>
-              ) : (
-                headline.split('\n').map((line, i) => (
-                  <span key={i}>
-                    {line}
-                    {i < headline.split('\n').length - 1 && <br />}
-                  </span>
-                ))
-              )}
+              <EditableText
+                value={headline}
+                onSave={(v) => __onFieldChange?.('headline', v)}
+                as="span"
+                className=""
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -136,7 +137,12 @@ export function ComunidadCTA({
               timelineRef={ref}
               className="mb-12 max-w-xl text-lg leading-relaxed text-white/60"
             >
-              {description}
+              <EditableText
+                value={description}
+                onSave={(v) => __onFieldChange?.('description', v)}
+                as="span"
+                className=""
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -149,7 +155,13 @@ export function ComunidadCTA({
                 href={primaryCta.href}
                 className="inline-flex items-center gap-3 border-2 border-[#E63946] bg-[#E63946] px-8 py-4 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {primaryCta.label}
+                <EditableText
+                  value={primaryCta.label}
+                  onSave={(v) => __onFieldChange?.('primaryCta.label', v)}
+                  as="span"
+                  singleLine
+                  className=""
+                />
                 <ArrowRight size={16} />
               </a>
 
@@ -157,7 +169,13 @@ export function ComunidadCTA({
                 href={secondaryCta.href}
                 className="inline-flex items-center gap-2 border-2 border-white/25 px-8 py-4 text-xs font-bold tracking-widest text-white/70 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-white/60 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.12)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {secondaryCta.label}
+                <EditableText
+                  value={secondaryCta.label}
+                  onSave={(v) => __onFieldChange?.('secondaryCta.label', v)}
+                  as="span"
+                  singleLine
+                  className=""
+                />
               </a>
             </TimelineAnimation>
           </div>
@@ -178,7 +196,15 @@ export function ComunidadCTA({
                   <span className="text-4xl leading-none font-bold tracking-tight text-white">
                     <StatNumber end={end} thousands={thousands} suffix={suffix} />
                   </span>
-                  <span className="text-xs tracking-widest text-white/40 uppercase">{label}</span>
+                  <span className="text-xs tracking-widest text-white/40 uppercase">
+                    <EditableText
+                      value={label}
+                      onSave={(v) => __onFieldChange?.(`stats.${i}.label`, v)}
+                      as="span"
+                      singleLine
+                      className=""
+                    />
+                  </span>
                 </motion.div>
               )
             })}

@@ -1,4 +1,5 @@
-import { DefaultAvatar, generateBannerUrl } from '@/components/shared/DefaultAvatar'
+import { DefaultAvatar } from '@/components/shared/DefaultAvatar'
+import { generateBannerUrl } from '@/lib/banner'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'

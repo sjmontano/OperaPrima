@@ -47,8 +47,8 @@ export async function POST(req: NextRequest) {
         {
           quantity: cantidad,
           price_data: {
-            currency: 'cop',
-            unit_amount: evento.precio * 100,
+            currency: 'eur',
+            unit_amount: Math.round(evento.precio * 100),
             product_data: {
               name: evento.titulo,
               description: evento.descripcion,

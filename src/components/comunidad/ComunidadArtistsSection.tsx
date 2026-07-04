@@ -47,8 +47,9 @@ export function ComunidadArtistsSection() {
 
   useEffect(() => {
     fetch('/api/usuarios')
-      .then((r) => r.json())
-      .then((data) => {
+      .then(async (r) => {
+        if (!r.ok) throw new Error('Error ' + r.status)
+        const data = await r.json()
         const mapped: Member[] = (data.usuarios || []).map(
           (u: {
             username: string
@@ -63,7 +64,7 @@ export function ComunidadArtistsSection() {
           }) => ({
             name: u.perfil?.artisticName || `${u.firstName} ${u.lastName || ''}`.trim(),
             discipline: mapDiscipline(u.perfil?.tags || []),
-            location: u.perfil?.tags?.length ? 'Colombia' : 'Colombia',
+            location: 'Colombia',
             image:
               u.perfil?.avatar || `https://api.dicebear.com/9.x/lorelei/svg?seed=${u.username}`,
             href: `/perfil/${u.username}`,
@@ -71,7 +72,9 @@ export function ComunidadArtistsSection() {
         )
         setMembers(mapped)
       })
-      .catch(() => {})
+      .catch((err) => {
+        console.error('Error fetching usuarios:', err)
+      })
       .finally(() => setLoading(false))
   }, [])
 

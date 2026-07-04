@@ -2,6 +2,7 @@ import { DefaultAvatar, generateBannerUrl } from '@/components/shared/DefaultAva
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'
+import { ProfileTestimonials } from '@/components/profile/ProfileTestimonials'
 import { prisma } from '@/lib/prisma'
 import Image from 'next/image'
 import { notFound } from 'next/navigation'
@@ -162,6 +163,11 @@ export default async function PublicProfilePage({ params }: Props) {
               </div>
             </section>
           )}
+
+          <ProfileTestimonials
+            username={usuario.username}
+            artisticName={perfil?.artisticName || `${usuario.firstName} ${usuario.lastName}`}
+          />
         </div>
       </main>
       <Footer />

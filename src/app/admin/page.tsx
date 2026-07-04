@@ -14,6 +14,7 @@ import {
   Ticket,
   DollarSign,
   TrendingUp,
+  MessageCircle,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -71,6 +72,12 @@ const sectionLinks = [
     description: 'Gestionar todos los eventos (CRUD completo)',
     icon: Calendar,
     href: '/admin/eventos',
+  },
+  {
+    title: 'Testimonios',
+    description: 'Moderar testimonios de la comunidad',
+    icon: MessageCircle,
+    href: '/admin/testimonios',
   },
   {
     title: 'Usuarios',

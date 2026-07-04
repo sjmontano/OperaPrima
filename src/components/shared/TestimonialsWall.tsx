@@ -3,15 +3,10 @@
 import { EditableImage } from '@/components/editor/EditableImage'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import Image from 'next/image'
-import { useRef, useState } from 'react'
-
-/**
- * TestimonialsWall — Testimonial Wall para comentarios de artistas.
- *
- * Nombre técnico: Testimonial Wall.
- * Sección escalable, fácil de editar y lista para recibir estilos globales.
- */
+import { createClient } from '@/lib/supabaseClient'
+import { MessageCircle, X } from 'lucide-react'
+import { useRouter } from 'next/navigation'
+import { useEffect, useRef, useState } from 'react'
 
 export const TESTIMONIAL_WALL_CONFIG = {
   cardWidth: 320,
@@ -20,10 +15,12 @@ export const TESTIMONIAL_WALL_CONFIG = {
 }
 
 export interface Testimonial {
+  id?: string
   name: string
   handle: string
   text: string
   avatar: string
+  username?: string
 }
 
 export interface TestimonialsWallProps {
@@ -38,38 +35,11 @@ export interface TestimonialsWallProps {
   fadeColor?: string
 }
 
-const DEFAULT_TESTIMONIALS: Testimonial[] = [
-  {
-    name: 'Camila Rojas',
-    handle: '@camilarte',
-    text: 'En Opera Prima encontré un espacio donde mi trabajo tiene visibilidad y comunidad. Las mentorías y eventos me han ayudado a conectar con nuevos públicos.',
-    avatar: 'https://i.pravatar.cc/150?u=camila',
-  },
-  {
-    name: 'Mateo Vargas',
-    handle: '@mateovibes',
-    text: 'La plataforma me permitió mostrar mis proyectos emergentes en un contexto profesional. Ahora participo en más convocatorias gracias al respaldo de la comunidad.',
-    avatar: 'https://i.pravatar.cc/150?u=mateo',
-  },
-  {
-    name: 'Mariana Cruz',
-    handle: '@mariana.crea',
-    text: 'Me gusta cómo Opera Prima pone el talento emergente al frente. Los eventos y talleres son justo lo que necesitaba para avanzar con confianza.',
-    avatar: 'https://i.pravatar.cc/150?u=mariana',
-  },
-  {
-    name: 'Santiago Pérez',
-    handle: '@santiagop',
-    text: 'La experiencia de colaborar con otros artistas aquí ha sido real. Me ayudó a expandir mi red y presentar mi trabajo a aliados clave.',
-    avatar: 'https://i.pravatar.cc/150?u=santiago',
-  },
-]
-
 export function TestimonialsWall({
   className = '',
   headline = 'Esto dicen los artistas de nuestra comunidad',
   testimonialEyebrow = 'Comunidad Opera Prima',
-  testimonials = DEFAULT_TESTIMONIALS,
+  testimonials: propTestimonials,
   animationDuration = TESTIMONIAL_WALL_CONFIG.animationDuration,
   cardWidth = TESTIMONIAL_WALL_CONFIG.cardWidth,
   cardGap = TESTIMONIAL_WALL_CONFIG.cardGap,
@@ -82,8 +52,105 @@ export function TestimonialsWall({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const [isCardHovered, setIsCardHovered] = useState(false)
+  const [dbTestimonials, setDbTestimonials] = useState<Testimonial[]>([])
+  const [loading, setLoading] = useState(true)
+  const [showModal, setShowModal] = useState(false)
+  const [newText, setNewText] = useState('')
+  const [submitting, setSubmitting] = useState(false)
+  const [session, setSession] = useState<{ user: { id: string } } | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
+  const router = useRouter()
+
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session as unknown as { user: { id: string } } | null)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (isEditMode) return
+
+    fetch('/api/testimonios')
+      .then((r) => r.json())
+      .then((data) => {
+        const mapped: Testimonial[] = (data.testimonials || []).map(
+          (t: {
+            id: string
+            text: string
+            usuario: {
+              username: string
+              firstName: string
+              lastName?: string
+              perfil?: { artisticName?: string; avatar?: string } | null
+            }
+          }) => ({
+            id: t.id,
+            name:
+              t.usuario.perfil?.artisticName ||
+              `${t.usuario.firstName} ${t.usuario.lastName || ''}`.trim(),
+            handle: `@${t.usuario.username}`,
+            text: t.text,
+            avatar:
+              t.usuario.perfil?.avatar ||
+              `https://api.dicebear.com/9.x/lorelei/svg?seed=${t.usuario.username}`,
+            username: t.usuario.username,
+          })
+        )
+        setDbTestimonials(mapped)
+      })
+      .catch(() => {})
+      .finally(() => setLoading(false))
+  }, [isEditMode])
+
+  const testimonials = isEditMode && propTestimonials ? propTestimonials : dbTestimonials
   const duplicated = [...testimonials, ...testimonials]
+
+  async function handleSubmit() {
+    if (!newText.trim() || submitting) return
+    setSubmitting(true)
+
+    const supabase = createClient()
+    const {
+      data: { session: s },
+    } = await supabase.auth.getSession()
+    if (!s) {
+      router.push('/login')
+      return
+    }
+
+    const res = await fetch('/api/testimonios', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${s.access_token}`,
+      },
+      body: JSON.stringify({ text: newText.trim() }),
+    })
+
+    if (res.ok) {
+      setNewText('')
+      setShowModal(false)
+      const data = await res.json()
+      const t = data.testimonial
+      const newTestimonial: Testimonial = {
+        id: t.id,
+        name:
+          t.usuario.perfil?.artisticName ||
+          `${t.usuario.firstName} ${t.usuario.lastName || ''}`.trim(),
+        handle: `@${t.usuario.username}`,
+        text: t.text,
+        avatar:
+          t.usuario.perfil?.avatar ||
+          `https://api.dicebear.com/9.x/lorelei/svg?seed=${t.usuario.username}`,
+        username: t.usuario.username,
+      }
+      setDbTestimonials((prev) => [newTestimonial, ...prev])
+      router.refresh()
+    }
+
+    setSubmitting(false)
+  }
 
   return (
     <section
@@ -119,42 +186,47 @@ export function TestimonialsWall({
               className=""
             />
           </TimelineAnimation>
+
+          {!isEditMode && (
+            <TimelineAnimation as="div" animationNum={2} timelineRef={sectionRef}>
+              <button
+                onClick={() => {
+                  if (!session) {
+                    router.push('/login')
+                    return
+                  }
+                  setShowModal(true)
+                }}
+                className="mt-6 inline-flex cursor-pointer items-center gap-2 border-2 border-[#023047] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_#353535]"
+                style={{ color: '#023047' }}
+              >
+                <MessageCircle size={14} />
+                Deja tu testimonio
+              </button>
+            </TimelineAnimation>
+          )}
         </div>
 
-        <div className="relative overflow-hidden">
-          {/* Degradado fade: tarjetas se desvanecen completamente al llegar al borde */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-y-0 right-0 left-0 z-10"
-            style={{
-              background: `linear-gradient(to right, ${fadeColor} 0%, transparent 25%, transparent 75%, ${fadeColor} 100%)`,
-            }}
-          />
-          <div className="testimonial-scroll-group">
+        {loading && !isEditMode ? (
+          <div className="flex justify-center py-12">
+            <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#023047] border-t-transparent" />
+          </div>
+        ) : testimonials.length === 0 && !isEditMode ? (
+          <p className="py-12 text-center text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
+            Aún no hay testimonios. Sé el primero en compartir tu experiencia.
+          </p>
+        ) : (
+          <div className="relative overflow-hidden">
             <div
-              className="scroll-row scroll-left"
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 left-0 z-10"
               style={{
-                animationDuration,
-                animationPlayState: isCardHovered ? 'paused' : 'running',
+                background: `linear-gradient(to right, ${fadeColor} 0%, transparent 25%, transparent 75%, ${fadeColor} 100%)`,
               }}
-            >
-              <div className="scroll-content" style={{ gap: cardGap }}>
-                {duplicated.map((testimonial, index) => (
-                  <TestimonialCard
-                    key={`left-${index}`}
-                    testimonial={testimonial}
-                    testimonialIndex={index % testimonials.length}
-                    width={cardWidth}
-                    onHoverChange={setIsCardHovered}
-                    __onFieldChange={__onFieldChange}
-                  />
-                ))}
-              </div>
-            </div>
-
-            {rows === 2 && (
+            />
+            <div className="testimonial-scroll-group">
               <div
-                className="scroll-row scroll-right"
+                className="scroll-row scroll-left"
                 style={{
                   animationDuration,
                   animationPlayState: isCardHovered ? 'paused' : 'running',
@@ -163,20 +235,98 @@ export function TestimonialsWall({
                 <div className="scroll-content" style={{ gap: cardGap }}>
                   {duplicated.map((testimonial, index) => (
                     <TestimonialCard
-                      key={`right-${index}`}
+                      key={`left-${index}`}
                       testimonial={testimonial}
                       testimonialIndex={index % testimonials.length}
                       width={cardWidth}
                       onHoverChange={setIsCardHovered}
+                      isEditMode={isEditMode}
                       __onFieldChange={__onFieldChange}
                     />
                   ))}
                 </div>
               </div>
-            )}
+
+              {rows === 2 && (
+                <div
+                  className="scroll-row scroll-right"
+                  style={{
+                    animationDuration,
+                    animationPlayState: isCardHovered ? 'paused' : 'running',
+                  }}
+                >
+                  <div className="scroll-content" style={{ gap: cardGap }}>
+                    {duplicated.map((testimonial, index) => (
+                      <TestimonialCard
+                        key={`right-${index}`}
+                        testimonial={testimonial}
+                        testimonialIndex={index % testimonials.length}
+                        width={cardWidth}
+                        onHoverChange={setIsCardHovered}
+                        isEditMode={isEditMode}
+                        __onFieldChange={__onFieldChange}
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {showModal && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setShowModal(false)}
+        >
+          <div
+            className="w-full max-w-md border-2 border-zinc-200 bg-[#F0F8FF] p-6 shadow-[6px_6px_0_#353535]"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h3
+                className="text-sm font-bold tracking-widest uppercase"
+                style={{ color: '#023047' }}
+              >
+                Deja tu testimonio
+              </h3>
+              <button
+                onClick={() => setShowModal(false)}
+                className="cursor-pointer"
+                style={{ color: '#353535' }}
+              >
+                <X size={18} />
+              </button>
+            </div>
+            <textarea
+              value={newText}
+              onChange={(e) => setNewText(e.target.value)}
+              placeholder="Comparte tu experiencia en Opera Prima..."
+              rows={4}
+              className="w-full resize-none border-2 border-zinc-300 bg-white p-3 text-xs focus:border-[#023047] focus:outline-none"
+              style={{ fontFamily: 'var(--font-poppins)', color: '#353535' }}
+            />
+            <div className="mt-4 flex justify-end gap-3">
+              <button
+                onClick={() => setShowModal(false)}
+                className="cursor-pointer border-2 border-zinc-300 px-4 py-2 text-xs font-bold tracking-widest uppercase"
+                style={{ color: '#353535' }}
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={!newText.trim() || submitting}
+                className="cursor-pointer border-2 border-[#023047] px-4 py-2 text-xs font-bold tracking-widest uppercase transition-all hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[3px_3px_0_#353535] disabled:opacity-50"
+                style={{ color: '#023047', background: '#F0F8FF' }}
+              >
+                {submitting ? 'Enviando...' : 'Enviar'}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </section>
   )
 }
@@ -186,16 +336,23 @@ function TestimonialCard({
   testimonialIndex,
   width,
   onHoverChange,
+  isEditMode,
   __onFieldChange,
 }: {
   testimonial: Testimonial
   testimonialIndex: number
   width: number
   onHoverChange: React.Dispatch<React.SetStateAction<boolean>>
+  isEditMode?: boolean
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
+  const CardWrapper = testimonial.username && !isEditMode ? 'a' : 'div'
+  const wrapperProps =
+    testimonial.username && !isEditMode ? { href: `/perfil/${testimonial.username}` } : {}
+
   return (
-    <article
+    <CardWrapper
+      {...wrapperProps}
       className="testimonial-card"
       style={{ minWidth: `${width}px`, width: `${width}px` }}
       onMouseEnter={() => onHoverChange(true)}
@@ -240,6 +397,6 @@ function TestimonialCard({
           className=""
         />
       </p>
-    </article>
+    </CardWrapper>
   )
 }

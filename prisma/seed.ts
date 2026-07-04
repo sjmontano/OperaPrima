@@ -1,6 +1,13 @@
 import { PrismaClient } from '@prisma/client'
+import { createClient } from '@supabase/supabase-js'
 
 const prisma = new PrismaClient()
+
+const supabaseAdmin = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!,
+  { auth: { autoRefreshToken: false, persistSession: false } }
+)
 
 const HERO_SLIDES = [
   {
@@ -225,7 +232,280 @@ const SEED_PAGES = [
   },
 ]
 
+const COLOMBIAN_USERS = [
+  {
+    username: 'valentina.artes',
+    email: 'valentina@email.com',
+    firstName: 'Valentina',
+    lastName: 'Arango',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Valentina Arango',
+      realName: 'Valentina Arango Moreno',
+      bio: 'Artista visual contemporánea explorando la memoria del paisaje colombiano a través de la acuarela y el grabado.',
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=valentina',
+      tags: ['acuarela', 'grabado', 'paisaje'],
+      interests: ['naturaleza', 'viajes', 'fotografía'],
+    },
+    location: 'Bogotá',
+  },
+  {
+    username: 'pipe.musica',
+    email: 'felipe@email.com',
+    firstName: 'Felipe',
+    lastName: 'Restrepo',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Pipe Restrepo',
+      realName: 'Felipe Restrepo Zapata',
+      bio: 'Productor musical y compositor de música electrónica experimental. Fusión de ritmos andinos con sintetizadores modulares.',
+      avatar: 'https://api.dicebear.com/9.x/open-peeps/svg?seed=pipe',
+      tags: ['música', 'producción', 'experimental'],
+      interests: ['synth', 'sonido', 'improvisación'],
+    },
+    location: 'Medellín',
+  },
+  {
+    username: 'laura.danza',
+    email: 'laura@email.com',
+    firstName: 'Laura',
+    lastName: 'Cifuentes',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Laura Cifuentes',
+      realName: 'Laura Cifuentes Díaz',
+      bio: 'Bailarina y coreógrafa de danza contemporánea. Investigo el movimiento como lenguaje de resistencia.',
+      avatar:
+        'https://images.unsplash.com/photo-1544717302-de2939b7ef71?w=300&h=300&fit=crop&crop=face',
+      tags: ['danza', 'coreografía', 'performance'],
+      interests: ['movimiento', 'acción social', 'colaboración'],
+    },
+    location: 'Cali',
+  },
+  {
+    username: 'santiago.teatro',
+    email: 'santiago@email.com',
+    firstName: 'Santiago',
+    lastName: 'Mendoza',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Santiago Mendoza',
+      realName: 'Santiago Mendoza Ríos',
+      bio: 'Actor y dramaturgo. Mis obras exploran las narrativas urbanas de la periferia bogotana.',
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=santiago',
+      tags: ['teatro', 'dramaturgia', 'actuación'],
+      interests: ['literatura', 'política', 'cine'],
+    },
+    location: 'Bogotá',
+  },
+  {
+    username: 'camila.visual',
+    email: 'camila.artes@email.com',
+    firstName: 'Camila',
+    lastName: 'Quintero',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Camila Quintero',
+      realName: 'Camila Quintero Londoño',
+      bio: 'Fotógrafa documental y artista multimedia. Retrato la memoria afrocolombiana del Pacífico.',
+      avatar:
+        'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=300&h=300&fit=crop&crop=face',
+      tags: ['fotografía', 'documental', 'multimedia'],
+      interests: ['memoria', 'archivo', 'identidad'],
+    },
+    location: 'Barranquilla',
+  },
+  {
+    username: 'andres.circo',
+    email: 'andres@email.com',
+    firstName: 'Andrés',
+    lastName: 'Montoya',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Andrés Montoya',
+      realName: 'Andrés Montoya Patiño',
+      bio: 'Artista circense especializado en malabares y acrobacia aérea. Combino teatro físico con técnicas de circo contemporáneo.',
+      avatar: 'https://api.dicebear.com/9.x/open-peeps/svg?seed=andres',
+      tags: ['circo', 'acrobacia', 'malabares'],
+      interests: ['movimiento', 'risoterapia', 'pedagogía'],
+    },
+    location: 'Medellín',
+  },
+  {
+    username: 'isabella.musica',
+    email: 'isabella@email.com',
+    firstName: 'Isabella',
+    lastName: 'Giraldo',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Isabella Giraldo',
+      realName: 'Isabella Giraldo Mejía',
+      bio: 'Cantautora de música popular colombiana. Fusiono el bambuco y el pasillo con sonidos contemporáneos.',
+      avatar:
+        'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=300&h=300&fit=crop&crop=face',
+      tags: ['música', 'canto', 'composición'],
+      interests: ['tradición', 'poesía', 'guitarra'],
+    },
+    location: 'Manizales',
+  },
+  {
+    username: 'daniel.visual',
+    email: 'daniel@email.com',
+    firstName: 'Daniel',
+    lastName: 'Castro',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Daniel Castro',
+      realName: 'Daniel Castro Herrera',
+      bio: 'Pintor muralista y street artist. Mis murales cuentan las historias del Caribe colombiano.',
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=daniel',
+      tags: ['muralismo', 'street art', 'pintura'],
+      interests: ['urbano', 'comunidad', 'color'],
+    },
+    location: 'Cartagena',
+  },
+  {
+    username: 'mariana.performance',
+    email: 'mariana@email.com',
+    firstName: 'Mariana',
+    lastName: 'Duque',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'Mariana Duque',
+      realName: 'Mariana Duque Ramírez',
+      bio: 'Artista interdisciplinaria. Trabajo con performance, video arte e instalación para cuestionar el espacio doméstico.',
+      avatar: 'https://api.dicebear.com/9.x/open-peeps/svg?seed=mariana',
+      tags: ['performance', 'video arte', 'instalación'],
+      interests: ['feminismo', 'espacio', 'cotidianidad'],
+    },
+    location: 'Bogotá',
+  },
+  {
+    username: 'jose.letras',
+    email: 'jose@email.com',
+    firstName: 'José',
+    lastName: 'Arias',
+    password: 'Seed123!',
+    perfil: {
+      artisticName: 'José Arias',
+      realName: 'José Arias Páez',
+      bio: 'Escritor y poeta. Publico narrativa breve y poesía sobre la identidad colombiana contemporánea.',
+      avatar: 'https://api.dicebear.com/9.x/lorelei/svg?seed=jose',
+      tags: ['literatura', 'poesía', 'narrativa'],
+      interests: ['lectura', 'edición', 'traducción'],
+    },
+    location: 'Bucaramanga',
+  },
+]
+
+const SEED_TESTIMONIALS = [
+  'Opera Prima me dio las herramientas y la comunidad que necesitaba para dar el salto profesional en mi carrera artística.',
+  'Los talleres y mentorías me conectaron con artistas que hoy son mis colaboradores. Una red real, no solo virtual.',
+  'Por primera vez siento que hay una plataforma que entiende lo que significa ser artista emergente en Colombia.',
+  'Gracias a Opera Prima conseguí mi primera residencia artística. La comunidad te empuja a postularte a cosas que antes no te atrevías.',
+  'El acompañamiento personalizado de los mentores transformó mi forma de entender mi práctica artística.',
+  'Los eventos de comunidad son espacios seguros donde podemos mostrar nuestro trabajo sin miedo al juicio.',
+  'Opera Prima no es solo una plataforma, es un movimiento que está cambiando la forma en que se hace cultura en el país.',
+  'Encontrar otros artistas que están en las mismas me ha dado la confianza para seguir creando y mostrando mi obra.',
+]
+
+async function seedUsers() {
+  console.log('Sembrando usuarios colombianos...')
+  let seededCount = 0
+
+  for (const userData of COLOMBIAN_USERS) {
+    const existing = await prisma.usuario.findUnique({ where: { username: userData.username } })
+    if (existing) {
+      console.log(`  Usuario ${userData.username} ya existe, saltando...`)
+      continue
+    }
+
+    const { data: authUser, error } = await supabaseAdmin.auth.admin.createUser({
+      email: userData.email,
+      password: userData.password,
+      email_confirm: true,
+    })
+
+    if (error || !authUser.user) {
+      console.error(`  Error creando usuario ${userData.username}: ${error?.message}`)
+      continue
+    }
+
+    await prisma.usuario.create({
+      data: {
+        supabaseId: authUser.user.id,
+        username: userData.username,
+        email: userData.email,
+        firstName: userData.firstName,
+        lastName: userData.lastName,
+        countryCode: 'CO',
+        phone: `300${Math.floor(1000000 + Math.random() * 9000000)}`,
+        rol: 'USUARIO',
+        perfil: {
+          create: {
+            artisticName: userData.perfil.artisticName,
+            realName: userData.perfil.realName,
+            bio: userData.perfil.bio,
+            avatar: userData.perfil.avatar,
+            tags: userData.perfil.tags,
+            interests: userData.perfil.interests,
+          },
+        },
+      },
+    })
+
+    seededCount++
+    console.log(`  ✓ ${userData.firstName} ${userData.lastName} (${userData.location})`)
+  }
+
+  console.log(`  Total: ${seededCount} usuarios creados`)
+  return COLOMBIAN_USERS.map((u) => u.username)
+}
+
+async function seedTestimonials(createdUsernames: string[]) {
+  const existingCount = await prisma.testimonial.count()
+  if (existingCount >= SEED_TESTIMONIALS.length) {
+    console.log('Testimonios ya existen, saltando...')
+    return
+  }
+
+  console.log('Sembrando testimonios...')
+
+  const targetUsernames =
+    createdUsernames.length > 0 ? createdUsernames : COLOMBIAN_USERS.map((u) => u.username)
+
+  const users = await prisma.usuario.findMany({
+    where: { username: { in: targetUsernames } },
+    include: { perfil: true },
+  })
+
+  for (let i = 0; i < Math.min(SEED_TESTIMONIALS.length, users.length); i++) {
+    const user = users[i]
+    const existing = await prisma.testimonial.findFirst({
+      where: { usuarioId: user.id, text: SEED_TESTIMONIALS[i] },
+    })
+    if (existing) continue
+
+    await prisma.testimonial.create({
+      data: {
+        text: SEED_TESTIMONIALS[i],
+        usuarioId: user.id,
+        active: true,
+      },
+    })
+    console.log(`  ✓ Testimonio de ${user.perfil?.artisticName || user.firstName}`)
+  }
+
+  console.log(`  Total: ${Math.min(SEED_TESTIMONIALS.length, users.length)} testimonios creados`)
+}
+
 async function main() {
+  // Seed users
+  const createdUsernames = await seedUsers()
+
+  // Seed testimonials
+  await seedTestimonials(createdUsernames)
+
   // Promover admin
   const email = process.env.ADMIN_EMAIL
   if (email) {

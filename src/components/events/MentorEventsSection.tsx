@@ -83,12 +83,15 @@ function mapEvent(evento: DbEvent): CalendarEvent {
     Concierto: 'terracota',
     Exposición: 'lavanda',
   }
+
   return {
     id: evento.id,
     title: evento.titulo,
     artist: evento.usuario?.perfil?.artisticName ?? evento.usuario?.username ?? 'Usuario',
     category: evento.categoria,
-    date: new Date(evento.fecha).toLocaleDateString('es-CO'),
+    date: new Date(evento.fecha).toLocaleDateString('es-CO', {
+      timeZone: 'UTC',
+    }),
     eventDate: new Date(evento.fecha),
     location: evento.ubicacion,
     image: evento.imagen ?? '/default-event.jpg',

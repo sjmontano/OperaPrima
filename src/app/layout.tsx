@@ -1,4 +1,5 @@
 import { AuthModalProvider } from '@/components/auth/AuthModalProvider'
+import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner'
 import { EditModeProvider } from '@/context/EditModeContext'
 import type { Metadata } from 'next'
 import { Geist_Mono, Poppins } from 'next/font/google'
@@ -30,7 +31,10 @@ export default function RootLayout({
     <html lang="en" className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="flex min-h-full flex-col">
         <AuthModalProvider>
-          <EditModeProvider>{children}</EditModeProvider>
+          <EditModeProvider>
+            {children}
+            <CookieConsentBanner />
+          </EditModeProvider>
         </AuthModalProvider>
       </body>
     </html>

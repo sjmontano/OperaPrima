@@ -1,12 +1,16 @@
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabase/server'
+import { createServerClient } from '@supabase/ssr'
 import { Rol } from '@prisma/client'
 
 async function getAdmin(req: Request) {
   const token = req.headers.get('Authorization')?.replace('Bearer ', '')
   if (!token) return null
 
-  const supabase = await createClient()
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    { cookies: { getAll: () => [], setAll: () => {} } }
+  )
   const {
     data: { user },
   } = await supabase.auth.getUser(token)
@@ -33,28 +37,45 @@ export async function GET(_req: Request, { params }: { params: Promise<{ slug: s
 }
 
 export async function PUT(req: Request, { params }: { params: Promise<{ slug: string }> }) {
-  const admin = await getAdmin(req)
-  if (!admin) {
-    return Response.json({ error: 'No autorizado' }, { status: 403 })
-  }
+  try {
+    const admin = await getAdmin(req)
+    if (!admin) {
+      return Response.json({ error: 'No autorizado' }, { status: 403 })
+    }
 
-  const { slug } = await params
-  const body = await req.json()
+    const { slug } = await params
+    const body = await req.json()
 
-  const page = await prisma.pageContent.upsert({
-    where: { slug },
-    update: {
-      title: body.title,
-      blocks: body.blocks ?? [],
-      published: body.published ?? true,
-    },
-    create: {
+    console.log(
+      '[PUT /api/pages] slug:',
       slug,
-      title: body.title,
-      blocks: body.blocks ?? [],
-      published: body.published ?? true,
-    },
-  })
+      'blocks:',
+      body.blocks?.length,
+      'title:',
+      body.title
+    )
 
-  return Response.json({ page })
+    const page = await prisma.pageContent.upsert({
+      where: { slug },
+      update: {
+        ...(body.title ? { title: body.title } : {}),
+        blocks: body.blocks ?? [],
+        published: body.published ?? true,
+      },
+      create: {
+        slug,
+        title: body.title || 'Sin título',
+        blocks: body.blocks ?? [],
+        published: body.published ?? true,
+      },
+    })
+
+    return Response.json({ page })
+  } catch (error) {
+    console.error('[PUT /api/pages] Error:', error)
+    return Response.json(
+      { error: error instanceof Error ? error.message : 'Error interno' },
+      { status: 500 }
+    )
+  }
 }

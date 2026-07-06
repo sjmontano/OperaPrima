@@ -3,14 +3,14 @@
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { ArrowRight, Mic, Palette, Users, type LucideIcon } from 'lucide-react'
+import { ArrowRight, Globe, Palette, Users, type LucideIcon } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Users,
   Palette,
-  Mic,
+  Globe,
 }
 
 export interface CTAStat {
@@ -22,9 +22,9 @@ export interface CTAStat {
 }
 
 const DEFAULT_STATS: CTAStat[] = [
-  { icon: 'Users', end: 2400, thousands: true, suffix: '+', label: 'artistas activos' },
-  { icon: 'Palette', end: 120, thousands: false, suffix: '+', label: 'eventos al año' },
-  { icon: 'Mic', end: 85, thousands: false, suffix: '+', label: 'mentores expertos' },
+  { icon: 'Users', end: 0, thousands: false, suffix: '', label: 'artistas registrados' },
+  { icon: 'Palette', end: 0, thousands: false, suffix: '', label: 'eventos publicados' },
+  { icon: 'Globe', end: 0, thousands: false, suffix: '', label: 'países alcanzados' },
 ]
 
 function StatNumber({
@@ -85,6 +85,42 @@ export function ComunidadCTA({
 }) {
   const ref = useRef<HTMLElement>(null)
   const { currentUser } = useAuthModal()
+  const [liveStats, setLiveStats] = useState<CTAStat[] | null>(null)
+
+  useEffect(() => {
+    fetch('/api/stats/public')
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.totalUsuarios !== undefined) {
+          setLiveStats([
+            {
+              icon: 'Users',
+              end: data.totalUsuarios,
+              thousands: false,
+              suffix: '',
+              label: 'artistas registrados',
+            },
+            {
+              icon: 'Palette',
+              end: data.totalEventos,
+              thousands: false,
+              suffix: '',
+              label: 'eventos publicados',
+            },
+            {
+              icon: 'Globe',
+              end: data.paises,
+              thousands: false,
+              suffix: '',
+              label: 'países alcanzados',
+            },
+          ])
+        }
+      })
+      .catch(() => {})
+  }, [])
+
+  const displayStats = liveStats ?? stats
 
   const effectivePrimaryCta = useMemo(() => {
     if (!isEditMode && currentUser) {
@@ -130,7 +166,7 @@ export function ComunidadCTA({
               as="h2"
               animationNum={1}
               timelineRef={ref}
-              className="mb-8 text-5xl leading-[1.0] font-bold tracking-[-0.03em] text-white lg:text-[4.5rem]"
+              className="mb-8 text-5xl leading-[1.0] font-semibold tracking-[-0.03em] text-white lg:text-[4.5rem]"
             >
               <EditableText
                 value={headline}
@@ -190,7 +226,7 @@ export function ComunidadCTA({
           </div>
 
           <div className="flex gap-4 lg:flex-col lg:gap-0 lg:divide-y lg:divide-white/10">
-            {stats.map(({ icon, end, thousands, suffix, label }, i) => {
+            {displayStats.map(({ icon, end, thousands, suffix, label }, i) => {
               const Icon = ICON_MAP[icon]
               return (
                 <motion.div

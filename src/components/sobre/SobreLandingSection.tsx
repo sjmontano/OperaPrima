@@ -147,7 +147,7 @@ export function SobreLandingSection() {
       <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
         <div className="grid gap-16 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
           {/* Left: texto */}
           <div className="max-w-3xl">
@@ -203,7 +203,7 @@ export function SobreLandingSection() {
 
       {/* ═══════════════ NUESTROS SERVICIOS ═══════════════ */}
       <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
-        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+        <div className="no-borders mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <TimelineAnimation as="div" animationNum={6} timelineRef={sectionRef} className="mb-14">
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase">
               La plataforma
@@ -250,7 +250,7 @@ export function SobreLandingSection() {
       </div>
 
       {/* ═══════════════ VALORES ═══════════════ */}
-      <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
         <div className="border-t-2 border-white/10 px-4 py-24 sm:px-2 lg:py-28">
           <TimelineAnimation as="div" animationNum={13} timelineRef={sectionRef} className="mb-10">
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
@@ -285,7 +285,7 @@ export function SobreLandingSection() {
 
       {/* ═══════════════ MISIÓN + VISIÓN ═══════════════ */}
       <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
-        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+        <div className="no-borders mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-2 lg:gap-12">
             <TimelineAnimation
               as="article"
@@ -342,7 +342,7 @@ export function SobreLandingSection() {
       <div className="relative border-t-2 border-white/10 bg-[#0f0f0f]">
         <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
-        <div className="relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+        <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="mb-14">
             <TimelineAnimation
               as="p"
@@ -408,7 +408,7 @@ export function SobreLandingSection() {
       <div className="relative border-t-2 border-white/10 bg-[#0f0f0f]">
         <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
-        <div className="relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+        <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <div className="mb-12 max-w-2xl">
             <TimelineAnimation
               as="p"

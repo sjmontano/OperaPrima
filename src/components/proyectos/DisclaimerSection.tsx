@@ -5,7 +5,7 @@ import { AlertTriangle } from 'lucide-react'
 export function DisclaimerSection() {
   return (
     <section className="w-full border-b-2 border-zinc-200 bg-white">
-      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+      <div className="no-borders mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="px-8 py-12">
           <div className="mx-auto max-w-3xl border-2 border-zinc-100 bg-zinc-50 p-6">
             <div className="flex items-start gap-3">

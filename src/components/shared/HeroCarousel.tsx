@@ -128,7 +128,7 @@ export function HeroCarousel({
 
   return (
     <section
-      className="relative w-full overflow-hidden border-b border-zinc-200"
+      className="no-borders relative w-full overflow-hidden border-b border-zinc-200"
       style={{ height: 'clamp(540px, 90vh, 860px)' }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
@@ -145,7 +145,7 @@ export function HeroCarousel({
             duration: transitionDuration,
             ease: [0.32, 0.72, 0, 1],
           }}
-          className={`absolute inset-0 bg-linear-to-br ${slide.bg}`}
+          className={`absolute inset-0 bg-linear-to-br ${slide.bg} no-borders`}
         >
           <div
             className="absolute inset-0 opacity-[0.04]"
@@ -156,7 +156,7 @@ export function HeroCarousel({
             }}
           />
 
-          <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
+          <div className="no-borders relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
             <motion.span
               key={`tag-${current}`}
               custom={0}

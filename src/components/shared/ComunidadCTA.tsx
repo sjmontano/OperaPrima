@@ -99,7 +99,7 @@ export function ComunidadCTA({
 
       <div className="absolute top-0 right-0 left-0 h-[3px] bg-[#8ECAE6]" />
 
-      <div className="relative z-10 mx-[100px] border-white/10 px-8 py-28 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 lg:py-36">
+      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-8 py-28 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 lg:py-36">
         <div className="grid items-center gap-16 lg:grid-cols-[1fr_auto] lg:gap-24">
           <div className="max-w-3xl">
             <TimelineAnimation

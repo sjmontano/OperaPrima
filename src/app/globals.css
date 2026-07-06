@@ -1410,12 +1410,16 @@
   gap: 0.55rem;
   cursor: pointer;
 }
+.no-borders {
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
+}
 
 .flip-auth-checkbox-input {
   width: 15px;
   height: 15px;
   margin-top: 1px;
-  border: 2px solid oklch(0.6 0 0);
+  border: 0px solid oklch(0.6 0 0);
   border-radius: 0;
   accent-color: #f65b7f;
   cursor: pointer;

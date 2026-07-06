@@ -466,7 +466,7 @@ export function FlipAuthCard({
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
         queryParams: {
-          prompt: 'consent select_account',
+          prompt: 'select_account',
         },
       },
     })

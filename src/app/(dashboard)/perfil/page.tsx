@@ -247,7 +247,7 @@ export default function PerfilPage() {
         <Navbar />
         <main className="min-h-screen bg-[#F0F8FF]">
           <SkeletonHero />
-          <div className="mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+          <div className="no-borders mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
             <section className="border-b border-zinc-200 px-8 py-10">
               <div className="mx-auto" style={{ maxWidth: '1024px' }}>
                 <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 lg:gap-16">
@@ -297,7 +297,7 @@ export default function PerfilPage() {
         <ProfileHero user={user} />
 
         {/* ── BORDER CONTAINER ── */}
-        <div className="mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+        <div className="no-borders mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
           {/* ── BIO + TAGS ── */}
           <section className="border-b border-zinc-200 px-8 py-10">
             <div className="mx-auto" style={{ maxWidth: '1024px' }}>

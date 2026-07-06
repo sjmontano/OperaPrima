@@ -232,13 +232,31 @@ const SEED_PAGES = [
   },
 ]
 
-const COLOMBIAN_USERS = [
+interface SeedUser {
+  username: string
+  email: string
+  firstName: string
+  lastName: string
+  password: string
+  rol?: string
+  perfil: {
+    artisticName: string
+    realName: string
+    bio: string
+    avatar: string
+    tags: string[]
+    interests: string[]
+  }
+  location: string
+}
+
+const COLOMBIAN_USERS: SeedUser[] = [
   {
     username: 'valentina.artes',
     email: 'valentina@email.com',
     firstName: 'Valentina',
     lastName: 'Arango',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Valentina Arango',
       realName: 'Valentina Arango Moreno',
@@ -254,7 +272,8 @@ const COLOMBIAN_USERS = [
     email: 'felipe@email.com',
     firstName: 'Felipe',
     lastName: 'Restrepo',
-    password: 'Seed123!',
+    password: 'Opera123.*',
+    rol: 'MENTOR',
     perfil: {
       artisticName: 'Pipe Restrepo',
       realName: 'Felipe Restrepo Zapata',
@@ -270,7 +289,7 @@ const COLOMBIAN_USERS = [
     email: 'laura@email.com',
     firstName: 'Laura',
     lastName: 'Cifuentes',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Laura Cifuentes',
       realName: 'Laura Cifuentes Díaz',
@@ -287,7 +306,7 @@ const COLOMBIAN_USERS = [
     email: 'santiago@email.com',
     firstName: 'Santiago',
     lastName: 'Mendoza',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Santiago Mendoza',
       realName: 'Santiago Mendoza Ríos',
@@ -303,7 +322,7 @@ const COLOMBIAN_USERS = [
     email: 'camila.artes@email.com',
     firstName: 'Camila',
     lastName: 'Quintero',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Camila Quintero',
       realName: 'Camila Quintero Londoño',
@@ -320,7 +339,7 @@ const COLOMBIAN_USERS = [
     email: 'andres@email.com',
     firstName: 'Andrés',
     lastName: 'Montoya',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Andrés Montoya',
       realName: 'Andrés Montoya Patiño',
@@ -336,7 +355,7 @@ const COLOMBIAN_USERS = [
     email: 'isabella@email.com',
     firstName: 'Isabella',
     lastName: 'Giraldo',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Isabella Giraldo',
       realName: 'Isabella Giraldo Mejía',
@@ -353,7 +372,7 @@ const COLOMBIAN_USERS = [
     email: 'daniel@email.com',
     firstName: 'Daniel',
     lastName: 'Castro',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Daniel Castro',
       realName: 'Daniel Castro Herrera',
@@ -369,7 +388,7 @@ const COLOMBIAN_USERS = [
     email: 'mariana@email.com',
     firstName: 'Mariana',
     lastName: 'Duque',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'Mariana Duque',
       realName: 'Mariana Duque Ramírez',
@@ -385,7 +404,7 @@ const COLOMBIAN_USERS = [
     email: 'jose@email.com',
     firstName: 'José',
     lastName: 'Arias',
-    password: 'Seed123!',
+    password: 'Opera123.*',
     perfil: {
       artisticName: 'José Arias',
       realName: 'José Arias Páez',
@@ -395,6 +414,23 @@ const COLOMBIAN_USERS = [
       interests: ['lectura', 'edición', 'traducción'],
     },
     location: 'Bucaramanga',
+  },
+  {
+    username: 'opera.admin',
+    email: 'opera@email.com',
+    firstName: 'Opera',
+    lastName: 'Prima',
+    password: 'Opera123.*',
+    rol: 'ADMIN',
+    perfil: {
+      artisticName: 'Opera Prima',
+      realName: 'Opera Prima Admin',
+      bio: 'Administrador de la plataforma Opera Prima.',
+      avatar: 'https://api.dicebear.com/9.x/initials/svg?seed=OP',
+      tags: ['admin'],
+      interests: ['gestión cultural'],
+    },
+    location: 'Bogotá',
   },
 ]
 
@@ -416,7 +452,21 @@ async function seedUsers() {
   for (const userData of COLOMBIAN_USERS) {
     const existing = await prisma.usuario.findUnique({ where: { username: userData.username } })
     if (existing) {
-      console.log(`  Usuario ${userData.username} ya existe, saltando...`)
+      // Actualizar contraseña en Supabase Auth si ya existe
+      if (existing.supabaseId) {
+        const { error: pwError } = await supabaseAdmin.auth.admin.updateUserById(
+          existing.supabaseId,
+          { password: userData.password }
+        )
+        if (pwError)
+          console.error(`  Error actualizando password de ${userData.username}: ${pwError.message}`)
+      }
+      // Actualizar rol si cambió
+      const newRol = userData.rol || 'USUARIO'
+      if (existing.rol !== newRol) {
+        await prisma.usuario.update({ where: { id: existing.id }, data: { rol: newRol } })
+      }
+      console.log(`  Usuario ${userData.username} ya existe, datos actualizados`)
       continue
     }
 
@@ -440,7 +490,7 @@ async function seedUsers() {
         lastName: userData.lastName,
         countryCode: 'CO',
         phone: `300${Math.floor(1000000 + Math.random() * 9000000)}`,
-        rol: 'USUARIO',
+        rol: userData.rol || 'USUARIO',
         perfil: {
           create: {
             artisticName: userData.perfil.artisticName,
@@ -506,16 +556,16 @@ async function main() {
   // Seed testimonials
   await seedTestimonials(createdUsernames)
 
-  // Promover admin
-  const email = process.env.ADMIN_EMAIL
-  if (email) {
-    const user = await prisma.usuario.findUnique({ where: { email } })
-    if (user) {
-      await prisma.usuario.update({ where: { email }, data: { rol: 'ADMIN' } })
-      console.log(`Usuario ${email} promovido a ADMIN`)
-    } else {
-      console.log(`No se encontró usuario con email: ${email}`)
+  // Promover admin (por env o por defecto opera@email.com)
+  const adminEmail = process.env.ADMIN_EMAIL || 'opera@email.com'
+  const user = await prisma.usuario.findUnique({ where: { email: adminEmail } })
+  if (user) {
+    if (user.rol !== 'ADMIN') {
+      await prisma.usuario.update({ where: { email: adminEmail }, data: { rol: 'ADMIN' } })
+      console.log(`Usuario ${adminEmail} promovido a ADMIN`)
     }
+  } else {
+    console.log(`No se encontró usuario con email: ${adminEmail}`)
   }
 
   // Sembrar/actualizar páginas

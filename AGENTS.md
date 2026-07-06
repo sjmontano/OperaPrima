@@ -1,3 +1,13 @@
+<!-- BEGIN:user-rules -->
+
+# User Rules (must follow at all times)
+
+- **Never** commit or push changes unless the user explicitly asks for it.
+- If the user says "haz commit", "pushea", "commitea", or similar explicit wording, then proceed.
+- Otherwise, just make the changes locally and wait for authorization.
+
+<!-- END:user-rules -->
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # This is NOT the Next.js you know

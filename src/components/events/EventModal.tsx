@@ -35,20 +35,20 @@ export function EventModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* IMAGEN */}
-        <div className="relative h-64">
+        <div className="relative">
           <img src={event.image} alt={event.title} className="h-full w-full object-cover" />
         </div>
 
         {/* CONTENIDO */}
         <div className="space-y-5 p-6">
           {/* Título */}
-          <div>
+          <div className="gap-6 border-b">
             <h2 className="text-2xl font-bold">{event.title}</h2>
 
             <p className="mt-1 text-sm text-zinc-500">{event.artist}</p>
           </div>
 
-          {/* Stats */}
+          {/* Stats 
           <div className="flex gap-6 border-y py-3 text-sm text-zinc-600">
             <div>
               <span className="font-bold text-zinc-900">{event.likes}</span> likes
@@ -62,6 +62,7 @@ export function EventModal({
               <span className="font-bold text-zinc-900">{event.comments}</span> comentarios
             </div>
           </div>
+          */}
 
           {/* Información */}
           <div className="space-y-4">

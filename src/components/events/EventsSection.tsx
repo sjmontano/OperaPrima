@@ -323,7 +323,7 @@ function EventCard({
           <span
             className={`block text-base leading-none font-bold ${event.soldOut ? 'text-zinc-400 line-through' : 'text-zinc-900'}`}
           >
-            {event.price}
+            {event.price} €
           </span>
           {String(event.price).startsWith('$') && (
             <span className="mt-1 block text-[0.6rem] tracking-widest text-zinc-400 uppercase">
@@ -331,22 +331,6 @@ function EventCard({
             </span>
           )}
         </div>
-        {event.soldOut ? (
-          <button
-            type="button"
-            disabled
-            className="cursor-not-allowed border-2 border-zinc-300 bg-zinc-50 px-3 py-1.5 text-[0.6rem] font-bold tracking-widest text-zinc-400 uppercase"
-          >
-            Agotado
-          </button>
-        ) : (
-          <button
-            type="button"
-            className="border-2 border-[#E63946] bg-[#E63946] px-3 py-1.5 text-[0.6rem] font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:bg-white hover:text-[#E63946] hover:shadow-[3px_3px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-          >
-            Inscribirse →
-          </button>
-        )}
       </div>
     </motion.article>
   )
@@ -466,7 +450,6 @@ export function EventsSection() {
   }
 
   useEffect(() => {
-     
     loadEvents()
   }, [])
 
@@ -662,8 +645,9 @@ export function EventsSection() {
         {selectedEvent && (
           <EventModal
             event={selectedEvent}
-            currentUser={currentUser}
             onClose={() => setSelectedEvent(null)}
+            tipo="MENTOR"
+            currentUser={currentUser}
           />
         )}
 

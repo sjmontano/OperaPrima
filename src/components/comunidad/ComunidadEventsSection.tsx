@@ -544,7 +544,7 @@ export function ComunidadEventsSection() {
                           </div>
 
                           <div className="mt-auto flex items-center justify-between border-t border-zinc-200 px-5 py-3">
-                            <span className="text-sm font-bold text-zinc-900">{event.price}</span>
+                            <span className="text-sm font-bold text-zinc-900">{event.price} €</span>
                             {isOwn && (
                               <button
                                 type="button"

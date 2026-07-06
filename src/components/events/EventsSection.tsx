@@ -374,6 +374,7 @@ export function EventsSection() {
   const [formError, setFormError] = useState('')
 
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -459,11 +460,13 @@ export function EventsSection() {
       setDbEvents(data.eventos)
     } catch (error: unknown) {
       console.error(error)
+    } finally {
+      setIsLoading(false)
     }
   }
 
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
+     
     loadEvents()
   }, [])
 
@@ -680,7 +683,7 @@ export function EventsSection() {
                 as="h2"
                 animationNum={1}
                 timelineRef={sectionRef}
-                className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
+                className="text-4xl leading-none font-semibold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
               >
                 Próximos eventos
               </TimelineAnimation>
@@ -759,7 +762,20 @@ export function EventsSection() {
         />
 
         {/* -- Events -- */}
-        {filteredEvents.length === 0 ? (
+        {isLoading ? (
+          <div className="px-8 py-10">
+            <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+              {Array.from({ length: 6 }, (_, i) => (
+                <div key={i} className="space-y-3">
+                  <div className="h-40 w-full animate-pulse rounded bg-zinc-200" />
+                  <div className="h-4 w-3/4 animate-pulse rounded bg-zinc-200" />
+                  <div className="h-3 w-1/2 animate-pulse rounded bg-zinc-200" />
+                  <div className="h-3 w-1/3 animate-pulse rounded bg-zinc-200" />
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : filteredEvents.length === 0 ? (
           <EmptyState />
         ) : (
           <>

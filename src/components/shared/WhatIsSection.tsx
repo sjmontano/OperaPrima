@@ -2,14 +2,15 @@
 
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { CalendarDays, Compass, Layers, Users, type LucideIcon } from 'lucide-react'
+import { ArrowRight, CalendarDays, Compass, Globe, Users, type LucideIcon } from 'lucide-react'
+import Link from 'next/link'
 import { useRef } from 'react'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Users,
   CalendarDays,
   Compass,
-  Layers,
+  Globe,
 }
 
 export interface ServiceCard {
@@ -48,10 +49,10 @@ const DEFAULT_CARDS: ServiceCard[] = [
   },
   {
     num: '04',
-    icon: 'Layers',
-    title: 'Comunidad Creativa',
-    desc: 'Conecta con artistas, comparte experiencias, descubre colaboraciones y forma parte de un espacio donde el aprendizaje y las oportunidades nacen de la comunidad.',
-    accent: '#8ECAE6',
+    icon: 'Globe',
+    title: 'Comunidad',
+    desc: 'Conecta con otros artistas emergentes, comparte tu trabajo y encuentra colaboraciones que impulsen tu carrera.',
+    accent: '#E63946',
     href: '/comunidad',
   },
 ]
@@ -104,7 +105,7 @@ export function WhatIsSection({
                 as="h2"
                 animationNum={1}
                 timelineRef={ref}
-                className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
+                className="text-4xl leading-none font-semibold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
               >
                 <EditableText
                   value={heading}
@@ -142,6 +143,15 @@ export function WhatIsSection({
                   className=""
                 />
               </TimelineAnimation>
+              <TimelineAnimation as="div" animationNum={4} timelineRef={ref}>
+                <Link
+                  href="/sobre"
+                  className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#023047] hover:shadow-[4px_4px_0_#023047]"
+                >
+                  Conoce más
+                  <ArrowRight size={14} />
+                </Link>
+              </TimelineAnimation>
             </div>
           </div>
         </div>
@@ -165,7 +175,7 @@ export function WhatIsSection({
             as="h2"
             animationNum={5}
             timelineRef={ref}
-            className="text-4xl leading-none font-bold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
+            className="text-4xl leading-none font-semibold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
           >
             <EditableText
               value={serviceHeading}
@@ -176,7 +186,7 @@ export function WhatIsSection({
           </TimelineAnimation>
         </div>
 
-        <div className="grid grid-cols-1 divide-y divide-zinc-200 md:grid-cols-2 md:divide-y-0">
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-px md:bg-zinc-200">
           {cards.map((s, i) => {
             const Icon = ICON_MAP[s.icon]
             return (
@@ -186,8 +196,18 @@ export function WhatIsSection({
                 href={s.href}
                 animationNum={i + 6}
                 timelineRef={ref}
-                className={`group flex flex-col gap-6 border-zinc-200 px-8 py-12 transition-all duration-200 hover:bg-zinc-50 ${i % 2 === 0 ? 'md:border-r' : ''} ${i < 2 ? 'border-b' : ''}`}
+                className={`group relative flex flex-col gap-6 bg-white px-8 py-12 transition-all duration-300 hover:z-10 hover:-translate-y-1 hover:shadow-lg ${i % 2 === 0 ? 'md:border-r md:border-zinc-200' : ''} ${i < 2 ? 'border-b border-zinc-200 md:border-b-0' : ''}`}
+                style={{
+                  borderBottom: i >= 2 ? '1px solid' : undefined,
+                  borderColor: i >= 2 ? '#e4e4e7' : undefined,
+                }}
               >
+                {/* Accent bar on hover */}
+                <div
+                  className="absolute top-0 left-0 h-1 w-0 transition-all duration-300 group-hover:w-full"
+                  style={{ backgroundColor: s.accent }}
+                />
+
                 <div className="flex items-start justify-between">
                   <span
                     className="text-[0.6rem] font-bold tracking-[0.24em] uppercase"
@@ -200,6 +220,7 @@ export function WhatIsSection({
                     style={{
                       borderColor: `${s.accent}50`,
                       color: s.accent,
+                      boxShadow: `0 0 0 ${s.accent}00`,
                     }}
                     onMouseEnter={(e) => {
                       ;(e.currentTarget as HTMLDivElement).style.boxShadow = `3px 3px 0 ${s.accent}`
@@ -213,7 +234,7 @@ export function WhatIsSection({
                 </div>
 
                 <div className="flex flex-col gap-3">
-                  <h3 className="text-xl leading-snug font-bold tracking-tight text-zinc-900">
+                  <h3 className="text-xl leading-snug font-bold tracking-tight text-zinc-900 transition-colors duration-200 group-hover:text-[#023047]">
                     <EditableText
                       value={s.title}
                       onSave={(v) => __onFieldChange?.(`cards.${i}.title`, v)}
@@ -233,10 +254,14 @@ export function WhatIsSection({
                 </div>
 
                 <span
-                  className="mt-auto flex items-center gap-1.5 self-start text-[0.62rem] font-bold tracking-widest uppercase transition-all duration-150 group-hover:gap-3"
+                  className="mt-auto flex items-center gap-1.5 self-start text-[0.62rem] font-bold tracking-widest uppercase transition-all duration-300 group-hover:gap-3"
                   style={{ color: s.accent }}
                 >
-                  Explorar →
+                  Explorar
+                  <ArrowRight
+                    size={12}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
                 </span>
               </TimelineAnimation>
             )

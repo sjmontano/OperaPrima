@@ -2,12 +2,15 @@
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Briefcase } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 
 export function ProyectosLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const auth = useAuthModal()
+  const { currentUser } = auth
+  const router = useRouter()
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden bg-[#0f0f0f]">
@@ -61,11 +64,14 @@ export function ProyectosLandingSection() {
                   </a>
                   <button
                     type="button"
-                    onClick={() => auth.open('registro')}
+                    onClick={() => {
+                      if (currentUser) router.push('/comunidad?tab=proyectos')
+                      else auth.open('registro')
+                    }}
                     className="flex items-center gap-2 border-2 border-white/20 px-6 py-3 text-xs font-bold tracking-widest text-white/70 uppercase transition-all duration-150 hover:border-white/40 hover:text-white"
                   >
                     <Briefcase size={14} />
-                    Publica tu proyecto
+                    {currentUser ? 'Ir a proyectos' : 'Publica tu proyecto'}
                   </button>
                 </div>
               </TimelineAnimation>

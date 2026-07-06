@@ -8,6 +8,7 @@ import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Heart, Target } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 
 const VALORES = [
@@ -137,6 +138,8 @@ const TEAM = [
 export function SobreLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
+  const { currentUser } = authModal
+  const router = useRouter()
 
   return (
     <section
@@ -177,18 +180,24 @@ export function SobreLandingSection() {
               <div className="flex flex-col gap-4 pt-2 sm:flex-row sm:items-center">
                 <button
                   type="button"
-                  onClick={() => authModal.open('registro')}
+                  onClick={() => {
+                    if (currentUser) router.push('/comunidad')
+                    else authModal.open('registro')
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#E63946]"
                 >
-                  Únete a la comunidad
+                  {currentUser ? 'Ir a la comunidad' : 'Únete a la comunidad'}
                   <ArrowRight size={16} />
                 </button>
                 <button
                   type="button"
-                  onClick={() => authModal.open('login')}
+                  onClick={() => {
+                    if (currentUser) router.push(`/perfil/${currentUser.username}`)
+                    else authModal.open('login')
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >
-                  Iniciar sesión
+                  {currentUser ? 'Mi perfil' : 'Iniciar sesión'}
                 </button>
               </div>
             </TimelineAnimation>

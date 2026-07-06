@@ -14,6 +14,7 @@ import {
   User,
 } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { ExpandingMentorsGallery } from './ExpandingMentorsGallery'
 
@@ -140,6 +141,8 @@ export const MENTORS = [
 export function MentoriasLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
+  const { currentUser } = authModal
+  const router = useRouter()
 
   return (
     <section
@@ -203,18 +206,24 @@ export function MentoriasLandingSection() {
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
                   type="button"
-                  onClick={() => authModal.open('registro')}
+                  onClick={() => {
+                    if (currentUser) router.push('/mentorias')
+                    else authModal.open('registro')
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:bg-transparent hover:text-[#E63946]"
                 >
-                  Reservar mentoría
+                  {currentUser ? 'Ver mentores' : 'Reservar mentoría'}
                   <ArrowRight size={16} />
                 </button>
                 <button
                   type="button"
-                  onClick={() => authModal.open('login')}
+                  onClick={() => {
+                    if (currentUser) router.push('/comunidad')
+                    else authModal.open('login')
+                  }}
                   className="inline-flex items-center justify-center gap-2 rounded-none border-2 border-white/20 bg-white/5 px-6 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >
-                  Ver perfiles
+                  {currentUser ? 'Ir a la comunidad' : 'Ver perfiles'}
                 </button>
               </div>
             </TimelineAnimation>

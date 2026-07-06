@@ -2,12 +2,15 @@
 
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Users } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 
 export function ComunidadLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
+  const { currentUser } = authModal
+  const router = useRouter()
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden bg-[#0f0f0f]">
@@ -53,11 +56,14 @@ export function ComunidadLandingSection() {
                 <div className="flex flex-wrap gap-3 pt-2">
                   <button
                     type="button"
-                    onClick={() => authModal.open('registro')}
+                    onClick={() => {
+                      if (currentUser) router.push('/comunidad')
+                      else authModal.open('registro')
+                    }}
                     className="flex items-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-white hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                   >
                     <Users size={14} />
-                    Únete a la comunidad
+                    {currentUser ? 'Ir a la comunidad' : 'Únete a la comunidad'}
                   </button>
                   <a
                     href="#eventos"

@@ -1,11 +1,12 @@
 'use client'
 
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { EditableText } from '@/components/editor/EditableText'
 import { ChevronLeft, ChevronRight } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 export interface HeroSlide {
   id: number
@@ -84,6 +85,27 @@ export function HeroCarousel({
   const [direction, setDirection] = useState<1 | -1>(1)
   const [hovered, setHovered] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const { currentUser } = useAuthModal()
+
+  const OVERRIDE_LABELS = useMemo(
+    () => ({
+      '/registro': { label: 'Ir a la comunidad', href: '/comunidad' },
+      '/login': {
+        label: 'Mi perfil',
+        href: currentUser ? `/perfil/${currentUser.username}` : '/login',
+      },
+    }),
+    [currentUser]
+  )
+
+  const getEffectiveCta = useCallback(
+    (cta: { label: string; href: string }) => {
+      if (isEditMode || !currentUser) return cta
+      const override = OVERRIDE_LABELS[cta.href as keyof typeof OVERRIDE_LABELS]
+      return override ?? cta
+    },
+    [isEditMode, currentUser, OVERRIDE_LABELS]
+  )
 
   const go = useCallback(
     (index: number, dir: 1 | -1) => {
@@ -105,6 +127,8 @@ export function HeroCarousel({
   }, [hovered, isEditMode, next, autoPlayInterval])
 
   const slide = slides[current]
+  const effectiveCta = getEffectiveCta(slide.cta)
+  const effectiveSecondaryCta = getEffectiveCta(slide.secondaryCta)
 
   const slideVariants = {
     enter: (dir: number) => ({ x: dir > 0 ? '3%' : '-3%', opacity: 0 }),
@@ -218,12 +242,12 @@ export function HeroCarousel({
               className="flex flex-wrap items-center gap-3"
             >
               <Link
-                href={slide.cta.href}
+                href={effectiveCta.href}
                 className="inline-flex items-center border-2 border-white/30 px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:border-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.5)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 style={{ backgroundColor: slide.accent, borderColor: slide.accent }}
               >
                 <EditableText
-                  value={slide.cta.label}
+                  value={effectiveCta.label}
                   onSave={(v) => __onFieldChange?.(`slides.${current}.cta.label`, v)}
                   as="span"
                   singleLine
@@ -231,11 +255,11 @@ export function HeroCarousel({
                 />
               </Link>
               <Link
-                href={slide.secondaryCta.href}
+                href={effectiveSecondaryCta.href}
                 className="inline-flex items-center border-2 border-white/20 px-6 py-3 text-sm font-bold tracking-widest text-white/80 uppercase transition-all duration-150 ease-out hover:border-white/50 hover:bg-white/10 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
                 <EditableText
-                  value={slide.secondaryCta.label}
+                  value={effectiveSecondaryCta.label}
                   onSave={(v) => __onFieldChange?.(`slides.${current}.secondaryCta.label`, v)}
                   as="span"
                   singleLine

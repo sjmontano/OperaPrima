@@ -3,6 +3,7 @@
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, BookOpen, CalendarDays, Users } from 'lucide-react'
+import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
 const TYPEWRITER_WORDS = [
@@ -148,6 +149,8 @@ function RotatingCTA() {
 export function EventsLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
+  const { currentUser } = authModal
+  const router = useRouter()
 
   return (
     <section
@@ -266,10 +269,13 @@ export function EventsLandingSection() {
             >
               <button
                 type="button"
-                onClick={() => authModal.open('registro')}
+                onClick={() => {
+                  if (currentUser) router.push('/eventos')
+                  else authModal.open('registro')
+                }}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                Comenzar gratis
+                {currentUser ? 'Ver eventos' : 'Comenzar gratis'}
                 <ArrowRight size={16} />
               </button>
 

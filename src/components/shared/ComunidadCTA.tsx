@@ -1,10 +1,11 @@
 'use client'
 
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Mic, Palette, Users, type LucideIcon } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 const ICON_MAP: Record<string, LucideIcon> = {
   Users,
@@ -83,6 +84,14 @@ export function ComunidadCTA({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const ref = useRef<HTMLElement>(null)
+  const { currentUser } = useAuthModal()
+
+  const effectivePrimaryCta = useMemo(() => {
+    if (!isEditMode && currentUser) {
+      return { label: 'Ir a la comunidad', href: '/comunidad' }
+    }
+    return primaryCta
+  }, [isEditMode, currentUser, primaryCta])
 
   const headlineParts = headline.split(', ')
 
@@ -152,11 +161,11 @@ export function ComunidadCTA({
               className="flex flex-wrap items-center gap-4"
             >
               <a
-                href={primaryCta.href}
+                href={effectivePrimaryCta.href}
                 className="inline-flex items-center gap-3 border-2 border-[#E63946] bg-[#E63946] px-8 py-4 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(255,255,255,0.25)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
                 <EditableText
-                  value={primaryCta.label}
+                  value={effectivePrimaryCta.label}
                   onSave={(v) => __onFieldChange?.('primaryCta.label', v)}
                   as="span"
                   singleLine

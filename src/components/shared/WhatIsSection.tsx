@@ -49,8 +49,8 @@ const DEFAULT_CARDS: ServiceCard[] = [
   {
     num: '04',
     icon: 'Layers',
-    title: 'Membresía Premium',
-    desc: 'Acceso completo a contenido exclusivo, tarifas preferenciales en eventos y visibilidad dentro de la comunidad.',
+    title: 'Comunidad Creativa',
+    desc: 'Conecta con artistas, comparte experiencias, descubre colaboraciones y forma parte de un espacio donde el aprendizaje y las oportunidades nacen de la comunidad.',
     accent: '#8ECAE6',
     href: '/comunidad',
   },

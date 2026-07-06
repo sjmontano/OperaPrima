@@ -336,7 +336,7 @@ export function ComunidadEventsSection() {
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
               Eventos de la comunidad
             </p>
-            <h2 className="mt-3 text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
               {currentUser ? '¿Qué está pasando?' : 'Explora la comunidad'}
             </h2>
             <p className="mt-2 text-sm text-zinc-500">

@@ -67,7 +67,7 @@ export function PartnersStrip({
             as="h2"
             animationNum={1}
             timelineRef={sectionRef}
-            className="text-4xl leading-[1.06] font-bold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
+            className="text-4xl leading-[1.06] font-semibold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
             <EditableText
               value={heading}

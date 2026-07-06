@@ -38,7 +38,7 @@ export function ProyectosLandingSection() {
               </TimelineAnimation>
 
               <TimelineAnimation as="h1" animationNum={2} timelineRef={sectionRef}>
-                <span className="text-5xl leading-[0.92] font-black tracking-tight text-white sm:text-7xl lg:text-8xl">
+                <span className="text-5xl leading-[0.92] font-extrabold tracking-tight text-white sm:text-7xl lg:text-8xl">
                   Encuentra tu
                   <br />
                   próximo proyecto

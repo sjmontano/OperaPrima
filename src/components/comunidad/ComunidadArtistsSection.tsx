@@ -128,7 +128,7 @@ export function ComunidadArtistsSection() {
 
               <TimelineAnimation as="div" animationNum={2} timelineRef={sectionRef}>
                 <div className="space-y-4">
-                  <h3 className="text-2xl font-black tracking-tight text-zinc-900 sm:text-3xl">
+                  <h3 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
                     {featuredArtist.name}
                   </h3>
                   <p className="text-sm leading-relaxed text-zinc-500">

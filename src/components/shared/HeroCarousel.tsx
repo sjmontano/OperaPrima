@@ -205,7 +205,7 @@ export function HeroCarousel({
               variants={textVariants}
               initial="hidden"
               animate="visible"
-              className="mb-5 leading-[1.05] font-bold whitespace-pre-line text-white"
+              className="mb-5 leading-[1.05] font-semibold whitespace-pre-line text-white"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
               <EditableText

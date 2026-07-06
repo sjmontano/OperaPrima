@@ -205,7 +205,7 @@ export function ProyectosSection() {
           <p className="mb-2 text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
             Proyectos activos
           </p>
-          <h2 className="text-3xl font-black tracking-tight text-zinc-900 sm:text-4xl">
+          <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
             Explora oportunidades
           </h2>
           <p className="mt-2 text-sm text-zinc-500">
@@ -415,7 +415,7 @@ export function ProyectosSection() {
                                 />
                               )}
                               <div>
-                                <h3 className="text-2xl font-black text-zinc-900">
+                                <h3 className="text-2xl font-extrabold text-zinc-900">
                                   {proyecto.nombre}
                                 </h3>
                                 <p className="mt-1 text-sm text-zinc-500">

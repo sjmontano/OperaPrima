@@ -86,7 +86,7 @@ const WHAT_IS_CARDS = [
     title: 'Membresía Premium',
     desc: 'Acceso completo a contenido exclusivo, tarifas preferenciales en eventos y visibilidad dentro de la comunidad.',
     accent: '#8ECAE6',
-    href: '/membresia',
+    href: '/comunidad',
   },
 ]
 

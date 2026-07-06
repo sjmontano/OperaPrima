@@ -447,6 +447,13 @@ const SEED_TESTIMONIALS = [
 
 async function seedUsers() {
   console.log('Sembrando usuarios colombianos...')
+  const COUNTRY_OVERRIDES: Record<string, string> = {
+    'pipe.musica': 'ES',
+    'jose.letras': 'MX',
+    'laura.danza': 'AR',
+    'andres.circo': 'CL',
+  }
+
   let seededCount = 0
 
   for (const userData of COLOMBIAN_USERS) {
@@ -463,8 +470,12 @@ async function seedUsers() {
       }
       // Actualizar rol si cambió
       const newRol = userData.rol || 'USUARIO'
-      if (existing.rol !== newRol) {
-        await prisma.usuario.update({ where: { id: existing.id }, data: { rol: newRol } })
+      const newCountry = COUNTRY_OVERRIDES[userData.username] ?? 'CO'
+      if (existing.rol !== newRol || existing.countryCode !== newCountry) {
+        await prisma.usuario.update({
+          where: { id: existing.id },
+          data: { rol: newRol, countryCode: newCountry },
+        })
       }
       console.log(`  Usuario ${userData.username} ya existe, datos actualizados`)
       continue
@@ -488,7 +499,7 @@ async function seedUsers() {
         email: userData.email,
         firstName: userData.firstName,
         lastName: userData.lastName,
-        countryCode: 'CO',
+        countryCode: COUNTRY_OVERRIDES[userData.username] ?? 'CO',
         phone: `300${Math.floor(1000000 + Math.random() * 9000000)}`,
         rol: userData.rol || 'USUARIO',
         perfil: {

@@ -1410,11 +1410,6 @@
   gap: 0.55rem;
   cursor: pointer;
 }
-.no-borders {
-  border-left-width: 0 !important;
-  border-right-width: 0 !important;
-}
-
 .flip-auth-checkbox-input {
   width: 15px;
   height: 15px;
@@ -1480,4 +1475,9 @@
   line-height: 1.55;
   margin: 0;
   max-width: 230px;
+}
+
+html.lines-off [class*='border-x-2'] {
+  border-left-width: 0 !important;
+  border-right-width: 0 !important;
 }

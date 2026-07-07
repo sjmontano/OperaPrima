@@ -94,7 +94,7 @@ export function ComunidadArtistsSection() {
 
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
-      <div className="no-borders mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {featuredArtist && (
           <div className="border-b-2 border-zinc-200 px-8 pt-20 pb-16">
             <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>

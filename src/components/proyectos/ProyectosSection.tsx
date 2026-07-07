@@ -199,7 +199,7 @@ export function ProyectosSection() {
       id="proyectos"
       className="bg-background w-full border-b-2 border-zinc-200"
     >
-      <div className="no-borders mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {/* Header */}
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
           <p className="mb-2 text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">

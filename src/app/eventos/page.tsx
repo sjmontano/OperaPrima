@@ -14,8 +14,8 @@ export const metadata: Metadata = {
 export default function EventosPage() {
   return (
     <>
-      <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
+      <Navbar accentColor="#F65B7F" />
+      <main className="flex flex-col" style={{ background: '#F0F8FF' }}>
         <DbPageServer
           slug="eventos"
           fallback={

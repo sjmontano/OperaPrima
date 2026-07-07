@@ -29,7 +29,10 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${poppins.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang="en"
+      className={`${poppins.variable} ${geistMono.variable} h-full antialiased${process.env.NEXT_PUBLIC_LINES === 'off' ? 'lines-off' : ''}`}
+    >
       <body className="flex min-h-full flex-col">
         <AuthModalProvider>
           <EditModeProvider>

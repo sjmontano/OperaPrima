@@ -1,3 +1,4 @@
+import { ContentFrame } from '@/components/layout/ContentFrame'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import type { Metadata } from 'next'
@@ -83,53 +84,55 @@ export default function PrivacidadPage() {
     <>
       <Navbar />
       <main className="flex flex-col bg-[#F0F8FF]">
-        <article className="mx-auto w-full max-w-3xl px-6 py-20">
-          <div className="mb-12">
-            <p className="mb-2 text-xs font-semibold tracking-wider text-[#023047] uppercase">
-              Documento legal
-            </p>
-            <h1 className="text-4xl font-bold tracking-tight text-[#111]">
-              Política de Privacidad
-            </h1>
-            <p className="mt-3 text-sm text-[#52525B]">
-              Ópera Prima &mdash; Última actualización: Mayo 2026
-            </p>
-          </div>
+        <ContentFrame>
+          <article className="mx-auto w-full max-w-3xl px-6 py-20">
+            <div className="mb-12">
+              <p className="mb-2 text-xs font-semibold tracking-wider text-[#023047] uppercase">
+                Documento legal
+              </p>
+              <h1 className="text-4xl font-bold tracking-tight text-[#111]">
+                Política de Privacidad
+              </h1>
+              <p className="mt-3 text-sm text-[#52525B]">
+                Ópera Prima &mdash; Última actualización: Mayo 2026
+              </p>
+            </div>
 
-          <div className="prose prose-sm max-w-none text-[#52525B]">
-            <p className="text-base leading-relaxed text-[#111]">
-              En Ópera Prima nos tomamos en serio tu privacidad. Esta Política de Privacidad
-              describe cómo recogemos, utilizamos y protegemos tus datos personales cuando accedes y
-              utilizas nuestra plataforma, en cumplimiento del Reglamento General de Protección de
-              Datos (RGPD) de la Unión Europea, la Ley Orgánica de Protección de Datos y Garantía de
-              Derechos Digitales (LOPDGDD) y la normativa colombiana aplicable.
-            </p>
-          </div>
+            <div className="prose prose-sm max-w-none text-[#52525B]">
+              <p className="text-base leading-relaxed text-[#111]">
+                En Ópera Prima nos tomamos en serio tu privacidad. Esta Política de Privacidad
+                describe cómo recogemos, utilizamos y protegemos tus datos personales cuando accedes
+                y utilizas nuestra plataforma, en cumplimiento del Reglamento General de Protección
+                de Datos (RGPD) de la Unión Europea, la Ley Orgánica de Protección de Datos y
+                Garantía de Derechos Digitales (LOPDGDD) y la normativa colombiana aplicable.
+              </p>
+            </div>
 
-          <div className="mt-12 space-y-10">
-            {privacySections.map((section, i) => (
-              <section key={i}>
-                <h2 className="mb-3 text-lg font-bold text-[#111]">
-                  {i + 1}. {section.title}
-                </h2>
-                <p className="text-sm leading-relaxed text-[#52525B]">{section.content}</p>
-              </section>
-            ))}
-          </div>
+            <div className="mt-12 space-y-10">
+              {privacySections.map((section, i) => (
+                <section key={i}>
+                  <h2 className="mb-3 text-lg font-bold text-[#111]">
+                    {i + 1}. {section.title}
+                  </h2>
+                  <p className="text-sm leading-relaxed text-[#52525B]">{section.content}</p>
+                </section>
+              ))}
+            </div>
 
-          <div className="mt-16 space-y-6 border-t border-[#E4E4E7] pt-10" id="colombia">
-            {colombiaAnnex.map((section, i) => (
-              <section key={i}>
-                <h2 className="mb-4 text-lg font-bold text-[#111]">{section.title}</h2>
-                {section.content.map((paragraph, j) => (
-                  <p key={j} className="mb-3 text-sm leading-relaxed text-[#52525B]">
-                    {paragraph}
-                  </p>
-                ))}
-              </section>
-            ))}
-          </div>
-        </article>
+            <div className="mt-16 space-y-6 border-t border-[#E4E4E7] pt-10" id="colombia">
+              {colombiaAnnex.map((section, i) => (
+                <section key={i}>
+                  <h2 className="mb-4 text-lg font-bold text-[#111]">{section.title}</h2>
+                  {section.content.map((paragraph, j) => (
+                    <p key={j} className="mb-3 text-sm leading-relaxed text-[#52525B]">
+                      {paragraph}
+                    </p>
+                  ))}
+                </section>
+              ))}
+            </div>
+          </article>
+        </ContentFrame>
       </main>
       <Footer />
     </>

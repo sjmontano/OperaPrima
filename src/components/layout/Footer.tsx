@@ -42,7 +42,7 @@ export function Footer() {
   return (
     <footer
       ref={footerRef}
-      className="no-borders relative w-full overflow-hidden border-t-2 border-white/10 bg-[#0f0f0f]"
+      className="relative w-full overflow-hidden border-t-2 border-white/10 bg-[#0f0f0f]"
     >
       {/* Watermark "Ópera Prima" de fondo */}
       <div
@@ -60,7 +60,7 @@ export function Footer() {
       </div>
 
       {/* Contenido principal */}
-      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-8 pt-20 pb-16 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+      <div className="relative z-10 mx-[100px] border-white/10 px-8 pt-20 pb-16 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {/* Grid 3 columnas */}
         <div className="mb-14 grid grid-cols-1 gap-16 md:grid-cols-3">
           {/* -- Brand -- */}

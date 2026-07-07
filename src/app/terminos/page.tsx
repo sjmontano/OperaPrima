@@ -1,3 +1,4 @@
+import { ContentFrame } from '@/components/layout/ContentFrame'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import type { Metadata } from 'next'
@@ -130,42 +131,45 @@ export default function TerminosPage() {
     <>
       <Navbar />
       <main className="flex flex-col bg-[#F0F8FF]">
-        <article className="mx-auto w-full max-w-3xl px-6 py-20">
-          <div className="mb-12">
-            <p className="mb-2 text-xs font-semibold tracking-wider text-[#023047] uppercase">
-              Documento legal
-            </p>
-            <h1 className="text-4xl font-bold tracking-tight text-[#111]">
-              Términos y Condiciones de Uso
-            </h1>
-            <p className="mt-3 text-sm text-[#52525B]">
-              Plataforma Ópera Prima &mdash; Última actualización: Mayo 2026
-            </p>
-          </div>
+        <ContentFrame>
+          <article className="mx-auto w-full max-w-3xl px-6 py-20">
+            <div className="mb-12">
+              <p className="mb-2 text-xs font-semibold tracking-wider text-[#023047] uppercase">
+                Documento legal
+              </p>
+              <h1 className="text-4xl font-bold tracking-tight text-[#111]">
+                Términos y Condiciones de Uso
+              </h1>
+              <p className="mt-3 text-sm text-[#52525B]">
+                Plataforma Ópera Prima &mdash; Última actualización: Mayo 2026
+              </p>
+            </div>
 
-          <div className="prose prose-sm max-w-none text-[#52525B]">
-            <p className="text-base leading-relaxed text-[#111]">
-              Bienvenido/a a Ópera Prima. Al acceder, registrarte o utilizar esta plataforma,
-              aceptas los presentes Términos y Condiciones de Uso. Si no estás de acuerdo con ellos,
-              deberás abstenerte de utilizar los servicios ofrecidos.
-            </p>
-            <p className="mt-4 text-base leading-relaxed text-[#111]">
-              Ópera Prima es una plataforma digital orientada a la conexión, visibilización y
-              acompañamiento de artistas, creadores y profesionales del sector cultural y creativo.
-            </p>
-          </div>
+            <div className="prose prose-sm max-w-none text-[#52525B]">
+              <p className="text-base leading-relaxed text-[#111]">
+                Bienvenido/a a Ópera Prima. Al acceder, registrarte o utilizar esta plataforma,
+                aceptas los presentes Términos y Condiciones de Uso. Si no estás de acuerdo con
+                ellos, deberás abstenerte de utilizar los servicios ofrecidos.
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-[#111]">
+                Ópera Prima es una plataforma digital orientada a la conexión, visibilización y
+                acompañamiento de artistas, creadores y profesionales del sector cultural y
+                creativo.
+              </p>
+            </div>
 
-          <div className="mt-12 space-y-10">
-            {sections.map((section) => (
-              <section key={section.num}>
-                <h2 className="mb-3 text-lg font-bold text-[#111]">
-                  {section.num}. {section.title}
-                </h2>
-                <p className="text-sm leading-relaxed text-[#52525B]">{section.content}</p>
-              </section>
-            ))}
-          </div>
-        </article>
+            <div className="mt-12 space-y-10">
+              {sections.map((section) => (
+                <section key={section.num}>
+                  <h2 className="mb-3 text-lg font-bold text-[#111]">
+                    {section.num}. {section.title}
+                  </h2>
+                  <p className="text-sm leading-relaxed text-[#52525B]">{section.content}</p>
+                </section>
+              ))}
+            </div>
+          </article>
+        </ContentFrame>
       </main>
       <Footer />
     </>

@@ -163,7 +163,7 @@ export function EventsLandingSection() {
       />
       <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
 
-      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+      <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
         <div className="grid gap-16 px-4 py-24 sm:px-2 lg:grid-cols-[1.3fr_0.9fr] lg:gap-20 lg:py-28">
           <div className="max-w-3xl">
             <TimelineAnimation

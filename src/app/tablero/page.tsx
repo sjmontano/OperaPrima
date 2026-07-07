@@ -17,7 +17,7 @@ export default function ProyectosPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col bg-[#F0F8FF]">
+      <main className="flex flex-col" style={{ background: '#F0F8FF' }}>
         <DbPageServer
           slug="tablero"
           fallback={

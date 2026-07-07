@@ -343,7 +343,7 @@ export default function EditarPerfilPage() {
       <AdBar />
       <Navbar />
       <main className="min-h-screen bg-[#F0F8FF]">
-        <div className="no-borders mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+        <div className="mx-[100px] border-zinc-200 bg-white max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-zinc-200 px-8 py-6">
             <div className="flex items-center gap-4">

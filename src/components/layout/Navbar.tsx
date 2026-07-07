@@ -29,7 +29,7 @@ const NAVBAR_CONFIG = {
 }
 
 // -- Component --
-export function Navbar() {
+export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
   const [scrolled, setScrolled] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
   const [userMenuOpen, setUserMenuOpen] = useState(false)
@@ -84,7 +84,7 @@ export function Navbar() {
       <div
         className={`mx-[100px] px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 ${
           scrolled ? 'border-white/10' : 'border-zinc-200'
-        } no-borders`}
+        }`}
       >
         <div className="flex h-16 items-center justify-between gap-6">
           {/* Logo */}
@@ -432,6 +432,10 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      <div
+        className="h-0.75 w-full transition-opacity duration-300"
+        style={{ backgroundColor: accentColor, opacity: scrolled ? 1 : 0.5 }}
+      />
     </header>
   )
 }

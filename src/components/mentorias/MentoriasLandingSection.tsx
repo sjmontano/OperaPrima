@@ -152,7 +152,7 @@ export function MentoriasLandingSection() {
       <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#8ECAE6]" />
 
       {/* ═══════════════ HERO ═══════════════ */}
-      <div className="no-borders relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+      <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
         <div className="grid gap-16 px-4 py-28 sm:px-2 lg:grid-cols-[1.1fr_0.9fr] lg:gap-20 lg:py-32">
           {/* Left: hero text + rotating */}
           <div className="max-w-3xl">
@@ -271,7 +271,7 @@ export function MentoriasLandingSection() {
 
       {/* ═══════════════ MENTORES ═══════════════ */}
       <div className="border-t-2 border-white/10 bg-[#F0F8FF]">
-        <div className="no-borders mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
+        <div className="mx-[100px] border-zinc-200 px-4 py-24 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6 lg:py-32">
           <TimelineAnimation
             as="div"
             animationNum={7}
@@ -299,7 +299,7 @@ export function MentoriasLandingSection() {
 
       {/* ═══════════════ CTA SER MENTOR ═══════════════ */}
       <div className="border-t-2 border-white/10 bg-[#0f0f0f]">
-        <div className="no-borders mx-[100px] border-white/10 px-4 py-20 text-center max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
+        <div className="mx-[100px] border-white/10 px-4 py-20 text-center max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <TimelineAnimation
             as="div"
             animationNum={8}

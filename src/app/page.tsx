@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <AdBar />
-      <Navbar />
+      <Navbar accentColor="#F65B7F" />
       <main className="flex flex-col">
         <DbPageServer
           slug="inicio"

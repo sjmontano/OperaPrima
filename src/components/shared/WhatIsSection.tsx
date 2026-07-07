@@ -81,8 +81,8 @@ export function WhatIsSection({
   const ref = useRef<HTMLElement>(null)
 
   return (
-    <section ref={ref} className="bg-background no-borders w-full border-b-2 border-zinc-200">
-      <div className="no-borders mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
+    <section ref={ref} className="bg-background w-full border-b-2 border-zinc-200">
+      <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="border-b border-zinc-200 px-8 pt-20 pb-16">
           <div className="grid items-end gap-12 lg:grid-cols-[1fr_1.6fr]">
             <div>
@@ -156,12 +156,14 @@ export function WhatIsSection({
           </div>
         </div>
 
-        <div className="px-8 pt-16 pb-6">
+        <div className="mb-6 ml-8 h-0.75 w-16 bg-[#F65B7F]" />
+
+        <div className="px-8 pt-8 pb-6">
           <TimelineAnimation
             as="p"
             animationNum={4}
             timelineRef={ref}
-            className="mb-3 text-[0.62rem] font-bold tracking-[0.28em] text-[#023047] uppercase"
+            className="mb-3 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
           >
             <EditableText
               value={serviceEyebrow}

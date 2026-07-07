@@ -77,7 +77,7 @@ export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
       className={[
         'sticky top-0 z-50 w-full transition-all duration-300',
         scrolled
-          ? 'border-b border-white/10 bg-[#0f0f0f]/97 shadow-[0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md'
+          ? 'bg-[#0f0f0f]/97 shadow-[0_1px_0_0_rgba(255,255,255,0.06)] backdrop-blur-md'
           : 'bg-transparent',
       ].join(' ')}
     >

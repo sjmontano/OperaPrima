@@ -16,7 +16,7 @@ export default function ComunidadPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#F0F8FF' }}>
+      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="comunidad"
           fallback={

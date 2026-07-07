@@ -171,14 +171,7 @@ export function HeroCarousel({
           }}
           className={`absolute inset-0 bg-linear-to-br ${slide.bg}`}
         >
-          <div
-            className="absolute inset-0 opacity-[0.04]"
-            style={{
-              backgroundImage:
-                'linear-gradient(#fff 1px, transparent 1px), linear-gradient(90deg, #fff 1px, transparent 1px)',
-              backgroundSize: '80px 80px',
-            }}
-          />
+          {/* Removed editorial grid overlay */}
 
           <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
             <motion.span

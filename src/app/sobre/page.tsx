@@ -15,7 +15,7 @@ export default function SobrePage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#F0F8FF' }}>
+      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="sobre"
           fallback={

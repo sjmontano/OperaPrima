@@ -3,16 +3,7 @@
 import { Navbar } from '@/components/layout/Navbar'
 import { Footer } from '@/components/layout/Footer'
 import { DSButton, DSCard, DSBadge, DSInput } from '@/components/ui/ds'
-import {
-  colors,
-  btn,
-  card,
-  shadow,
-  input,
-  eyebrow,
-  section,
-  gridOverlay,
-} from '@/lib/design-tokens'
+import { colors, btn, card, shadow, input, eyebrow, section } from '@/lib/design-tokens'
 import {
   ArrowRight,
   CalendarDays,
@@ -55,9 +46,9 @@ const ITEMS = [
     accent: colors.blueMid,
   },
   {
-    title: 'Membresía Premium',
+    title: 'Comunidad',
     desc: 'Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque.',
-    icon: Star,
+    icon: Users,
     accent: colors.blueLight,
   },
 ]
@@ -108,7 +99,6 @@ export default function MuestraPage() {
         {/* ═══ HERO ═══ */}
         <section className={section.hero}>
           <div className="max-w-landing relative mx-auto px-8 pt-28 pb-24">
-            <div className={gridOverlay.base} style={gridOverlay.style} />
             <div className="relative grid gap-12 lg:grid-cols-2 lg:items-center">
               <div className="max-w-2xl">
                 <div className="h-0.75 w-16 bg-[#8ECAE6]" />
@@ -182,7 +172,6 @@ export default function MuestraPage() {
         {/* ═══ EVENTOS / TARJETAS ═══ */}
         <section className={section.dark}>
           <div className="max-w-landing relative mx-auto px-8 py-24">
-            <div className={gridOverlay.base} style={gridOverlay.style} />
             <div className="relative">
               <div className="flex items-end justify-between">
                 <div>
@@ -254,7 +243,6 @@ export default function MuestraPage() {
         {/* ═══ CTA + STATS ═══ */}
         <section className={section.dark}>
           <div className="max-w-landing relative mx-auto px-8 py-24">
-            <div className={gridOverlay.base} style={gridOverlay.style} />
             <div className="relative">
               <div className="h-0.75 w-full bg-[#8ECAE6]" />
               <div className="mt-12 grid gap-12 lg:grid-cols-2 lg:items-center">
@@ -323,7 +311,6 @@ export default function MuestraPage() {
         {/* ═══ FORMULARIO / CONTACTO ═══ */}
         <section className={section.dark}>
           <div className="max-w-landing relative mx-auto px-8 py-24">
-            <div className={gridOverlay.base} style={gridOverlay.style} />
             <div className="relative mx-auto max-w-2xl text-center">
               <p className={eyebrow.dark}>06 — Contacto</p>
               <h2 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white lg:text-5xl">

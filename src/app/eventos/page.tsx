@@ -15,7 +15,7 @@ export default function EventosPage() {
   return (
     <>
       <Navbar accentColor="#F65B7F" />
-      <main className="flex flex-col" style={{ background: '#F0F8FF' }}>
+      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="eventos"
           fallback={

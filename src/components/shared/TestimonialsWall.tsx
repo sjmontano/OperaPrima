@@ -282,7 +282,7 @@ export function TestimonialsWall({
           onClick={() => setShowModal(false)}
         >
           <div
-            className="w-full max-w-md border-2 border-zinc-200 bg-[#F0F8FF] p-6 shadow-[6px_6px_0_#353535]"
+            className="w-full max-w-md border-2 border-zinc-200 bg-white p-6 shadow-[6px_6px_0_#353535]"
             onClick={(e) => e.stopPropagation()}
           >
             <div className="mb-4 flex items-center justify-between">

@@ -1,3 +1,4 @@
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { DisclaimerSection } from '@/components/proyectos/DisclaimerSection'
 import { ProyectosDestacados } from '@/components/proyectos/ProyectosDestacados'
@@ -17,7 +18,7 @@ export default function ProyectosPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
+      <main className="relative flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="tablero"
           fallback={
@@ -29,6 +30,7 @@ export default function ProyectosPage() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

@@ -3,6 +3,7 @@
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { RotatingText } from '@/components/shared/RotatingText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { useEditMode } from '@/context/EditModeContext'
 import { MentorEditModal } from '@/components/mentorias/MentorEditModal'
 import {
   ArrowRight,
@@ -12,9 +13,11 @@ import {
   Compass,
   FileText,
   MessageCircle,
+  Plus,
   Search,
   Sparkles,
   Star,
+  Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
@@ -75,33 +78,41 @@ export function MentoriasLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const { currentUser } = authModal
+  const { isEditMode } = useEditMode()
   const router = useRouter()
   const [mentores, setMentores] = useState<MentorCard[]>([])
   const [mentoresLoaded, setMentoresLoaded] = useState(false)
   const [editingMentor, setEditingMentor] = useState<MentorDB | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [creating, setCreating] = useState(false)
+
+  async function fetchMentores() {
+    try {
+      const res = await fetch('/api/mentores')
+      const data = await res.json()
+      if (data.mentores) {
+        const mapped: MentorCard[] = data.mentores.map((m: MentorDB) => ({
+          id: m.id,
+          usuarioId: m.usuarioId,
+          name: m.name,
+          title: m.title,
+          location: m.location,
+          focus: m.focus,
+          notes: m.notes,
+          galleryImages: m.galleryImages,
+          avatar: m.usuario?.perfil?.avatar || null,
+        }))
+        setMentores(mapped)
+      }
+      setMentoresLoaded(true)
+    } catch {
+      setMentoresLoaded(true)
+    }
+  }
 
   useEffect(() => {
-    fetch('/api/mentores')
-      .then((res) => res.json())
-      .then((data) => {
-        if (data.mentores) {
-          const mapped: MentorCard[] = data.mentores.map((m: MentorDB) => ({
-            id: m.id,
-            usuarioId: m.usuarioId,
-            name: m.name,
-            title: m.title,
-            location: m.location,
-            focus: m.focus,
-            notes: m.notes,
-            galleryImages: m.galleryImages,
-            avatar: m.usuario?.perfil?.avatar || null,
-          }))
-          setMentores(mapped)
-        }
-        setMentoresLoaded(true)
-      })
-      .catch(() => setMentoresLoaded(true))
+    fetchMentores()
+     
   }, [])
 
   function canEdit(mentor: MentorCard): boolean {
@@ -159,6 +170,42 @@ export function MentoriasLandingSection() {
       )
     }
   }
+
+  async function handleCreate(data: MentorFormData) {
+    const supabase = (await import('@/lib/supabaseClient')).createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return
+    const token = session.access_token
+    const res = await fetch('/api/mentores', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    })
+    if (res.ok) {
+      await fetchMentores()
+    }
+  }
+
+  async function handleDelete(mentor: MentorCard) {
+    if (!window.confirm(`¿Eliminar a ${mentor.name}? Esta acción no se puede deshacer.`)) return
+    const supabase = (await import('@/lib/supabaseClient')).createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return
+    const token = session.access_token
+    const res = await fetch(`/api/mentores/${mentor.id}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${token}` },
+    })
+    if (res.ok) {
+      setMentores((prev) => prev.filter((p) => p.id !== mentor.id))
+    }
+  }
+
+  const showInlineAdmin = isEditMode && currentUser?.rol === 'ADMIN'
 
   return (
     <>
@@ -400,8 +447,31 @@ export function MentoriasLandingSection() {
               </h2>
             </TimelineAnimation>
             <div className="mt-12">
+              {showInlineAdmin && (
+                <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
+                  <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">
+                    Modo edición — Mentores
+                  </p>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setEditingMentor(null)
+                      setShowEditModal(true)
+                    }}
+                    className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
+                  >
+                    <Plus size={14} />
+                    Agregar mentor
+                  </button>
+                </div>
+              )}
               {mentores.length > 0 ? (
-                <ExpandingMentorsGallery mentors={mentores} canEdit={canEdit} onEdit={handleEdit} />
+                <ExpandingMentorsGallery
+                  mentors={mentores}
+                  canEdit={canEdit}
+                  onEdit={handleEdit}
+                  onDelete={showInlineAdmin ? handleDelete : undefined}
+                />
               ) : (
                 <div className="border-2 border-zinc-200 p-12 text-center">
                   <p className="text-sm text-zinc-500">
@@ -476,7 +546,7 @@ export function MentoriasLandingSection() {
           setShowEditModal(false)
           setEditingMentor(null)
         }}
-        onSave={handleSaveEdit}
+        onSave={editingMentor ? handleSaveEdit : handleCreate}
       />
     </>
   )

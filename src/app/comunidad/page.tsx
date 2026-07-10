@@ -1,3 +1,4 @@
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { ComunidadArtistsSection } from '@/components/comunidad/ComunidadArtistsSection'
 import { ComunidadEventsSection } from '@/components/comunidad/ComunidadEventsSection'
@@ -16,7 +17,7 @@ export default function ComunidadPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
+      <main className="relative flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="comunidad"
           fallback={
@@ -27,6 +28,7 @@ export default function ComunidadPage() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

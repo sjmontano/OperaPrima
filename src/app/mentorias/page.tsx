@@ -1,3 +1,4 @@
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
@@ -14,7 +15,7 @@ export default function MentoriasPage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
+      <main className="relative flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="mentorias"
           fallback={
@@ -23,6 +24,7 @@ export default function MentoriasPage() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

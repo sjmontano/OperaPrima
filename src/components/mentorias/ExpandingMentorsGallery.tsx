@@ -22,12 +22,14 @@ interface ExpandingMentorsGalleryProps {
   mentors: MentorCard[]
   canEdit?: (mentor: MentorCard) => boolean
   onEdit?: (mentor: MentorCard) => void
+  onDelete?: (mentor: MentorCard) => void
 }
 
 export function ExpandingMentorsGallery({
   mentors,
   canEdit,
   onEdit,
+  onDelete,
 }: ExpandingMentorsGalleryProps) {
   const authModal = useAuthModal()
   const [expandedId, setExpandedId] = useState<string | null>(null)
@@ -145,6 +147,19 @@ export function ExpandingMentorsGallery({
               className={`mentor-card group relative cursor-pointer ${showOverlay ? 'mentor-card--expanded' : ''}`}
               style={{ flex: `${flex}` }}
             >
+              {onDelete && canEdit && canEdit(mentor) && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete(mentor)
+                  }}
+                  className="absolute top-2 right-2 z-30 flex h-7 w-7 items-center justify-center border-2 border-red-500 bg-red-500 text-white opacity-0 transition-all group-hover:opacity-100 hover:bg-white hover:text-red-500"
+                >
+                  <X size={14} />
+                  <span className="sr-only">Eliminar mentor</span>
+                </button>
+              )}
               {image.url ? (
                 <img
                   src={image.url}
@@ -197,6 +212,19 @@ export function ExpandingMentorsGallery({
               className={`mentor-card group relative cursor-pointer ${isSelected ? 'mentor-card--expanded' : ''}`}
               style={{ height: isSelected ? '420px' : '180px' }}
             >
+              {onDelete && canEdit && canEdit(mentor) && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    onDelete(mentor)
+                  }}
+                  className="absolute top-2 right-2 z-30 flex h-7 w-7 items-center justify-center border-2 border-red-500 bg-red-500 text-white transition-all hover:bg-white hover:text-red-500"
+                >
+                  <X size={14} />
+                  <span className="sr-only">Eliminar mentor</span>
+                </button>
+              )}
               {image.url ? (
                 <img
                   src={image.url}
@@ -342,6 +370,19 @@ export function ExpandingMentorsGallery({
                     >
                       <Pencil size={14} />
                       Editar tarjeta
+                    </button>
+                  )}
+                  {onDelete && canEdit && canEdit(selectedMentor) && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        onDelete(selectedMentor)
+                        handleCloseModal()
+                      }}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-none border-2 border-red-500 bg-red-500 px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-red-500 hover:bg-transparent hover:text-red-500 active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                    >
+                      <X size={14} />
+                      Eliminar mentor
                     </button>
                   )}
                   <button

@@ -1,3 +1,4 @@
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { ComunidadEventsSection } from '@/components/comunidad/ComunidadEventsSection'
 import { EventsLandingSection } from '@/components/events/EventsLandingSection'
@@ -15,7 +16,7 @@ export default function EventosPage() {
   return (
     <>
       <Navbar accentColor="#F65B7F" />
-      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
+      <main className="relative flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="eventos"
           fallback={
@@ -27,6 +28,7 @@ export default function EventosPage() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

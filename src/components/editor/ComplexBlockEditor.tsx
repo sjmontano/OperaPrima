@@ -136,6 +136,7 @@ function HeroCarouselEditor({
         bg: '',
         accent: '',
         tag: '',
+        bgImage: '',
       }}
       onChange={(v) => onChange({ ...p, slides: v })}
       renderItem={(s, _, update) => (
@@ -185,6 +186,11 @@ function HeroCarouselEditor({
             label="Bg gradient"
             value={String(s.bg || '')}
             onChange={(v) => update({ ...s, bg: v })}
+          />
+          <Input
+            label="Bg imagen URL"
+            value={String(s.bgImage || '')}
+            onChange={(v) => update({ ...s, bgImage: v })}
           />
           <Input
             label="Color acento"
@@ -350,7 +356,6 @@ function PartnersEditor({
   props: Record<string, unknown>
   onChange: (p: Record<string, unknown>) => void
 }) {
-  const items = (p.partners as Array<Record<string, unknown>>) || []
   return (
     <div className="space-y-4">
       <Input
@@ -378,26 +383,9 @@ function PartnersEditor({
         value={String(p.ctaEmail || '')}
         onChange={(v) => onChange({ ...p, ctaEmail: v })}
       />
-      <ArrayEditor
-        label="Aliados"
-        items={items}
-        defaultItem={{ name: '', src: '' }}
-        onChange={(v) => onChange({ ...p, partners: v })}
-        renderItem={(t, _, update) => (
-          <>
-            <Input
-              label="Nombre"
-              value={String(t.name || '')}
-              onChange={(v) => update({ ...t, name: v })}
-            />
-            <Input
-              label="Logo URL"
-              value={String(t.src || '')}
-              onChange={(v) => update({ ...t, src: v })}
-            />
-          </>
-        )}
-      />
+      <p className="text-[10px] leading-relaxed text-zinc-400">
+        Los slots de aliados se administran directamente desde la página en modo edición.
+      </p>
     </div>
   )
 }

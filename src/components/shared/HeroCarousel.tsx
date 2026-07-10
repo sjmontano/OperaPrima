@@ -17,6 +17,7 @@ export interface HeroSlide {
   bg: string
   accent: string
   tag: string
+  bgImage?: string
 }
 
 const DEFAULT_SLIDES: HeroSlide[] = [
@@ -169,9 +170,23 @@ export function HeroCarousel({
             duration: transitionDuration,
             ease: [0.32, 0.72, 0, 1],
           }}
-          className={`absolute inset-0 bg-linear-to-br ${slide.bg}`}
+          className={
+            slide.bgImage ? 'absolute inset-0' : `absolute inset-0 bg-linear-to-br ${slide.bg}`
+          }
         >
-          {/* Removed editorial grid overlay */}
+          {slide.bgImage ? (
+            <>
+              <Image
+                src={slide.bgImage}
+                alt=""
+                fill
+                className="object-cover"
+                sizes="100vw"
+                priority
+              />
+              <div className="absolute inset-0 bg-linear-to-b from-black/50 to-black/70" />
+            </>
+          ) : null}
 
           <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
             <motion.span

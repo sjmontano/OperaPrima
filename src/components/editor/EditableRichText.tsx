@@ -77,6 +77,14 @@ const COLORS = [
   '#bbdefb',
   '#b3e5fc',
   '#b2ebf2',
+  '#8ECAE6',
+  '#4682B4',
+  '#F0F8FF',
+  '#FB6F92',
+  '#E63946',
+  '#0f0f0f',
+  '#353535',
+  '#FAFAF9',
 ]
 
 interface EditableRichTextProps {
@@ -173,9 +181,26 @@ function FontSizePicker({ editor }: { editor: NonNullable<ReturnType<typeof useE
 
   useEffect(() => {
     const fn = () => {
-      if (!editorRef.current) return
-      const size = editorRef.current.getAttributes('textStyle').fontSize as string | undefined
-      setDisplay(size ? size.replace(/^(\d+).*$/, '$1') : '—')
+      const ed = editorRef.current
+      if (!ed) return
+      const explicitSize = ed.getAttributes('textStyle').fontSize as string | undefined
+      if (explicitSize) {
+        setDisplay(explicitSize.replace(/^(\d+).*$/, '$1'))
+        return
+      }
+      try {
+        const { from } = ed.state.selection
+        const domPos = ed.view.domAtPos(from)
+        const el =
+          domPos.node.nodeType === Node.TEXT_NODE
+            ? domPos.node.parentElement
+            : (domPos.node as HTMLElement)
+        if (el) {
+          setDisplay(window.getComputedStyle(el).fontSize.replace('px', ''))
+        }
+      } catch {
+        setDisplay('')
+      }
     }
     fn()
     editorRef.current.on('selectionUpdate', fn)

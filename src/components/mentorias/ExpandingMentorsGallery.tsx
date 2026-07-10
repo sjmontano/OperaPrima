@@ -2,113 +2,33 @@
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { ROUTES } from '@/constants'
-import { X } from 'lucide-react'
+import { Pencil, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
-const MENTOR_IMAGES = [
-  {
-    id: 'ana-restrepo',
-    photos: [
-      {
-        url: 'https://images.unsplash.com/photo-1633885274964-d5a5d914bcb3?q=80&w=687&auto=format&fit=crop',
-        alt: 'Ana Restrepo - retrato en estudio',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1517841905240-472988babdf9?q=80&w=687&auto=format&fit=crop',
-        alt: 'Ana Restrepo revisando portafolios',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=687&auto=format&fit=crop',
-        alt: 'Ana Restrepo compartiendo feedback creativo',
-      },
-    ],
-  },
-  {
-    id: 'mateo-campos',
-    photos: [
-      {
-        url: 'https://images.unsplash.com/photo-1589194837807-30a2f9540ad9?q=80&w=687&auto=format&fit=crop',
-        alt: 'Mateo Campos - mentoría en proyectos culturales',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=687&auto=format&fit=crop',
-        alt: 'Mateo Campos analizando producción cultural',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1488426862026-3ee34a7d66df?q=80&w=687&auto=format&fit=crop',
-        alt: 'Mateo Campos con equipo creativo',
-      },
-    ],
-  },
-  {
-    id: 'laura-reyes',
-    photos: [
-      {
-        url: 'https://images.unsplash.com/photo-1582644826651-f71401f0f3f6?q=80&w=687&auto=format&fit=crop',
-        alt: 'Laura Reyes - asesoría de aplicaciones',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?q=80&w=687&auto=format&fit=crop',
-        alt: 'Laura Reyes guiando a un artista',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?q=80&w=687&auto=format&fit=crop',
-        alt: 'Laura Reyes en reunión creativa',
-      },
-    ],
-  },
-  {
-    id: 'diego-salazar',
-    photos: [
-      {
-        url: 'https://images.unsplash.com/photo-1614679967638-fe153775eff6?q=80&w=765&auto=format&fit=crop',
-        alt: 'Diego Salazar - mentor de giras',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1485217988980-11786ced9454?q=80&w=765&auto=format&fit=crop',
-        alt: 'Diego Salazar revisando producción',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=765&auto=format&fit=crop',
-        alt: 'Diego Salazar en actividad musical',
-      },
-    ],
-  },
-  {
-    id: 'lucia-gomez',
-    photos: [
-      {
-        url: 'https://images.unsplash.com/photo-1617195737496-bc30194e3a19?q=80&w=735&auto=format&fit=crop',
-        alt: 'Lucía Gómez - finanzas artísticas',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=735&auto=format&fit=crop',
-        alt: 'Lucía Gómez en consulta financiera',
-      },
-      {
-        url: 'https://images.unsplash.com/photo-1485217988980-11786ced9454?q=80&w=735&auto=format&fit=crop',
-        alt: 'Lucía Gómez trabajando con datos',
-      },
-    ],
-  },
-]
-
-interface Mentor {
+export interface MentorCard {
   id: string
-  file: string
+  usuarioId: string | null
   name: string
   title: string
   location: string
   focus: string
   notes: string[]
+  galleryImages: { url: string; alt: string }[] | null
+  avatar: string | null
 }
 
 interface ExpandingMentorsGalleryProps {
-  mentors: Mentor[]
+  mentors: MentorCard[]
+  canEdit?: (mentor: MentorCard) => boolean
+  onEdit?: (mentor: MentorCard) => void
 }
 
-export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProps) {
+export function ExpandingMentorsGallery({
+  mentors,
+  canEdit,
+  onEdit,
+}: ExpandingMentorsGalleryProps) {
   const authModal = useAuthModal()
   const [expandedId, setExpandedId] = useState<string | null>(null)
   const [hoveredId, setHoveredId] = useState<string | null>(null)
@@ -117,12 +37,18 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
   const [imageVisible, setImageVisible] = useState(true)
   const wrapperRef = useRef<HTMLDivElement>(null)
 
-  const getMentorPhotos = (mentorId: string) => {
-    return MENTOR_IMAGES.find((item) => item.id === mentorId)?.photos || MENTOR_IMAGES[0].photos
+  function getMentorPhotos(mentor: MentorCard) {
+    if (mentor.galleryImages && mentor.galleryImages.length > 0) {
+      return mentor.galleryImages
+    }
+    if (mentor.avatar) {
+      return [{ url: mentor.avatar, alt: mentor.name }]
+    }
+    return [{ url: '', alt: mentor.name }]
   }
 
-  const getMentorImage = (mentorId: string) => {
-    return getMentorPhotos(mentorId)[0]
+  function getMentorImage(mentor: MentorCard) {
+    return getMentorPhotos(mentor)[0]
   }
 
   const handleCardClick = (mentorId: string) => {
@@ -131,7 +57,6 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
       setExpandedId(null)
       return
     }
-
     setActiveMentorId(mentorId)
     setExpandedId(mentorId)
     setHoveredId(null)
@@ -155,23 +80,22 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
       setSelectedImageIndex(0)
       return
     }
-
-    const photos = getMentorPhotos(activeMentorId)
+    const mentor = mentors.find((m) => m.id === activeMentorId)
+    const photos = mentor ? getMentorPhotos(mentor) : []
     setSelectedImageIndex(0)
     setImageVisible(true)
+
+    if (photos.length <= 1) return
 
     const interval = window.setInterval(() => {
       setSelectedImageIndex((index) => (index + 1) % photos.length)
     }, 3500)
 
     return () => window.clearInterval(interval)
-  }, [activeMentorId])
+  }, [activeMentorId, mentors])
 
   useEffect(() => {
-    if (!activeMentorId) {
-      return
-    }
-
+    if (!activeMentorId) return
     setImageVisible(false)
     const timeout = window.setTimeout(() => setImageVisible(true), 50)
     return () => window.clearTimeout(timeout)
@@ -181,26 +105,20 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
     if (expandedId !== null) {
       return expandedId === mentorId ? 3 : 0.5
     }
-
     if (hoveredId !== null) {
       return hoveredId === mentorId ? 3 : 0.5
     }
-
     return 1
   }
 
   const shouldShowOverlay = (mentorId: string) => {
-    if (expandedId !== null) {
-      return expandedId === mentorId
-    }
-    if (hoveredId !== null) {
-      return hoveredId === mentorId
-    }
+    if (expandedId !== null) return expandedId === mentorId
+    if (hoveredId !== null) return hoveredId === mentorId
     return false
   }
 
   const selectedMentor = activeMentorId
-    ? mentors.find((mentor) => mentor.id === activeMentorId)
+    ? mentors.find((mentor) => mentor.id === activeMentorId) || null
     : null
 
   return (
@@ -213,7 +131,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
         style={{ height: '550px' }}
       >
         {mentors.map((mentor) => {
-          const image = getMentorImage(mentor.id)
+          const image = getMentorImage(mentor)
           const flex = getColumnFlex(mentor.id)
           const showOverlay = shouldShowOverlay(mentor.id)
 
@@ -221,27 +139,41 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
             <div
               key={mentor.id}
               onMouseEnter={() => {
-                if (expandedId === null) {
-                  setHoveredId(mentor.id)
-                }
+                if (expandedId === null) setHoveredId(mentor.id)
               }}
               onClick={() => handleCardClick(mentor.id)}
               className={`mentor-card group relative cursor-pointer ${showOverlay ? 'mentor-card--expanded' : ''}`}
-              style={{
-                flex: `${flex}`,
-              }}
+              style={{ flex: `${flex}` }}
             >
-              <img
-                src={image.url}
-                alt={image.alt}
-                className="mentor-card__image"
-                style={{
-                  transform: showOverlay ? 'scale(1.08)' : 'scale(1)',
-                }}
-              />
+              {image.url ? (
+                <img
+                  src={image.url}
+                  alt={image.alt}
+                  className="mentor-card__image"
+                  style={{ transform: showOverlay ? 'scale(1.08)' : 'scale(1)' }}
+                />
+              ) : (
+                <div className="mentor-card__image flex items-center justify-center bg-zinc-200">
+                  <span className="text-3xl font-bold text-zinc-400">
+                    {mentor.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
+                </div>
+              )}
 
               <div className="mentor-card__overlay" aria-hidden={!showOverlay}>
-                <span className="mentor-card__label">{mentor.file}</span>
+                <span className="mentor-card__label">
+                  {mentor.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
                 <h3 className="mentor-card__name">{mentor.name}</h3>
                 <p className="mentor-card__role">{mentor.title}</p>
                 <p className="mentor-card__location">{mentor.location}</p>
@@ -255,7 +187,7 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
       {/* Mobile: Vertical stacked gallery */}
       <div className="flex w-full flex-col gap-3 md:hidden">
         {mentors.map((mentor) => {
-          const image = getMentorImage(mentor.id)
+          const image = getMentorImage(mentor)
           const isSelected = activeMentorId === mentor.id
 
           return (
@@ -263,27 +195,43 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
               key={mentor.id}
               onClick={() => handleCardClick(mentor.id)}
               className={`mentor-card group relative cursor-pointer ${isSelected ? 'mentor-card--expanded' : ''}`}
-              style={{
-                height: isSelected ? '420px' : '180px',
-              }}
+              style={{ height: isSelected ? '420px' : '180px' }}
             >
-              <img
-                src={image.url}
-                alt={image.alt}
-                className="mentor-card__image"
-                style={{
-                  transform: isSelected ? 'scale(1.08)' : 'scale(1)',
-                }}
-              />
+              {image.url ? (
+                <img
+                  src={image.url}
+                  alt={image.alt}
+                  className="mentor-card__image"
+                  style={{ transform: isSelected ? 'scale(1.08)' : 'scale(1)' }}
+                />
+              ) : (
+                <div className="mentor-card__image flex items-center justify-center bg-zinc-200">
+                  <span className="text-2xl font-bold text-zinc-400">
+                    {mentor.name
+                      .split(' ')
+                      .map((n) => n[0])
+                      .join('')
+                      .slice(0, 2)
+                      .toUpperCase()}
+                  </span>
+                </div>
+              )}
 
               <div className="mentor-card__overlay">
-                <span className="mentor-card__label">{mentor.file}</span>
+                <span className="mentor-card__label">
+                  {mentor.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
                 <h3 className="mentor-card__name">{mentor.name}</h3>
                 <p className="mentor-card__role">{mentor.title}</p>
                 <p className="mentor-card__location">{mentor.location}</p>
                 <p className="mentor-card__focus">{mentor.focus}</p>
                 <ul className="mentor-card__notes">
-                  {mentor.notes.map((note) => (
+                  {mentor.notes.filter(Boolean).map((note) => (
                     <li key={note} className="mentor-card__note">
                       {note}
                     </li>
@@ -313,23 +261,48 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
 
             <div className="grid gap-0 lg:grid-cols-[1fr_1.2fr]">
               <div className="relative h-72 lg:h-full">
-                <img
-                  src={getMentorPhotos(selectedMentor.id)[selectedImageIndex].url}
-                  alt={getMentorPhotos(selectedMentor.id)[selectedImageIndex].alt}
-                  className={`h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${imageVisible ? 'opacity-100' : 'opacity-0'}`}
-                />
-                <div className="absolute right-4 bottom-4 left-4 flex items-center justify-center gap-2">
-                  {getMentorPhotos(selectedMentor.id).map((photo, index) => (
-                    <span
-                      key={photo.url}
-                      className={`h-2 rounded-full transition-all duration-200 ${index === selectedImageIndex ? 'w-8 bg-[#8ECAE6]' : 'w-2 bg-white/30'}`}
+                {getMentorPhotos(selectedMentor).length > 0 &&
+                getMentorPhotos(selectedMentor)[0].url ? (
+                  <>
+                    <img
+                      src={getMentorPhotos(selectedMentor)[selectedImageIndex].url}
+                      alt={getMentorPhotos(selectedMentor)[selectedImageIndex].alt}
+                      className={`h-full w-full object-cover object-center transition-opacity duration-700 ease-out ${imageVisible ? 'opacity-100' : 'opacity-0'}`}
                     />
-                  ))}
-                </div>
+                    {getMentorPhotos(selectedMentor).length > 1 && (
+                      <div className="absolute right-4 bottom-4 left-4 flex items-center justify-center gap-2">
+                        {getMentorPhotos(selectedMentor).map((photo, index) => (
+                          <span
+                            key={photo.url}
+                            className={`h-2 rounded-full transition-all duration-200 ${index === selectedImageIndex ? 'w-8 bg-[#8ECAE6]' : 'w-2 bg-white/30'}`}
+                          />
+                        ))}
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center bg-zinc-800">
+                    <span className="text-5xl font-bold text-zinc-600">
+                      {selectedMentor.name
+                        .split(' ')
+                        .map((n) => n[0])
+                        .join('')
+                        .slice(0, 2)
+                        .toUpperCase()}
+                    </span>
+                  </div>
+                )}
               </div>
 
               <div className="p-8 sm:p-10">
-                <span className="mentor-card__label">{selectedMentor.file}</span>
+                <span className="mentor-card__label">
+                  {selectedMentor.name
+                    .split(' ')
+                    .map((n) => n[0])
+                    .join('')
+                    .slice(0, 2)
+                    .toUpperCase()}
+                </span>
                 <h3 className="mt-4 text-4xl font-bold tracking-[-0.03em] text-white">
                   {selectedMentor.name}
                 </h3>
@@ -337,39 +310,54 @@ export function ExpandingMentorsGallery({ mentors }: ExpandingMentorsGalleryProp
                 <p className="mt-2 text-sm font-medium text-[#8ECAE6]">{selectedMentor.location}</p>
                 <p className="mt-6 text-base leading-7 text-white/70">{selectedMentor.focus}</p>
 
-                <div className="mt-8 space-y-6 border-t border-white/10 pt-8 text-white/85">
-                  <div>
-                    <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
-                      Temas que trabajamos
-                    </p>
-                    <ul className="mt-4 grid gap-3">
-                      {selectedMentor.notes.map((note) => (
-                        <li
-                          key={note}
-                          className="rounded-none border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6"
-                        >
-                          {note}
-                        </li>
-                      ))}
-                    </ul>
+                {selectedMentor.notes.filter(Boolean).length > 0 && (
+                  <div className="mt-8 space-y-6 border-t border-white/10 pt-8 text-white/85">
+                    <div>
+                      <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
+                        Temas que trabajamos
+                      </p>
+                      <ul className="mt-4 grid gap-3">
+                        {selectedMentor.notes.filter(Boolean).map((note) => (
+                          <li
+                            key={note}
+                            className="rounded-none border border-white/10 bg-white/5 px-4 py-3 text-sm leading-6"
+                          >
+                            {note}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
                   </div>
-                  <div className="mt-8 space-y-3 border-t border-white/10 pt-8">
+                )}
+
+                <div className="mt-8 space-y-3 border-t border-white/10 pt-8">
+                  {canEdit && onEdit && canEdit(selectedMentor) && (
                     <button
                       type="button"
-                      onClick={() => authModal.open('registro')}
-                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#E63946] hover:bg-transparent hover:text-[#E63946] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                      onClick={() => {
+                        onEdit(selectedMentor)
+                        handleCloseModal()
+                      }}
+                      className="inline-flex w-full items-center justify-center gap-2 rounded-none border-2 border-[#8ECAE6] bg-[#8ECAE6] px-6 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:bg-transparent hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                     >
-                      Reservar mentoría
+                      <Pencil size={14} />
+                      Editar tarjeta
                     </button>
-
-                    <Link
-                      href={ROUTES.MENTOR_PROFILE(selectedMentor.id)}
-                      onClick={handleCloseModal}
-                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-                    >
-                      Ver perfil
-                    </Link>
-                  </div>
+                  )}
+                  <button
+                    type="button"
+                    onClick={() => authModal.open('registro')}
+                    className="inline-flex w-full items-center justify-center rounded-none border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-sm font-bold tracking-widest text-white uppercase shadow-[4px_4px_0_#353535] transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#E63946] hover:bg-transparent hover:text-[#E63946] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  >
+                    Reservar mentoría
+                  </button>
+                  <Link
+                    href={ROUTES.MENTOR_PROFILE(selectedMentor.usuarioId || selectedMentor.id)}
+                    onClick={handleCloseModal}
+                    className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                  >
+                    Ver perfil
+                  </Link>
                 </div>
               </div>
             </div>

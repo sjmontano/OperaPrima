@@ -70,6 +70,8 @@ model Usuario {
 
   perfil        Perfil?
 
+  mentor        Mentor?
+
   eventos       Evento[]
 
   entradas      Entrada[]
@@ -77,6 +79,37 @@ model Usuario {
   proyectos     Proyecto[]
 
   testimonios   Testimonial[]
+}
+
+model Mentor {
+  id            String   @id @default(uuid())
+
+  usuarioId     String?  @unique
+
+  usuario       Usuario? @relation(fields: [usuarioId], references: [id], onDelete: SetNull)
+
+  name          String
+
+  title         String
+
+  location      String
+
+  focus         String   @db.Text
+
+  notes         String[]
+
+  galleryImages Json?
+
+  active        Boolean  @default(true)
+
+  orden         Int      @default(0)
+
+  createdAt     DateTime @default(now())
+
+  updatedAt     DateTime @updatedAt
+
+  @@index([active])
+  @@index([orden])
 }
 
 model Perfil {

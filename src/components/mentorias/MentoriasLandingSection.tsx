@@ -3,6 +3,7 @@
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { RotatingText } from '@/components/shared/RotatingText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { MentorEditModal } from '@/components/mentorias/MentorEditModal'
 import {
   ArrowRight,
   CheckCircle2,
@@ -17,8 +18,10 @@ import {
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ExpandingMentorsGallery } from './ExpandingMentorsGallery'
+import type { MentorCard } from './ExpandingMentorsGallery'
+import type { MentorDB, MentorFormData } from './MentorEditModal'
 
 const ROTATING_TOPICS = [
   'No sabes cómo empezar tu proyecto.',
@@ -68,79 +71,94 @@ const STEPS = [
   },
 ]
 
-export const MENTORS = [
-  {
-    id: 'ana-restrepo',
-    file: 'AN-R',
-    name: 'Ana Restrepo',
-    title: 'Portafolio, convocatorias y becas',
-    location: 'Bogotá, presencial + online',
-    focus: 'Portafolio editorial, cartas de motivación y convocatorias culturales.',
-    notes: [
-      'Revisa tu showcase y estructura la narrativa de tu trabajo.',
-      'Prepara cartas claras para residencias y apoyos.',
-      'Optimiza imágenes, hojas de vida y proyectos clave.',
-    ],
-  },
-  {
-    id: 'mateo-campos',
-    file: 'MA-CA',
-    name: 'Mateo Campos',
-    title: 'Proyectos culturales y producciones',
-    location: 'Medellín, online',
-    focus: 'Estrategia, cronograma y presentación de proyectos culturales.',
-    notes: [
-      'Diseña pasos claros para lanzar tu proyecto.',
-      'Define roles, entregables y fechas clave.',
-      'Encuentra aliados y rutas de visibilidad.',
-    ],
-  },
-  {
-    id: 'laura-reyes',
-    file: 'LA-RE',
-    name: 'Laura Reyes',
-    title: 'Cartas, aplicaciones y becas',
-    location: 'Cali, online',
-    focus: 'Texto persuasivo para convocatorias y presentación profesional.',
-    notes: [
-      'Escribe cartas de motivación que conecten con jurados.',
-      'Ajusta tu perfil a los criterios de postulación.',
-      'Haz que tu propuesta sea clara y memorable.',
-    ],
-  },
-  {
-    id: 'diego-salazar',
-    file: 'DI-SA',
-    name: 'Diego Salazar',
-    title: 'Giras, producción y logística',
-    location: 'Bucaramanga, online',
-    focus: 'Plan de gira, producción de shows y administración de recursos.',
-    notes: [
-      'Estructura tu ruta y presupuesto de viaje.',
-      'Revisa propuestas de escenario y riders.',
-      'Diseña pasos para presentar tu proyecto a espacios.',
-    ],
-  },
-  {
-    id: 'lucia-gomez',
-    file: 'LU-GO',
-    name: 'Lucía Gómez',
-    title: 'Finanzas artísticas y presupuestos',
-    location: 'Barranquilla, online',
-    focus: 'Presupuestos, facturación y decisiones financieras para artistas.',
-    notes: [
-      'Transforma tu idea en un presupuesto claro.',
-      'Calcula costos reales y margen de sostenibilidad.',
-      'Presenta tu plan con confianza frente a productores.',
-    ],
-  },
-]
-
 export function MentoriasLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const { currentUser } = authModal
   const router = useRouter()
+  const [mentores, setMentores] = useState<MentorCard[]>([])
+  const [mentoresLoaded, setMentoresLoaded] = useState(false)
+  const [editingMentor, setEditingMentor] = useState<MentorDB | null>(null)
+  const [showEditModal, setShowEditModal] = useState(false)
+
+  useEffect(() => {
+    fetch('/api/mentores')
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.mentores) {
+          const mapped: MentorCard[] = data.mentores.map((m: MentorDB) => ({
+            id: m.id,
+            usuarioId: m.usuarioId,
+            name: m.name,
+            title: m.title,
+            location: m.location,
+            focus: m.focus,
+            notes: m.notes,
+            galleryImages: m.galleryImages,
+            avatar: m.usuario?.perfil?.avatar || null,
+          }))
+          setMentores(mapped)
+        }
+        setMentoresLoaded(true)
+      })
+      .catch(() => setMentoresLoaded(true))
+  }, [])
+
+  function canEdit(mentor: MentorCard): boolean {
+    if (!currentUser) return false
+    if (currentUser.rol === 'ADMIN') return true
+    return mentor.usuarioId === currentUser.id
+  }
+
+  function handleEdit(mentor: MentorCard) {
+    const full: MentorDB = {
+      id: mentor.id,
+      usuarioId: mentor.usuarioId,
+      name: mentor.name,
+      title: mentor.title,
+      location: mentor.location,
+      focus: mentor.focus,
+      notes: mentor.notes,
+      galleryImages: mentor.galleryImages,
+      active: true,
+      orden: 0,
+    }
+    setEditingMentor(full)
+    setShowEditModal(true)
+  }
+
+  async function handleSaveEdit(data: MentorFormData) {
+    const supabase = (await import('@/lib/supabaseClient')).createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) return
+    const token = session.access_token
+    const res = await fetch(`/api/mentores/${editingMentor!.id}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
+      body: JSON.stringify(data),
+    })
+    if (res.ok) {
+      const result = await res.json()
+      const m = result.mentor
+      setMentores((prev) =>
+        prev.map((p) =>
+          p.id === m.id
+            ? {
+                ...p,
+                name: m.name,
+                title: m.title,
+                location: m.location,
+                focus: m.focus,
+                notes: m.notes,
+                galleryImages: m.galleryImages,
+              }
+            : p
+        )
+      )
+    }
+  }
 
   return (
     <>
@@ -151,10 +169,8 @@ export function MentoriasLandingSection() {
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(246,91,127,0.06),transparent_70%)]"
         />
         <div className="absolute top-0 right-0 left-0 h-0.75 bg-[#F65B7F]" />
-
         <div className="relative z-10 mx-[100px] border-white/10 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <div className="grid gap-16 px-4 py-28 sm:px-2 lg:grid-cols-[1.2fr_1fr] lg:gap-20 lg:py-32">
-            {/* Left */}
             <div className="max-w-3xl">
               <TimelineAnimation
                 as="div"
@@ -166,22 +182,18 @@ export function MentoriasLandingSection() {
                   <Sparkles size={13} />
                   Mentorías a la medida
                 </div>
-
                 <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
                   NO ESTÁS <span className="text-[#F65B7F]">SOLO</span>
                 </h1>
-
                 <p className="text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
                   Espacios de acompañamiento personalizados para que tu práctica artística sea más
                   clara, más estratégica y más efectiva.
                 </p>
-
                 <p className="text-base leading-relaxed text-white/60">
                   Conecta con un mentor que tiene las herramientas para ayudarte: portafolio, becas,
                   proyectos culturales, cartas de motivación, giras, presupuestos y más. Todo lo que
                   no enseñan en la universidad.
                 </p>
-
                 <div className="border-2 border-[#F65B7F]/30 bg-white/5 px-6 py-5">
                   <p className="mb-2 flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
                     <Star size={12} />
@@ -193,7 +205,6 @@ export function MentoriasLandingSection() {
                     &rdquo;
                   </p>
                 </div>
-
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                   <button
                     type="button"
@@ -219,8 +230,6 @@ export function MentoriasLandingSection() {
                 </div>
               </TimelineAnimation>
             </div>
-
-            {/* Right: highlights */}
             <div className="flex flex-col gap-4 self-start">
               <TimelineAnimation
                 as="div"
@@ -239,7 +248,7 @@ export function MentoriasLandingSection() {
                     'Redactar cartas para becas',
                     'Planear una gira o exposición',
                     'Revisar un presupuesto',
-                  ].map((item, i) => (
+                  ].map((item) => (
                     <div key={item} className="flex items-center gap-3">
                       <ChevronRight size={14} className="shrink-0 text-[#F65B7F]" />
                       <span className="text-sm text-white/75">{item}</span>
@@ -247,7 +256,6 @@ export function MentoriasLandingSection() {
                   ))}
                 </div>
               </TimelineAnimation>
-
               <TimelineAnimation
                 as="div"
                 animationNum={2}
@@ -264,7 +272,6 @@ export function MentoriasLandingSection() {
             </div>
           </div>
         </div>
-
         <div className="absolute right-0 bottom-0 left-0 h-px bg-white/10" />
       </section>
 
@@ -282,13 +289,11 @@ export function MentoriasLandingSection() {
                 <span className="text-[#F65B7F]">tenga foco y resultado.</span>
               </h2>
             </TimelineAnimation>
-
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
               {STEPS.map((step, index) => {
                 const Icon = step.icon
                 const isPink = index % 2 === 0
                 const accent = isPink ? '#F65B7F' : '#8ECAE6'
-
                 return (
                   <TimelineAnimation
                     key={step.title}
@@ -296,10 +301,7 @@ export function MentoriasLandingSection() {
                     animationNum={index + 4}
                     timelineRef={sectionRef}
                     className="group border-2 border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1"
-                    style={{
-                      boxShadow: `4px 4px 0 ${accent}30`,
-                      borderColor: '#e4e4e7',
-                    }}
+                    style={{ boxShadow: `4px 4px 0 ${accent}30`, borderColor: '#e4e4e7' }}
                   >
                     <div className="flex items-center gap-3">
                       <div
@@ -323,7 +325,6 @@ export function MentoriasLandingSection() {
                 )
               })}
             </div>
-
             <TimelineAnimation
               as="div"
               animationNum={10}
@@ -398,9 +399,18 @@ export function MentoriasLandingSection() {
                 <span className="text-[#F65B7F]">impulsar tu camino.</span>
               </h2>
             </TimelineAnimation>
-
             <div className="mt-12">
-              <ExpandingMentorsGallery mentors={MENTORS} />
+              {mentores.length > 0 ? (
+                <ExpandingMentorsGallery mentors={mentores} canEdit={canEdit} onEdit={handleEdit} />
+              ) : (
+                <div className="border-2 border-zinc-200 p-12 text-center">
+                  <p className="text-sm text-zinc-500">
+                    {mentoresLoaded
+                      ? 'Próximamente estaremos anunciando nuestros mentores.'
+                      : 'Cargando mentores...'}
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -458,6 +468,16 @@ export function MentoriasLandingSection() {
           </div>
         </div>
       </section>
+
+      <MentorEditModal
+        open={showEditModal}
+        mentor={editingMentor}
+        onClose={() => {
+          setShowEditModal(false)
+          setEditingMentor(null)
+        }}
+        onSave={handleSaveEdit}
+      />
     </>
   )
 }

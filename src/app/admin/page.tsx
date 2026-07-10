@@ -15,6 +15,7 @@ import {
   DollarSign,
   TrendingUp,
   MessageCircle,
+  GraduationCap,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -78,6 +79,12 @@ const sectionLinks = [
     description: 'Moderar testimonios de la comunidad',
     icon: MessageCircle,
     href: '/admin/testimonios',
+  },
+  {
+    title: 'Mentores',
+    description: 'Gestionar mentores (CRUD completo)',
+    icon: GraduationCap,
+    href: '/admin/mentores',
   },
   {
     title: 'Usuarios',

@@ -116,7 +116,7 @@ export function WhatIsSection({
 
             <div className="flex flex-col gap-6 lg:pb-1">
               <TimelineAnimation
-                as="p"
+                as="div"
                 animationNum={2}
                 timelineRef={ref}
                 className="max-w-lg text-lg leading-relaxed text-zinc-500"
@@ -128,7 +128,7 @@ export function WhatIsSection({
                 />
               </TimelineAnimation>
               <TimelineAnimation
-                as="p"
+                as="div"
                 animationNum={3}
                 timelineRef={ref}
                 className="max-w-lg text-base leading-relaxed text-zinc-400"

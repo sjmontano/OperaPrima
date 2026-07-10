@@ -124,6 +124,7 @@ function ColorPopup({
             key={c}
             type="button"
             onClick={() => applyColor(c)}
+            onMouseDown={(e) => e.preventDefault()}
             className="h-6 w-6 rounded-sm border border-zinc-200 transition-transform hover:scale-125"
             style={{ backgroundColor: c }}
             title={c}
@@ -159,6 +160,7 @@ function ColorPopup({
         <button
           type="button"
           onClick={applyCustom}
+          onMouseDown={(e) => e.preventDefault()}
           className="rounded-sm bg-[#023047] px-2 py-0.5 text-[9px] font-bold tracking-wider text-white"
         >
           OK
@@ -320,6 +322,7 @@ function ToolBtn({
     <button
       type="button"
       onClick={onClick}
+      onMouseDown={(e) => e.preventDefault()}
       title={label}
       className={`flex size-7 items-center justify-center rounded transition-colors ${
         active ? 'bg-[#023047] text-white' : 'text-zinc-500 hover:bg-zinc-200'
@@ -444,7 +447,7 @@ function EditorInline({
       {/* ── Floating Toolbar ── */}
       <div
         className="absolute bottom-full left-1/2 z-50 mb-2 flex -translate-x-1/2 flex-nowrap items-center gap-0.5 rounded-sm border border-zinc-200 bg-white px-2 py-1.5 shadow-lg"
-        onMouseDown={(e) => e.preventDefault()}
+        onMouseDown={(e) => e.stopPropagation()}
       >
         <FontSizePicker editor={editor} />
 
@@ -577,6 +580,7 @@ function EditorInline({
               <button
                 type="button"
                 onClick={applyLink}
+                onMouseDown={(e) => e.preventDefault()}
                 className="rounded-sm bg-[#023047] px-2 py-0.5 text-[9px] font-bold tracking-wider text-white"
               >
                 OK

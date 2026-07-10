@@ -170,7 +170,7 @@ export function ComunidadCTA({
             </TimelineAnimation>
 
             <TimelineAnimation
-              as="p"
+              as="div"
               animationNum={2}
               timelineRef={ref}
               className="mb-12 max-w-xl text-lg leading-relaxed text-white/60"

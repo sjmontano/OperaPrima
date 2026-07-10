@@ -18,6 +18,11 @@ enum TipoEvento {
   COMUNIDAD
 }
 
+enum TipoProyecto {
+  COMUNIDAD
+  ENTIDAD
+}
+
 enum Gender {
   MASCULINO
   FEMENINO
@@ -68,6 +73,8 @@ model Usuario {
   eventos       Evento[]
 
   entradas      Entrada[]
+
+  proyectos     Proyecto[]
 
   testimonios   Testimonial[]
 }
@@ -177,7 +184,7 @@ model Entrada {
 
   usuario    Usuario @relation(fields: [usuarioId], references: [id])
 
-  evento     Evento @relation(fields: [eventoId], references: [id])
+  evento     Evento @relation(fields: [eventoId], references: [id], onDelete: Cascade)
 
   pago       Pago? @relation(fields: [pagoId], references: [id])
 
@@ -205,6 +212,34 @@ model Pago {
   createdAt               DateTime @default(now())
 
   updatedAt               DateTime @updatedAt
+}
+
+model DeletedEventBackup {
+  id        String   @id @default(uuid())
+  eventoId  String
+  data      Json
+  deletedAt DateTime @default(now())
+}
+
+model Proyecto {
+  id            String      @id @default(uuid())
+  tipo          TipoProyecto @default(COMUNIDAD)
+  nombre        String
+  representante String
+  descripcion   String      @db.Text
+  queBuscan     String      @db.Text
+  requisitos    String      @db.Text
+  proceso       String      @db.Text
+  imagen        String?
+  contacto      String
+  disciplinas   String[]
+  ubicacion     String
+  destacado     Boolean     @default(false)
+  fechaLimite   DateTime
+  usuarioId     String?
+  usuario       Usuario?    @relation(fields: [usuarioId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
 }
 
 model PageContent {

@@ -75,15 +75,6 @@ const CAT_STYLES: Record<string, { fg: string; bg: string; border: string }> = {
 }
 
 function mapEvent(evento: DbEvent): CalendarEvent {
-  const categoryMap: Record<string, string> = {
-    Taller: 'terracota',
-    Workshop: 'lavanda',
-    Networking: 'selva',
-    Residencia: 'selva',
-    Concierto: 'terracota',
-    Exposición: 'lavanda',
-  }
-
   return {
     id: evento.id,
     title: evento.titulo,
@@ -318,6 +309,7 @@ export function MentorEventsSection() {
     () => new Set(dbEvents.filter((e) => e.usuarioId === currentUser?.id).map((e) => e.id)),
     [dbEvents, currentUser]
   )
+  const isAdmin = currentUser?.rol === 'ADMIN'
 
   return (
     <section
@@ -468,6 +460,7 @@ export function MentorEventsSection() {
                         ]
                       const dbEvent = dbEvents.find((de) => de.id === event.id)
                       const isOwn = dbEvent ? ownEventIds.has(dbEvent.id) : false
+                      const canEdit = isOwn || isAdmin
                       return (
                         <motion.article
                           layout
@@ -522,7 +515,7 @@ export function MentorEventsSection() {
                               <span className="text-sm font-bold text-zinc-900">
                                 {event.price} €
                               </span>
-                              {isOwn && (
+                              {canEdit && (
                                 <button
                                   type="button"
                                   onClick={() => dbEvent && openEdit(dbEvent)}

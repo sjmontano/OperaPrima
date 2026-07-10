@@ -111,6 +111,9 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     }
 
     const { id } = await params
+    const url = new URL(req.url)
+    const force = url.searchParams.get('force') === 'true'
+    const confirm = url.searchParams.get('confirm') === 'true'
 
     const evento = await prisma.evento.findUnique({ where: { id } })
     if (!evento) {
@@ -122,6 +125,36 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
 
     if (!isOwner && !isAdmin) {
       return Response.json({ error: 'No autorizado' }, { status: 403 })
+    }
+
+    const entradasCount = await prisma.entrada.count({ where: { eventoId: id } })
+
+    if (entradasCount > 0 && !(force && confirm)) {
+      return Response.json({
+        warning: true,
+        hasEntries: true,
+        count: entradasCount,
+        message: `Este evento tiene ${entradasCount} entrada(s) registrada(s). Si lo eliminas, se perderán permanentemente.`,
+      })
+    }
+
+    if (entradasCount > 0 && force && confirm) {
+      const entradas = await prisma.entrada.findMany({
+        where: { eventoId: id },
+        include: {
+          usuario: { select: { id: true, email: true, firstName: true, lastName: true } },
+        },
+      })
+
+      await prisma.deletedEventBackup.create({
+        data: {
+          eventoId: id,
+          data: {
+            evento,
+            entradas,
+          },
+        },
+      })
     }
 
     if (evento.imagen) {

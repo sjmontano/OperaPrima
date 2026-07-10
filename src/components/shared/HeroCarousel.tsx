@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { compressImage } from '@/lib/useImageCompressor'
 import { ChevronLeft, ChevronRight, Loader2, Plus, Upload, X } from 'lucide-react'
@@ -328,15 +329,14 @@ export function HeroCarousel({
               className="mb-5 leading-[1.05] font-semibold whitespace-pre-line text-white"
               style={{ fontSize: 'clamp(2.5rem, 6vw, 5rem)' }}
             >
-              <EditableText
+              <EditableRichText
                 value={slide.headline}
                 onSave={(v) => __onFieldChange?.(`slides.${current}.headline`, v)}
                 as="span"
-                className=""
               />
             </motion.h1>
 
-            <motion.p
+            <motion.div
               key={`sub-${current}`}
               custom={2}
               variants={textVariants}
@@ -345,13 +345,12 @@ export function HeroCarousel({
               className="mb-8 max-w-xl leading-relaxed text-white/70"
               style={{ fontSize: 'clamp(0.95rem, 1.5vw, 1.125rem)' }}
             >
-              <EditableText
+              <EditableRichText
                 value={slide.subtext}
                 onSave={(v) => __onFieldChange?.(`slides.${current}.subtext`, v)}
                 as="span"
-                className=""
               />
-            </motion.p>
+            </motion.div>
 
             <motion.div
               key={`cta-${current}`}

@@ -1,5 +1,6 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, CalendarDays, Compass, Globe, Users, type LucideIcon } from 'lucide-react'
@@ -65,7 +66,6 @@ export function WhatIsSection({
   serviceEyebrow = 'Nuestros servicios',
   serviceHeading = 'Todo lo que necesitas para crecer',
   cards = DEFAULT_CARDS,
-  isEditMode,
   __onFieldChange,
 }: {
   eyebrow?: string
@@ -75,7 +75,6 @@ export function WhatIsSection({
   serviceEyebrow?: string
   serviceHeading?: string
   cards?: ServiceCard[]
-  isEditMode?: boolean
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const ref = useRef<HTMLElement>(null)
@@ -107,11 +106,10 @@ export function WhatIsSection({
                 timelineRef={ref}
                 className="text-4xl leading-none font-semibold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
               >
-                <EditableText
+                <EditableRichText
                   value={heading}
                   onSave={(v) => __onFieldChange?.('heading', v)}
                   as="span"
-                  className=""
                 />
               </TimelineAnimation>
             </div>
@@ -123,11 +121,10 @@ export function WhatIsSection({
                 timelineRef={ref}
                 className="max-w-lg text-lg leading-relaxed text-zinc-500"
               >
-                <EditableText
+                <EditableRichText
                   value={description}
                   onSave={(v) => __onFieldChange?.('description', v)}
                   as="span"
-                  className=""
                 />
               </TimelineAnimation>
               <TimelineAnimation
@@ -136,11 +133,10 @@ export function WhatIsSection({
                 timelineRef={ref}
                 className="max-w-lg text-base leading-relaxed text-zinc-400"
               >
-                <EditableText
+                <EditableRichText
                   value={description2}
                   onSave={(v) => __onFieldChange?.('description2', v)}
                   as="span"
-                  className=""
                 />
               </TimelineAnimation>
               <TimelineAnimation as="div" animationNum={4} timelineRef={ref}>
@@ -179,11 +175,10 @@ export function WhatIsSection({
             timelineRef={ref}
             className="text-4xl leading-none font-semibold tracking-[-0.03em] text-zinc-900 lg:text-[3.4rem]"
           >
-            <EditableText
+            <EditableRichText
               value={serviceHeading}
               onSave={(v) => __onFieldChange?.('serviceHeading', v)}
               as="span"
-              className=""
             />
           </TimelineAnimation>
         </div>
@@ -246,11 +241,10 @@ export function WhatIsSection({
                     />
                   </h3>
                   <p className="text-sm leading-relaxed text-zinc-500">
-                    <EditableText
+                    <EditableRichText
                       value={s.desc}
                       onSave={(v) => __onFieldChange?.(`cards.${i}.desc`, v)}
                       as="span"
-                      className=""
                     />
                   </p>
                 </div>

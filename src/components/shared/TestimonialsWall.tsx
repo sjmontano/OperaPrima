@@ -1,6 +1,7 @@
 'use client'
 
 import { EditableImage } from '@/components/editor/EditableImage'
+import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { createClient } from '@/lib/supabaseClient'
@@ -180,11 +181,10 @@ export function TestimonialsWall({
             timelineRef={sectionRef}
             className="text-4xl leading-[1.06] font-semibold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
-            <EditableText
+            <EditableRichText
               value={headline}
               onSave={(v) => __onFieldChange?.('headline', v)}
               as="span"
-              className=""
             />
           </TimelineAnimation>
 
@@ -391,11 +391,10 @@ function TestimonialCard({
         </div>
       </div>
       <p className="testimonial-text">
-        <EditableText
+        <EditableRichText
           value={testimonial.text}
           onSave={(v) => __onFieldChange?.(`testimonials.${testimonialIndex}.text`, v)}
           as="span"
-          className=""
         />
       </p>
     </CardWrapper>

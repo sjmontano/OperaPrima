@@ -1,6 +1,7 @@
 'use client'
 
 import { EditableImage } from '@/components/editor/EditableImage'
+import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { compressImage } from '@/lib/useImageCompressor'
@@ -114,7 +115,7 @@ export function PartnersStrip({
               timelineRef={sectionRef}
               className="text-4xl leading-[1.06] font-semibold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
             >
-              <EditableText
+              <EditableRichText
                 value={heading}
                 onSave={(v) => __onFieldChange?.('heading', v)}
                 as="span"
@@ -126,7 +127,7 @@ export function PartnersStrip({
               timelineRef={sectionRef}
               className="mx-auto mt-3 max-w-md text-base text-zinc-500"
             >
-              <EditableText
+              <EditableRichText
                 value={description}
                 onSave={(v) => __onFieldChange?.('description', v)}
                 as="span"
@@ -316,7 +317,7 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="text-4xl leading-[1.06] font-semibold tracking-[-0.025em] text-zinc-900 lg:text-5xl"
           >
-            <EditableText
+            <EditableRichText
               value={heading}
               onSave={(v) => __onFieldChange?.('heading', v)}
               as="span"
@@ -328,7 +329,7 @@ export function PartnersStrip({
             timelineRef={sectionRef}
             className="mx-auto mt-3 max-w-md text-base text-zinc-500"
           >
-            <EditableText
+            <EditableRichText
               value={description}
               onSave={(v) => __onFieldChange?.('description', v)}
               as="span"

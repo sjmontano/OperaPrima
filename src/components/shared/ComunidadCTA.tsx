@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Globe, Palette, Users, type LucideIcon } from 'lucide-react'
@@ -129,8 +130,6 @@ export function ComunidadCTA({
     return primaryCta
   }, [isEditMode, currentUser, primaryCta])
 
-  const headlineParts = headline.split(', ')
-
   return (
     <section ref={ref} className="relative w-full overflow-hidden bg-[#0f0f0f]">
       <div
@@ -163,11 +162,10 @@ export function ComunidadCTA({
               timelineRef={ref}
               className="mb-8 text-5xl leading-[1.0] font-semibold tracking-[-0.03em] text-white lg:text-[4.5rem]"
             >
-              <EditableText
+              <EditableRichText
                 value={headline}
                 onSave={(v) => __onFieldChange?.('headline', v)}
                 as="span"
-                className=""
               />
             </TimelineAnimation>
 
@@ -177,11 +175,10 @@ export function ComunidadCTA({
               timelineRef={ref}
               className="mb-12 max-w-xl text-lg leading-relaxed text-white/60"
             >
-              <EditableText
+              <EditableRichText
                 value={description}
                 onSave={(v) => __onFieldChange?.('description', v)}
                 as="span"
-                className=""
               />
             </TimelineAnimation>
 

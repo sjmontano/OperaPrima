@@ -6,6 +6,34 @@
 - If the user says "haz commit", "pushea", "commitea", or similar explicit wording, then proceed.
 - Otherwise, just make the changes locally and wait for authorization.
 
+## 📝 Convenciones de commits
+
+- **Idioma**: todos los commits deben escribirse en **español**.
+- **Agrupación lógica**: agrupa cambios relacionados en un mismo commit (ej. "todo lo del admin de eventos en uno"), pero **separa tareas independientes** en commits distintos (ej. no mezcles "fix toolbar" con "admin eventos").
+- **Formato del mensaje**:
+
+  ```
+  tipo: descripción breve (máx 72 caracteres)
+
+  - Detalle 1: qué se hizo y por qué
+  - Detalle 2
+  - ...
+  ```
+
+- **Tipos permitidos**: `feat` (nueva funcionalidad), `fix` (corrección), `refactor` (cambio sin afectar comportamiento), `style` (estilos/UI), `perf` (rendimiento), `chore` (infraestructura), `docs` (documentación), `revert`.
+- **Descripción**: debe ser específica y entendible sin contexto externo. Incluye el "por qué" cuando no sea obvio.
+- **Longitud**: mensaje principal ≤ 72 caracteres; cuerpo con viñetas, cada línea ≤ 100 caracteres.
+- **Ejemplo**:
+
+  ```
+  feat: agregar modal de detalle en admin de eventos
+
+  - Click en fila abre modal con pestañas Info/Edit, Entries, Delete
+  - Vista de entradas con tabla de usuarios, email y fecha
+  - Eliminación con advertencia, countdown de 10s y backup automático
+  - Admin puede editar eventos de cualquier usuario
+  ```
+
 <!-- END:user-rules -->
 
 <!-- BEGIN:nextjs-agent-rules -->

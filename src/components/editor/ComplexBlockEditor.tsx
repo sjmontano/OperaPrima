@@ -123,83 +123,68 @@ function HeroCarouselEditor({
   onChange: (p: Record<string, unknown>) => void
 }) {
   const slides = (p.slides as Array<Record<string, unknown>>) || []
+
+  const updateSlide = (i: number, v: Record<string, unknown>) => {
+    const next = [...slides]
+    next[i] = v
+    onChange({ ...p, slides: next })
+  }
+
   return (
-    <ArrayEditor
-      label="Slides"
-      items={slides}
-      defaultItem={{
-        id: 'new',
-        headline: '',
-        subtext: '',
-        cta: { label: '', href: '' },
-        secondaryCta: { label: '', href: '' },
-        bg: '',
-        accent: '',
-        tag: '',
-        bgImage: '',
-      }}
-      onChange={(v) => onChange({ ...p, slides: v })}
-      renderItem={(s, _, update) => (
-        <>
-          <Input
-            label="Tag"
-            value={String(s.tag || '')}
-            onChange={(v) => update({ ...s, tag: v })}
-          />
-          <TextArea
-            label="Headline"
-            value={String(s.headline || '')}
-            onChange={(v) => update({ ...s, headline: v })}
-            rows={2}
-          />
-          <TextArea
-            label="Subtexto"
-            value={String(s.subtext || '')}
-            onChange={(v) => update({ ...s, subtext: v })}
-            rows={2}
-          />
-          <Input
-            label="CTA Label"
-            value={String((s.cta as Record<string, string>)?.label || '')}
-            onChange={(v) => update({ ...s, cta: { ...(s.cta as object), label: v } })}
-          />
-          <Input
-            label="CTA URL"
-            value={String((s.cta as Record<string, string>)?.href || '')}
-            onChange={(v) => update({ ...s, cta: { ...(s.cta as object), href: v } })}
-          />
-          <Input
-            label="Sec. CTA Label"
-            value={String((s.secondaryCta as Record<string, string>)?.label || '')}
-            onChange={(v) =>
-              update({ ...s, secondaryCta: { ...(s.secondaryCta as object), label: v } })
-            }
-          />
-          <Input
-            label="Sec. CTA URL"
-            value={String((s.secondaryCta as Record<string, string>)?.href || '')}
-            onChange={(v) =>
-              update({ ...s, secondaryCta: { ...(s.secondaryCta as object), href: v } })
-            }
-          />
-          <Input
-            label="Bg gradient"
-            value={String(s.bg || '')}
-            onChange={(v) => update({ ...s, bg: v })}
-          />
-          <Input
-            label="Bg imagen URL"
-            value={String(s.bgImage || '')}
-            onChange={(v) => update({ ...s, bgImage: v })}
-          />
-          <Input
-            label="Color acento"
-            value={String(s.accent || '')}
-            onChange={(v) => update({ ...s, accent: v })}
-          />
-        </>
-      )}
-    />
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+          Slides ({slides.length})
+        </span>
+      </div>
+      {slides.map((s, i) => (
+        <div key={i} className="rounded-sm border border-zinc-200 bg-zinc-50 p-3">
+          <div className="mb-2">
+            <span className="text-[9px] font-bold tracking-wider text-zinc-400 uppercase">
+              Slide #{i + 1}
+            </span>
+          </div>
+          <div className="space-y-2">
+            <Input
+              label="Color acento"
+              value={String(s.accent || '')}
+              onChange={(v) => updateSlide(i, { ...s, accent: v })}
+              placeholder="#8ECAE6"
+            />
+            <Input
+              label="Bg gradient"
+              value={String(s.bg || '')}
+              onChange={(v) => updateSlide(i, { ...s, bg: v })}
+              placeholder="from-[...] to-[...]"
+            />
+            <Input
+              label="Bg imagen URL"
+              value={String(s.bgImage || '')}
+              onChange={(v) => updateSlide(i, { ...s, bgImage: v })}
+              placeholder="https://…"
+            />
+            <Input
+              label="CTA URL"
+              value={String((s.cta as Record<string, string>)?.href || '')}
+              onChange={(v) => updateSlide(i, { ...s, cta: { ...(s.cta as object), href: v } })}
+              placeholder="/ruta"
+            />
+            <Input
+              label="Sec. CTA URL"
+              value={String((s.secondaryCta as Record<string, string>)?.href || '')}
+              onChange={(v) =>
+                updateSlide(i, { ...s, secondaryCta: { ...(s.secondaryCta as object), href: v } })
+              }
+              placeholder="/ruta"
+            />
+          </div>
+        </div>
+      ))}
+      <p className="text-[10px] leading-relaxed text-zinc-400">
+        Los slides se añaden/eliminan desde la página en modo edición. Los textos (tag, headline,
+        subtexto, CTAs) se editan inline.
+      </p>
+    </div>
   )
 }
 

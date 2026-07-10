@@ -2,7 +2,8 @@
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { EditableText } from '@/components/editor/EditableText'
-import { ChevronLeft, ChevronRight } from 'lucide-react'
+import { compressImage } from '@/lib/useImageCompressor'
+import { ChevronLeft, ChevronRight, Loader2, Plus, Upload, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
@@ -85,6 +86,7 @@ export function HeroCarousel({
   const [current, setCurrent] = useState(0)
   const [direction, setDirection] = useState<1 | -1>(1)
   const [hovered, setHovered] = useState(false)
+  const [uploadingBg, setUploadingBg] = useState(false)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
   const { currentUser } = useAuthModal()
 
@@ -126,6 +128,55 @@ export function HeroCarousel({
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
   }, [hovered, isEditMode, next, autoPlayInterval])
+
+  const addSlide = () => {
+    if (!__onFieldChange) return
+    const newSlide: HeroSlide = {
+      id: Date.now(),
+      headline: '',
+      subtext: '',
+      cta: { label: '', href: '' },
+      secondaryCta: { label: '', href: '' },
+      bg: 'from-[#1a1a1a] to-[#2d1a14]',
+      accent: '#8ECAE6',
+      tag: '',
+      bgImage: '',
+    }
+    const newSlides = [...slides]
+    newSlides.splice(current + 1, 0, newSlide)
+    __onFieldChange('slides', newSlides)
+    setCurrent(current + 1)
+  }
+
+  const removeSlide = (i: number) => {
+    if (!__onFieldChange || slides.length <= 1) return
+    const newSlides = slides.filter((_, idx) => idx !== i)
+    __onFieldChange('slides', newSlides)
+    if (i >= newSlides.length) {
+      setCurrent(newSlides.length - 1)
+    }
+  }
+
+  const handleBgUpload = async (file: File) => {
+    setUploadingBg(true)
+    try {
+      const compressed = await compressImage(file)
+      const formData = new FormData()
+      formData.append(
+        'file',
+        new File([compressed], file.name.replace(/\.[^.]+$/, '.webp'), { type: 'image/webp' })
+      )
+      formData.append('folder', 'hero')
+      const res = await fetch('/api/upload/image', { method: 'POST', body: formData })
+      if (!res.ok) throw new Error('Upload failed')
+      const data = await res.json()
+      __onFieldChange?.(`slides.${current}.bgImage`, data.url)
+    } catch (err) {
+      console.error(err)
+    } finally {
+      setUploadingBg(false)
+    }
+  }
 
   const slide = slides[current]
   const effectiveCta = getEffectiveCta(slide.cta)
@@ -187,6 +238,67 @@ export function HeroCarousel({
               <div className="absolute inset-0 bg-linear-to-b from-black/50 to-black/70" />
             </>
           ) : null}
+
+          {isEditMode && (
+            <>
+              <div className="absolute top-4 left-4 z-30 rounded-sm bg-black/50 px-2.5 py-1 text-[10px] font-bold tracking-widest text-white/80 backdrop-blur-sm">
+                Slide {current + 1} / {slides.length}
+              </div>
+              <button
+                type="button"
+                onClick={() => removeSlide(current)}
+                disabled={slides.length <= 1}
+                className="absolute top-4 right-4 z-30 flex h-7 w-7 items-center justify-center rounded-full bg-red-500/80 text-white shadow-sm backdrop-blur-sm transition-all hover:bg-red-600 disabled:hidden"
+                title="Eliminar slide"
+              >
+                <X size={14} />
+              </button>
+            </>
+          )}
+
+          {isEditMode && (
+            <div className="absolute top-16 left-4 z-30">
+              {!slide.bgImage ? (
+                <label className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-black/50 px-3 py-1.5 text-[10px] font-bold tracking-widest text-white/80 backdrop-blur-sm transition-all hover:bg-black/70">
+                  {uploadingBg ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : (
+                    <Upload size={12} />
+                  )}
+                  Subir fondo
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) handleBgUpload(file)
+                    }}
+                    className="hidden"
+                    disabled={uploadingBg}
+                  />
+                </label>
+              ) : (
+                <label className="flex cursor-pointer items-center gap-1.5 rounded-sm bg-black/50 px-3 py-1.5 text-[10px] font-bold tracking-widest text-white/80 backdrop-blur-sm transition-all hover:bg-black/70">
+                  {uploadingBg ? (
+                    <Loader2 size={12} className="animate-spin" />
+                  ) : (
+                    <Upload size={12} />
+                  )}
+                  Cambiar fondo
+                  <input
+                    type="file"
+                    accept="image/png,image/jpeg,image/webp,image/gif,image/avif"
+                    onChange={(e) => {
+                      const file = e.target.files?.[0]
+                      if (file) handleBgUpload(file)
+                    }}
+                    className="hidden"
+                    disabled={uploadingBg}
+                  />
+                </label>
+              )}
+            </div>
+          )}
 
           <div className="relative mx-[100px] flex h-full flex-col justify-end border-white/10 px-6 pb-25 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-40 sm:pb-25">
             <motion.span
@@ -329,6 +441,16 @@ export function HeroCarousel({
             )}
           </button>
         ))}
+        {isEditMode && (
+          <button
+            type="button"
+            onClick={addSlide}
+            className="ml-3 flex h-6 w-6 items-center justify-center rounded-full border border-white/40 bg-white/10 text-white backdrop-blur-sm transition-all hover:bg-white/20"
+            title="Añadir slide"
+          >
+            <Plus size={14} />
+          </button>
+        )}
       </div>
 
       <div className="absolute top-5 right-6 z-10 font-mono text-xs text-white/40 tabular-nums select-none">

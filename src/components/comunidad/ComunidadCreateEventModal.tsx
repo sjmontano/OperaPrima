@@ -1,7 +1,7 @@
 'use client'
 
 import { X } from 'lucide-react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 export interface EventFormData {
   titulo: string
@@ -48,11 +48,17 @@ export function ComunidadCreateEventModal({
   onSubmit,
   onDelete,
 }: Props) {
-
-  
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
   const [form, setForm] = useState<EventFormData>({ ...INITIAL_FORM, ...initial })
+
+  useEffect(() => {
+    if (open) {
+      setForm({ ...INITIAL_FORM, ...initial })
+      setErrors({})
+    }
+  }, [open, initial])
+
   if (!open) return null
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
@@ -77,7 +83,6 @@ export function ComunidadCreateEventModal({
   }
 
   async function handleSubmit(e: React.FormEvent) {
-    
     e.preventDefault()
     if (!validate()) return
     try {
@@ -97,64 +102,61 @@ export function ComunidadCreateEventModal({
   }
 
   function validate() {
-  const newErrors: Record<string, string> = {}
+    const newErrors: Record<string, string> = {}
 
-  const today = new Date()
-  today.setHours(0, 0, 0, 0)
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
 
-  const eventDate = form.fecha ? new Date(form.fecha) : null
+    const eventDate = form.fecha ? new Date(form.fecha) : null
 
-  const price = Number(form.precio)
-  const cupos = Number(form.cuposTotales)
+    const price = Number(form.precio)
+    const cupos = Number(form.cuposTotales)
 
-  if (!form.titulo.trim()) newErrors.titulo = 'El título es obligatorio'
+    if (!form.titulo.trim()) newErrors.titulo = 'El título es obligatorio'
 
-  if (!form.descripcion.trim())
-    newErrors.descripcion = 'La descripción es obligatoria'
+    if (!form.descripcion.trim()) newErrors.descripcion = 'La descripción es obligatoria'
 
-  if (!form.categoria.trim())
-    newErrors.categoria = 'La categoría es obligatoria'
+    if (!form.categoria.trim()) newErrors.categoria = 'La categoría es obligatoria'
 
-  if (!form.fecha) {
-    newErrors.fecha = 'La fecha es obligatoria'
-  } else if (eventDate && eventDate < today) {
-    newErrors.fecha = 'La fecha no puede ser menor a hoy'
-  }
-
-  if (!form.ubicacion.trim())
-    newErrors.ubicacion = 'La ubicación es obligatoria'
-
-  if (form.precio === '') {
-    newErrors.precio = 'El precio es obligatorio'
-  } else if (isNaN(price)) {
-    newErrors.precio = 'El precio debe ser un número'
-  } else if (price < 0) {
-    newErrors.precio = 'El precio no puede ser negativo'
-  }
-
-  if (form.cuposTotales === '') {
-    newErrors.cuposTotales = 'Los cupos son obligatorios'
-  } else if (isNaN(cupos)) {
-    newErrors.cuposTotales = 'Los cupos deben ser un número'
-  } else if (cupos < 1) {
-    newErrors.cuposTotales = 'Debe haber al menos 1 cupo'
-  }
-
-  if (!form.imagen) {
-    newErrors.imagen = 'Debes seleccionar una imagen'
-  }
-
-  if (form.urlPago) {
-    try {
-      new URL(form.urlPago)
-    } catch {
-      newErrors.urlPago = 'La URL no es válida'
+    if (!form.fecha) {
+      newErrors.fecha = 'La fecha es obligatoria'
+    } else if (eventDate && eventDate < today) {
+      newErrors.fecha = 'La fecha no puede ser menor a hoy'
     }
-  }
 
-  setErrors(newErrors)
-  return Object.keys(newErrors).length === 0
-}
+    if (!form.ubicacion.trim()) newErrors.ubicacion = 'La ubicación es obligatoria'
+
+    if (form.precio === '') {
+      newErrors.precio = 'El precio es obligatorio'
+    } else if (isNaN(price)) {
+      newErrors.precio = 'El precio debe ser un número'
+    } else if (price < 0) {
+      newErrors.precio = 'El precio no puede ser negativo'
+    }
+
+    if (form.cuposTotales === '') {
+      newErrors.cuposTotales = 'Los cupos son obligatorios'
+    } else if (isNaN(cupos)) {
+      newErrors.cuposTotales = 'Los cupos deben ser un número'
+    } else if (cupos < 1) {
+      newErrors.cuposTotales = 'Debe haber al menos 1 cupo'
+    }
+
+    if (!form.imagen && !editing) {
+      newErrors.imagen = 'Debes seleccionar una imagen'
+    }
+
+    if (form.urlPago) {
+      try {
+        new URL(form.urlPago)
+      } catch {
+        newErrors.urlPago = 'La URL no es válida'
+      }
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   return (
     <div
@@ -185,16 +187,9 @@ export function ComunidadCreateEventModal({
             </label>
             <label className="flex cursor-pointer items-center justify-center border-2 border-zinc-200 px-4 py-3 text-sm font-medium transition hover:border-[#023047]">
               {form.imagen ? form.imagen.name : 'Seleccionar imagen'}
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImage}
-                className="hidden"
-              />
-
-              
+              <input type="file" accept="image/*" onChange={handleImage} className="hidden" />
             </label>
-            {(errors.imagen) && (
+            {errors.imagen && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.imagen}
               </p>
@@ -212,7 +207,7 @@ export function ComunidadCreateEventModal({
               onChange={handleChange}
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
-            {(errors.titulo) && (
+            {errors.titulo && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.titulo}
               </p>
@@ -231,7 +226,7 @@ export function ComunidadCreateEventModal({
               onChange={handleChange}
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
-            {(errors.descripcion) && (
+            {errors.descripcion && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.descripcion}
               </p>
@@ -251,12 +246,11 @@ export function ComunidadCreateEventModal({
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
-            {(errors.categoria) && (
+            {errors.categoria && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.categoria}
               </p>
             )}
-            
           </div>
 
           {/* Disciplinas asociadas */}
@@ -295,8 +289,6 @@ export function ComunidadCreateEventModal({
                 ))}
               </div>
             )}
-
-            
           </div>
 
           {/* Fecha */}
@@ -312,7 +304,7 @@ export function ComunidadCreateEventModal({
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
-            {(errors.fecha) && (
+            {errors.fecha && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.fecha}
               </p>
@@ -331,7 +323,7 @@ export function ComunidadCreateEventModal({
               placeholder="Bogotá"
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
-            {(errors.ubicacion) && (
+            {errors.ubicacion && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.ubicacion}
               </p>
@@ -340,7 +332,7 @@ export function ComunidadCreateEventModal({
 
           {/* CUPOS */}
           <div>
-            <label className="mb-2 block text-xs font-bold uppercase text-zinc-500">
+            <label className="mb-2 block text-xs font-bold text-zinc-500 uppercase">
               Cupos totales
             </label>
 
@@ -359,7 +351,6 @@ export function ComunidadCreateEventModal({
             )}
           </div>
 
-
           {/* Precio */}
           <div>
             <label className="mb-2 block text-xs font-bold tracking-widest text-zinc-500 uppercase">
@@ -373,7 +364,7 @@ export function ComunidadCreateEventModal({
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
-            {(errors.precio) && (
+            {errors.precio && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.precio}
               </p>
@@ -393,7 +384,7 @@ export function ComunidadCreateEventModal({
               className="w-full border-2 border-zinc-200 px-4 py-3 focus:border-[#023047] focus:outline-none"
             />
 
-            {(errors.urlPago) && (
+            {errors.urlPago && (
               <p className="mt-1 text-[0.6rem] font-bold tracking-widest text-[#E63946] uppercase">
                 {errors.urlPago}
               </p>
@@ -435,5 +426,3 @@ export function ComunidadCreateEventModal({
     </div>
   )
 }
-
-

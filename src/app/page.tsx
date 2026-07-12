@@ -1,4 +1,5 @@
-﻿import { DbPageServer } from '@/components/shared/DbPageServer'
+﻿import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
+import { DbPageServer } from '@/components/shared/DbPageServer'
 import { EventsSection } from '@/components/events/EventsSection'
 import { AdBar } from '@/components/layout/AdBar'
 import { Footer } from '@/components/layout/Footer'
@@ -14,7 +15,7 @@ export default function Home() {
     <>
       <AdBar />
       <Navbar accentColor="#F65B7F" />
-      <main className="flex flex-col">
+      <main className="relative flex flex-col">
         <DbPageServer
           slug="inicio"
           fallback={
@@ -28,6 +29,7 @@ export default function Home() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

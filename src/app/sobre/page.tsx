@@ -1,3 +1,4 @@
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
@@ -15,7 +16,7 @@ export default function SobrePage() {
   return (
     <>
       <Navbar />
-      <main className="flex flex-col" style={{ background: '#FFFFFF' }}>
+      <main className="relative flex flex-col" style={{ background: '#FFFFFF' }}>
         <DbPageServer
           slug="sobre"
           fallback={
@@ -25,6 +26,7 @@ export default function SobrePage() {
             </>
           }
         />
+        <FloatingEditButton />
       </main>
       <Footer />
     </>

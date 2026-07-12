@@ -1,22 +1,41 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, BookOpen, CalendarDays, Sparkles, Users } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-const TYPEWRITER_WORDS = [
+const DEFAULT_TYPEWRITER_WORDS = [
   'presentarte a convocatorias',
   'vender tu trabajo',
   'construir tu carrera',
-] as const
+]
 
-const HIGHLIGHTS = [
+const DEFAULT_HIGHLIGHTS = [
   'Herramientas reales',
   'Profesionales del sector',
   'Networking con criterio',
-] as const
+]
+
+const DEFAULT_INFOCARDS = [
+  {
+    eyebrow: 'Talleres',
+    title: 'Aprender haciendo',
+    body: 'Cada sesión guiada por profesionales del sector. Lo que no te enseñaron en la universidad pero necesitas para vivir del arte.',
+    accent: '#F65B7F',
+    icon: 'BookOpen',
+  },
+  {
+    eyebrow: 'Networking',
+    title: 'Conectar con propósito',
+    body: 'Encuentros con artistas, gestores y profesionales del sector cultural para construir relaciones que impulsan tu carrera.',
+    accent: '#8ECAE6',
+    icon: 'Users',
+  },
+]
 
 function useRotatingTypewriter(words: readonly string[]) {
   const [wordIndex, setWordIndex] = useState(0)
@@ -27,7 +46,6 @@ function useRotatingTypewriter(words: readonly string[]) {
   useEffect(() => {
     const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)')
     const handleChange = () => setReduceMotion(mediaQuery.matches)
-
     handleChange()
     mediaQuery.addEventListener('change', handleChange)
     return () => mediaQuery.removeEventListener('change', handleChange)
@@ -35,122 +53,65 @@ function useRotatingTypewriter(words: readonly string[]) {
 
   useEffect(() => {
     if (reduceMotion) return
-
     const currentWord = words[wordIndex] ?? ''
     const typeSpeed = 55
     const deleteSpeed = 28
     const pauseSpeed = 1500
     const resetSpeed = 220
-
     let timeoutId: number
-
     if (!isDeleting && charIndex < currentWord.length) {
-      timeoutId = window.setTimeout(() => {
-        setCharIndex((value) => value + 1)
-      }, typeSpeed)
+      timeoutId = window.setTimeout(() => setCharIndex((v) => v + 1), typeSpeed)
     } else if (!isDeleting && charIndex === currentWord.length) {
-      timeoutId = window.setTimeout(() => {
-        setIsDeleting(true)
-      }, pauseSpeed)
+      timeoutId = window.setTimeout(() => setIsDeleting(true), pauseSpeed)
     } else if (isDeleting && charIndex > 0) {
-      timeoutId = window.setTimeout(() => {
-        setCharIndex((value) => value - 1)
-      }, deleteSpeed)
+      timeoutId = window.setTimeout(() => setCharIndex((v) => v - 1), deleteSpeed)
     } else {
       timeoutId = window.setTimeout(() => {
         setIsDeleting(false)
-        setWordIndex((value) => (value + 1) % words.length)
+        setWordIndex((v) => (v + 1) % words.length)
       }, resetSpeed)
     }
-
     return () => window.clearTimeout(timeoutId)
   }, [charIndex, isDeleting, reduceMotion, wordIndex, words])
-
-  if (reduceMotion) {
-    return words[0] ?? ''
-  }
-
+  if (reduceMotion) return words[0] ?? ''
   return words[wordIndex]?.slice(0, charIndex) ?? ''
 }
 
-function InfoCard({
-  eyebrow,
-  title,
-  body,
-  accent,
-  icon: Icon,
-  animationNum,
-  timelineRef,
+const ICON_MAP: Record<string, typeof BookOpen> = { BookOpen, Users }
+
+const HIGHLIGHT_COLORS = ['#F65B7F', '#8ECAE6', '#1A4A3C'] as const
+
+export function EventsLandingSection({
+  heading = 'Aprende, conecta y <span class="text-[#F65B7F]">crece con método.</span>',
+  description = 'Talleres prácticos y encuentros de networking. Herramientas reales para tomar decisiones estratégicas sobre tu carrera.',
+  typewriterLabel = 'Aprende a',
+  typewriterWords = DEFAULT_TYPEWRITER_WORDS,
+  highlights = DEFAULT_HIGHLIGHTS,
+  infoCards = DEFAULT_INFOCARDS,
+  calendarText = 'Talleres presenciales y online. Próxima agenda disponible en el calendario.',
+  ctaText = 'Ver eventos',
+  guestCtaText = 'Comenzar gratis',
+  secondaryCtaText = 'Ver próximos talleres',
+  bottomDescription = 'Todo los talleres están diseñados para darte contexto, método y comunidad real. No es solo formación, es el empujón que necesitabas.',
+  __onFieldChange,
 }: {
-  eyebrow: string
-  title: string
-  body: string
-  accent: string
-  icon: typeof BookOpen
-  animationNum: number
-  timelineRef: React.RefObject<HTMLElement | null>
+  heading?: string
+  description?: string
+  typewriterLabel?: string
+  typewriterWords?: string[]
+  highlights?: string[]
+  infoCards?: Array<{ eyebrow: string; title: string; body: string; accent: string; icon: string }>
+  calendarText?: string
+  ctaText?: string
+  guestCtaText?: string
+  secondaryCtaText?: string
+  bottomDescription?: string
+  __onFieldChange?: (path: string, value: unknown) => void
 }) {
-  return (
-    <TimelineAnimation
-      as="article"
-      animationNum={animationNum}
-      timelineRef={timelineRef}
-      className="group border-2 border-white/10 bg-white/5 p-7 shadow-[4px_4px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1"
-      style={{ boxShadow: `4px 4px 0 rgba(255,255,255,0.06)` }}
-    >
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p
-            className="text-[0.62rem] font-bold tracking-[0.28em] uppercase"
-            style={{ color: accent }}
-          >
-            {eyebrow}
-          </p>
-          <h3 className="mt-4 text-2xl leading-snug font-bold tracking-[-0.03em] text-white">
-            {title}
-          </h3>
-        </div>
-        <div
-          className="flex size-10 shrink-0 items-center justify-center border-2 border-white/12 text-white transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
-          style={{ boxShadow: `3px 3px 0 ${accent}` }}
-        >
-          <Icon size={17} />
-        </div>
-      </div>
-
-      <p className="mt-5 text-sm leading-relaxed text-white/65">{body}</p>
-    </TimelineAnimation>
-  )
-}
-
-function TypewriterBlock() {
-  const visibleWord = useRotatingTypewriter(TYPEWRITER_WORDS)
-
-  return (
-    <div className="border-2 border-white/10 bg-white/[0.03] p-8 sm:p-10">
-      <div className="mb-4 flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-        <Sparkles size={13} />
-        Aprende a
-      </div>
-      <div className="flex flex-wrap items-baseline gap-3 text-3xl tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
-        <span className="sr-only">Cómo {TYPEWRITER_WORDS.join('. Cómo ')}.</span>
-        <span aria-hidden className="min-h-[1.2em] font-semibold text-white">
-          {visibleWord}
-        </span>
-        <span
-          aria-hidden="true"
-          className="inline-block h-[1em] w-[3px] animate-pulse bg-[#F65B7F] align-middle"
-        />
-      </div>
-    </div>
-  )
-}
-
-export function EventsLandingSection() {
   const sectionRef = useRef<HTMLElement>(null)
-  const authModal = useAuthModal()
-  const { currentUser } = authModal
+  const { currentUser } = useAuthModal()
   const router = useRouter()
+  const visibleWord = useRotatingTypewriter(typewriterWords)
 
   return (
     <section
@@ -172,7 +133,11 @@ export function EventsLandingSection() {
               timelineRef={sectionRef}
               className="text-4xl leading-[1.1] font-semibold tracking-[-0.04em] text-white sm:text-5xl lg:text-[3.5rem]"
             >
-              Aprende, conecta y <span className="text-[#F65B7F]">crece con método.</span>
+              <EditableRichText
+                value={heading}
+                onSave={(v) => __onFieldChange?.('heading', v)}
+                as="span"
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -181,8 +146,11 @@ export function EventsLandingSection() {
               timelineRef={sectionRef}
               className="mt-6 max-w-xl text-base leading-relaxed text-white/60"
             >
-              Talleres prácticos y encuentros de networking. Herramientas reales para tomar
-              decisiones estratégicas sobre tu carrera.
+              <EditableRichText
+                value={description}
+                onSave={(v) => __onFieldChange?.('description', v)}
+                as="span"
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -191,46 +159,103 @@ export function EventsLandingSection() {
               timelineRef={sectionRef}
               className="mt-10 flex flex-wrap gap-3"
             >
-              {HIGHLIGHTS.map((highlight, index) => {
-                const colors = ['#F65B7F', '#8ECAE6', '#1A4A3C'] as const
-                const accent = colors[index % colors.length]
-
+              {highlights.map((h, i) => {
+                const accent = HIGHLIGHT_COLORS[i % HIGHLIGHT_COLORS.length]
                 return (
                   <span
-                    key={highlight}
+                    key={i}
                     className="border-2 border-white/10 px-4 py-2 text-[0.6rem] font-bold tracking-[0.24em] text-white/80 uppercase"
                     style={{ boxShadow: `3px 3px 0 ${accent}` }}
                   >
-                    {highlight}
+                    <EditableText
+                      value={h}
+                      onSave={(v) => __onFieldChange?.(`highlights.${i}`, v)}
+                      as="span"
+                      singleLine
+                    />
                   </span>
                 )
               })}
             </TimelineAnimation>
 
             <TimelineAnimation as="div" animationNum={4} timelineRef={sectionRef} className="mt-16">
-              <TypewriterBlock />
+              <div className="border-2 border-white/10 bg-white/[0.03] p-8 sm:p-10">
+                <div className="mb-4 flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
+                  <Sparkles size={13} />
+                  <EditableText
+                    value={typewriterLabel}
+                    onSave={(v) => __onFieldChange?.('typewriterLabel', v)}
+                    as="span"
+                    singleLine
+                  />
+                </div>
+                <div className="flex flex-wrap items-baseline gap-3 text-3xl tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
+                  <span className="sr-only">Cómo {typewriterWords.join('. Cómo ')}.</span>
+                  <span aria-hidden className="min-h-[1.2em] font-semibold text-white">
+                    {visibleWord}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="inline-block h-[1em] w-[3px] animate-pulse bg-[#F65B7F] align-middle"
+                  />
+                </div>
+              </div>
             </TimelineAnimation>
           </div>
 
           <div className="flex flex-col gap-4 self-start">
-            <InfoCard
-              eyebrow="Talleres"
-              title="Aprender haciendo"
-              body="Cada sesión guiada por profesionales del sector. Lo que no te enseñaron en la universidad pero necesitas para vivir del arte."
-              accent="#F65B7F"
-              icon={BookOpen}
-              animationNum={5}
-              timelineRef={sectionRef}
-            />
-            <InfoCard
-              eyebrow="Networking"
-              title="Conectar con propósito"
-              body="Encuentros con artistas, gestores y profesionales del sector cultural para construir relaciones que impulsan tu carrera."
-              accent="#8ECAE6"
-              icon={Users}
-              animationNum={6}
-              timelineRef={sectionRef}
-            />
+            {infoCards.map((card, i) => {
+              const Icon = ICON_MAP[card.icon]
+              return (
+                <TimelineAnimation
+                  key={i}
+                  as="article"
+                  animationNum={5 + i}
+                  timelineRef={sectionRef}
+                  className="group border-2 border-white/10 bg-white/5 p-7 shadow-[4px_4px_0_rgba(255,255,255,0.06)] transition-all duration-300 hover:-translate-x-1 hover:-translate-y-1"
+                >
+                  <div className="flex items-start justify-between gap-4">
+                    <div>
+                      <p
+                        className="text-[0.62rem] font-bold tracking-[0.28em] uppercase"
+                        style={{ color: card.accent }}
+                      >
+                        <EditableText
+                          value={card.eyebrow}
+                          onSave={(v) => __onFieldChange?.(`infoCards.${i}.eyebrow`, v)}
+                          as="span"
+                          singleLine
+                        />
+                      </p>
+                      <h3 className="mt-4 text-2xl leading-snug font-bold tracking-[-0.03em] text-white">
+                        <EditableText
+                          value={card.title}
+                          onSave={(v) => __onFieldChange?.(`infoCards.${i}.title`, v)}
+                          as="span"
+                          singleLine
+                        />
+                      </h3>
+                    </div>
+                    {Icon && (
+                      <div
+                        className="flex size-10 shrink-0 items-center justify-center border-2 border-white/12 text-white transition-all duration-300 group-hover:-translate-x-0.5 group-hover:-translate-y-0.5"
+                        style={{ boxShadow: `3px 3px 0 ${card.accent}` }}
+                      >
+                        <Icon size={17} />
+                      </div>
+                    )}
+                  </div>
+                  <p className="mt-5 text-sm leading-relaxed text-white/65">
+                    <EditableRichText
+                      value={card.body}
+                      onSave={(v) => __onFieldChange?.(`infoCards.${i}.body`, v)}
+                      as="span"
+                    />
+                  </p>
+                </TimelineAnimation>
+              )
+            })}
+
             <TimelineAnimation
               as="div"
               animationNum={7}
@@ -239,7 +264,11 @@ export function EventsLandingSection() {
             >
               <CalendarDays size={16} className="shrink-0 text-[#8ECAE6]" />
               <span className="text-xs leading-relaxed text-white/60">
-                Talleres presenciales y online. Próxima agenda disponible en el calendario.
+                <EditableRichText
+                  value={calendarText}
+                  onSave={(v) => __onFieldChange?.('calendarText', v)}
+                  as="span"
+                />
               </span>
             </TimelineAnimation>
           </div>
@@ -253,8 +282,11 @@ export function EventsLandingSection() {
               timelineRef={sectionRef}
               className="max-w-lg text-lg leading-relaxed text-white/60"
             >
-              Todo los talleres están diseñados para darte contexto, método y comunidad real. No es
-              solo formación, es el empujón que necesitabas.
+              <EditableRichText
+                value={bottomDescription}
+                onSave={(v) => __onFieldChange?.('bottomDescription', v)}
+                as="span"
+              />
             </TimelineAnimation>
 
             <TimelineAnimation
@@ -267,11 +299,16 @@ export function EventsLandingSection() {
                 type="button"
                 onClick={() => {
                   if (currentUser) router.push('/eventos')
-                  else authModal.open('registro')
+                  else router.push('/registro')
                 }}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-7 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {currentUser ? 'Ver eventos' : 'Comenzar gratis'}
+                <EditableText
+                  value={currentUser ? ctaText : guestCtaText}
+                  onSave={(v) => __onFieldChange?.(currentUser ? 'ctaText' : 'guestCtaText', v)}
+                  as="span"
+                  singleLine
+                />
                 <ArrowRight size={16} />
               </button>
 
@@ -279,7 +316,12 @@ export function EventsLandingSection() {
                 href="#proximos"
                 className="inline-flex items-center justify-center border-2 border-white/20 px-7 py-3 text-xs font-bold tracking-widest text-white/70 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-white/50 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                Ver próximos talleres
+                <EditableText
+                  value={secondaryCtaText}
+                  onSave={(v) => __onFieldChange?.('secondaryCtaText', v)}
+                  as="span"
+                  singleLine
+                />
               </a>
             </TimelineAnimation>
           </div>

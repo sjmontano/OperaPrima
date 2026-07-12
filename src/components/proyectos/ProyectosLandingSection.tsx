@@ -1,15 +1,57 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Briefcase, ChevronRight, Sparkles } from 'lucide-react'
-import { useRouter } from 'next/navigation'
 import { useRef } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { useRouter } from 'next/navigation'
 
-export function ProyectosLandingSection() {
+const DEFAULT_ITEMS = [
+  'Convocatorias abiertas',
+  'Proyectos colaborativos',
+  'Prácticas profesionales',
+  'Voluntariados culturales',
+]
+
+const DEFAULT_ASIDE_ITEMS = [
+  'Estructurar un proyecto cultural',
+  'Diseñar tu portafolio',
+  'Redactar cartas para becas',
+  'Planear una gira o exposición',
+  'Revisar un presupuesto',
+]
+
+export function ProyectosLandingSection({
+  eyebrow = 'Tablero de Oportunidades',
+  heading = 'Encuentra tu <span class="text-[#8ECAE6]">próximo proyecto</span>',
+  description = 'Participa en iniciativas gestionadas por Ópera Prima y gana experiencia profesional desde el inicio.',
+  description2 = 'Explora proyectos de la comunidad, convocatorias de entidades culturales y oportunidades exclusivas para artistas emergentes.',
+  listEyebrow = 'Tipos de oportunidades',
+  listItems = DEFAULT_ITEMS,
+  buttonText = 'Ver proyectos',
+  loggedButtonText = 'Ir a proyectos',
+  guestButtonText = 'Publica tu proyecto',
+  asideEyebrow = 'Puedes trabajar en',
+  asideItems = DEFAULT_ASIDE_ITEMS,
+  __onFieldChange,
+}: {
+  eyebrow?: string
+  heading?: string
+  description?: string
+  description2?: string
+  listEyebrow?: string
+  listItems?: string[]
+  buttonText?: string
+  loggedButtonText?: string
+  guestButtonText?: string
+  asideEyebrow?: string
+  asideItems?: string[]
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
-  const auth = useAuthModal()
-  const { currentUser } = auth
+  const { currentUser } = useAuthModal()
   const router = useRouter()
 
   return (
@@ -31,38 +73,60 @@ export function ProyectosLandingSection() {
             >
               <div className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 <Sparkles size={13} />
-                Tablero de Oportunidades
+                <EditableText
+                  value={eyebrow}
+                  onSave={(v) => __onFieldChange?.('eyebrow', v)}
+                  as="span"
+                  singleLine
+                />
               </div>
 
               <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
-                Encuentra tu <span className="text-[#8ECAE6]">próximo proyecto</span>
+                <EditableRichText
+                  value={heading}
+                  onSave={(v) => __onFieldChange?.('heading', v)}
+                  as="span"
+                />
               </h1>
 
               <p className="text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
-                Participa en iniciativas gestionadas por Ópera Prima y gana experiencia profesional
-                desde el inicio.
+                <EditableRichText
+                  value={description}
+                  onSave={(v) => __onFieldChange?.('description', v)}
+                  as="span"
+                />
               </p>
 
               <p className="text-base leading-relaxed text-white/60">
-                Explora proyectos de la comunidad, convocatorias de entidades culturales y
-                oportunidades exclusivas para artistas emergentes.
+                <EditableRichText
+                  value={description2}
+                  onSave={(v) => __onFieldChange?.('description2', v)}
+                  as="span"
+                />
               </p>
 
               <div className="border-2 border-white/10 bg-white/5 px-6 py-5">
                 <p className="mb-3 flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                   <Sparkles size={12} />
-                  Tipos de oportunidades
+                  <EditableText
+                    value={listEyebrow}
+                    onSave={(v) => __onFieldChange?.('listEyebrow', v)}
+                    as="span"
+                    singleLine
+                  />
                 </p>
                 <div className="flex flex-col gap-2">
-                  {[
-                    'Convocatorias abiertas',
-                    'Proyectos colaborativos',
-                    'Prácticas profesionales',
-                    'Voluntariados culturales',
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3">
+                  {listItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
                       <ChevronRight size={14} className="shrink-0 text-[#8ECAE6]" />
-                      <span className="text-sm text-white/75">{item}</span>
+                      <span className="text-sm text-white/75">
+                        <EditableText
+                          value={item}
+                          onSave={(v) => __onFieldChange?.(`listItems.${i}`, v)}
+                          as="span"
+                          singleLine
+                        />
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -73,19 +137,31 @@ export function ProyectosLandingSection() {
                   href="#proyectos"
                   className="inline-flex items-center justify-center gap-2 border-2 border-[#8ECAE6] bg-[#8ECAE6] px-7 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase transition-all duration-150 hover:bg-transparent hover:text-[#8ECAE6] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
-                  Ver proyectos
+                  <EditableText
+                    value={buttonText}
+                    onSave={(v) => __onFieldChange?.('buttonText', v)}
+                    as="span"
+                    singleLine
+                  />
                   <ArrowRight size={16} />
                 </a>
                 <button
                   type="button"
                   onClick={() => {
                     if (currentUser) router.push('/comunidad?tab=proyectos')
-                    else auth.open('registro')
+                    else router.push('/registro')
                   }}
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/20 bg-white/5 px-7 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >
                   <Briefcase size={14} />
-                  {currentUser ? 'Ir a proyectos' : 'Publica tu proyecto'}
+                  <EditableText
+                    value={currentUser ? loggedButtonText : guestButtonText}
+                    onSave={(v) =>
+                      __onFieldChange?.(currentUser ? 'loggedButtonText' : 'guestButtonText', v)
+                    }
+                    as="span"
+                    singleLine
+                  />
                 </button>
               </div>
             </TimelineAnimation>
@@ -100,19 +176,25 @@ export function ProyectosLandingSection() {
             >
               <p className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
                 <Sparkles size={13} />
-                Puedes trabajar en
+                <EditableText
+                  value={asideEyebrow}
+                  onSave={(v) => __onFieldChange?.('asideEyebrow', v)}
+                  as="span"
+                  singleLine
+                />
               </p>
               <div className="mt-5 flex flex-col gap-3">
-                {[
-                  'Estructurar un proyecto cultural',
-                  'Diseñar tu portafolio',
-                  'Redactar cartas para becas',
-                  'Planear una gira o exposición',
-                  'Revisar un presupuesto',
-                ].map((item, i) => (
-                  <div key={item} className="flex items-center gap-3">
+                {asideItems.map((item, i) => (
+                  <div key={i} className="flex items-center gap-3">
                     <ChevronRight size={14} className="shrink-0 text-[#8ECAE6]" />
-                    <span className="text-sm text-white/75">{item}</span>
+                    <span className="text-sm text-white/75">
+                      <EditableText
+                        value={item}
+                        onSave={(v) => __onFieldChange?.(`asideItems.${i}`, v)}
+                        as="span"
+                        singleLine
+                      />
+                    </span>
                   </div>
                 ))}
               </div>

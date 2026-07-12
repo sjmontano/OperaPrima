@@ -1,9 +1,12 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { RotatingText } from '@/components/shared/RotatingText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { useEditMode } from '@/context/EditModeContext'
+import { useInlineCrud } from '@/lib/useInlineCrud'
 import { MentorEditModal } from '@/components/mentorias/MentorEditModal'
 import {
   ArrowRight,
@@ -17,11 +20,10 @@ import {
   Search,
   Sparkles,
   Star,
-  Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useRef, useState } from 'react'
 import { ExpandingMentorsGallery } from './ExpandingMentorsGallery'
 import type { MentorCard } from './ExpandingMentorsGallery'
 import type { MentorDB, MentorFormData } from './MentorEditModal'
@@ -74,46 +76,68 @@ const STEPS = [
   },
 ]
 
-export function MentoriasLandingSection() {
+const DEFAULT_ASIDE_ITEMS = [
+  'Estructurar un proyecto cultural',
+  'Revisar el diseño de tu portafolio',
+  'Redactar cartas para becas',
+  'Planear una gira o exposición',
+  'Revisar un presupuesto',
+]
+
+export function MentoriasLandingSection({
+  eyebrow = 'Mentorías a la medida',
+  heading = 'NO ESTÁS <span class="text-[#F65B7F]">SOLO</span>',
+  description = 'Espacios de acompañamiento personalizados para que tu práctica artística sea más clara, más estratégica y más efectiva.',
+  description2 = 'Conecta con un mentor que tiene las herramientas para ayudarte: portafolio, becas, proyectos culturales, cartas de motivación, giras, presupuestos y más. Todo lo que no enseñan en la universidad.',
+  rotatingLabel = '¿Te identificas con esto?',
+  ctaLoggedText = 'Ver mentores',
+  ctaGuestText = 'Reservar mentoría',
+  secondaryCtaText = 'Ver perfiles',
+  asideEyebrow = 'Puedes trabajar en',
+  asideItems = DEFAULT_ASIDE_ITEMS,
+  bannerText = 'Mentores expertos en diferentes áreas listos para ayudarte.',
+  __onFieldChange,
+}: {
+  eyebrow?: string
+  heading?: string
+  description?: string
+  description2?: string
+  rotatingLabel?: string
+  ctaLoggedText?: string
+  ctaGuestText?: string
+  secondaryCtaText?: string
+  asideEyebrow?: string
+  asideItems?: string[]
+  bannerText?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const { currentUser } = authModal
   const { isEditMode } = useEditMode()
   const router = useRouter()
-  const [mentores, setMentores] = useState<MentorCard[]>([])
-  const [mentoresLoaded, setMentoresLoaded] = useState(false)
+  const {
+    items: mentorDBs,
+    loading,
+    addItem: addMentor,
+    updateItem: updateMentor,
+    deleteItem: deleteMentor,
+  } = useInlineCrud<MentorDB>({ endpoint: '/api/mentores' })
+  const mentoresLoaded = !loading
   const [editingMentor, setEditingMentor] = useState<MentorDB | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
-  const [creating, setCreating] = useState(false)
 
-  async function fetchMentores() {
-    try {
-      const res = await fetch('/api/mentores')
-      const data = await res.json()
-      if (data.mentores) {
-        const mapped: MentorCard[] = data.mentores.map((m: MentorDB) => ({
-          id: m.id,
-          usuarioId: m.usuarioId,
-          name: m.name,
-          title: m.title,
-          location: m.location,
-          focus: m.focus,
-          notes: m.notes,
-          galleryImages: m.galleryImages,
-          avatar: m.usuario?.perfil?.avatar || null,
-        }))
-        setMentores(mapped)
-      }
-      setMentoresLoaded(true)
-    } catch {
-      setMentoresLoaded(true)
-    }
-  }
-
-  useEffect(() => {
-    fetchMentores()
-     
-  }, [])
+  const mentores: MentorCard[] = mentorDBs.map((m) => ({
+    id: m.id,
+    usuarioId: m.usuarioId,
+    name: m.name,
+    title: m.title,
+    location: m.location,
+    focus: m.focus,
+    notes: m.notes,
+    galleryImages: m.galleryImages,
+    avatar: m.usuario?.perfil?.avatar || null,
+  }))
 
   function canEdit(mentor: MentorCard): boolean {
     if (!currentUser) return false
@@ -122,87 +146,23 @@ export function MentoriasLandingSection() {
   }
 
   function handleEdit(mentor: MentorCard) {
-    const full: MentorDB = {
-      id: mentor.id,
-      usuarioId: mentor.usuarioId,
-      name: mentor.name,
-      title: mentor.title,
-      location: mentor.location,
-      focus: mentor.focus,
-      notes: mentor.notes,
-      galleryImages: mentor.galleryImages,
-      active: true,
-      orden: 0,
-    }
+    const full = mentorDBs.find((m) => m.id === mentor.id) || null
     setEditingMentor(full)
     setShowEditModal(true)
   }
 
   async function handleSaveEdit(data: MentorFormData) {
-    const supabase = (await import('@/lib/supabaseClient')).createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) return
-    const token = session.access_token
-    const res = await fetch(`/api/mentores/${editingMentor!.id}`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(data),
-    })
-    if (res.ok) {
-      const result = await res.json()
-      const m = result.mentor
-      setMentores((prev) =>
-        prev.map((p) =>
-          p.id === m.id
-            ? {
-                ...p,
-                name: m.name,
-                title: m.title,
-                location: m.location,
-                focus: m.focus,
-                notes: m.notes,
-                galleryImages: m.galleryImages,
-              }
-            : p
-        )
-      )
-    }
+    if (!editingMentor) return
+    await updateMentor(editingMentor.id, data as unknown as Record<string, unknown>)
   }
 
   async function handleCreate(data: MentorFormData) {
-    const supabase = (await import('@/lib/supabaseClient')).createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) return
-    const token = session.access_token
-    const res = await fetch('/api/mentores', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-      body: JSON.stringify(data),
-    })
-    if (res.ok) {
-      await fetchMentores()
-    }
+    await addMentor(data as unknown as Record<string, unknown>)
   }
 
   async function handleDelete(mentor: MentorCard) {
     if (!window.confirm(`¿Eliminar a ${mentor.name}? Esta acción no se puede deshacer.`)) return
-    const supabase = (await import('@/lib/supabaseClient')).createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) return
-    const token = session.access_token
-    const res = await fetch(`/api/mentores/${mentor.id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    })
-    if (res.ok) {
-      setMentores((prev) => prev.filter((p) => p.id !== mentor.id))
-    }
+    await deleteMentor(mentor.id)
   }
 
   const showInlineAdmin = isEditMode && currentUser?.rol === 'ADMIN'
@@ -227,24 +187,43 @@ export function MentoriasLandingSection() {
               >
                 <div className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
                   <Sparkles size={13} />
-                  Mentorías a la medida
+                  <EditableText
+                    value={eyebrow}
+                    onSave={(v) => __onFieldChange?.('eyebrow', v)}
+                    as="span"
+                    singleLine
+                  />
                 </div>
                 <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-6xl lg:text-[4rem]">
-                  NO ESTÁS <span className="text-[#F65B7F]">SOLO</span>
+                  <EditableRichText
+                    value={heading}
+                    onSave={(v) => __onFieldChange?.('heading', v)}
+                    as="span"
+                  />
                 </h1>
                 <p className="text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
-                  Espacios de acompañamiento personalizados para que tu práctica artística sea más
-                  clara, más estratégica y más efectiva.
+                  <EditableRichText
+                    value={description}
+                    onSave={(v) => __onFieldChange?.('description', v)}
+                    as="span"
+                  />
                 </p>
                 <p className="text-base leading-relaxed text-white/60">
-                  Conecta con un mentor que tiene las herramientas para ayudarte: portafolio, becas,
-                  proyectos culturales, cartas de motivación, giras, presupuestos y más. Todo lo que
-                  no enseñan en la universidad.
+                  <EditableRichText
+                    value={description2}
+                    onSave={(v) => __onFieldChange?.('description2', v)}
+                    as="span"
+                  />
                 </p>
                 <div className="border-2 border-[#F65B7F]/30 bg-white/5 px-6 py-5">
                   <p className="mb-2 flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
                     <Star size={12} />
-                    ¿Te identificas con esto?
+                    <EditableText
+                      value={rotatingLabel}
+                      onSave={(v) => __onFieldChange?.('rotatingLabel', v)}
+                      as="span"
+                      singleLine
+                    />
                   </p>
                   <p className="text-lg font-medium text-white italic">
                     &ldquo;
@@ -261,7 +240,14 @@ export function MentoriasLandingSection() {
                     }}
                     className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-7 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                   >
-                    {currentUser ? 'Ver mentores' : 'Reservar mentoría'}
+                    <EditableText
+                      value={currentUser ? ctaLoggedText : ctaGuestText}
+                      onSave={(v) =>
+                        __onFieldChange?.(currentUser ? 'ctaLoggedText' : 'ctaGuestText', v)
+                      }
+                      as="span"
+                      singleLine
+                    />
                     <ArrowRight size={16} />
                   </button>
                   <button
@@ -272,7 +258,12 @@ export function MentoriasLandingSection() {
                     }}
                     className="inline-flex items-center justify-center gap-2 border-2 border-white/20 bg-white/5 px-7 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-white"
                   >
-                    Ver perfiles
+                    <EditableText
+                      value={secondaryCtaText}
+                      onSave={(v) => __onFieldChange?.('secondaryCtaText', v)}
+                      as="span"
+                      singleLine
+                    />
                   </button>
                 </div>
               </TimelineAnimation>
@@ -286,19 +277,25 @@ export function MentoriasLandingSection() {
               >
                 <p className="flex items-center gap-2 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
                   <Sparkles size={13} />
-                  Puedes trabajar en
+                  <EditableText
+                    value={asideEyebrow}
+                    onSave={(v) => __onFieldChange?.('asideEyebrow', v)}
+                    as="span"
+                    singleLine
+                  />
                 </p>
                 <div className="mt-5 flex flex-col gap-3">
-                  {[
-                    'Estructurar un proyecto cultural',
-                    'Revisar el diseño de tu portafolio',
-                    'Redactar cartas para becas',
-                    'Planear una gira o exposición',
-                    'Revisar un presupuesto',
-                  ].map((item) => (
-                    <div key={item} className="flex items-center gap-3">
+                  {asideItems.map((item, i) => (
+                    <div key={i} className="flex items-center gap-3">
                       <ChevronRight size={14} className="shrink-0 text-[#F65B7F]" />
-                      <span className="text-sm text-white/75">{item}</span>
+                      <span className="text-sm text-white/75">
+                        <EditableText
+                          value={item}
+                          onSave={(v) => __onFieldChange?.(`asideItems.${i}`, v)}
+                          as="span"
+                          singleLine
+                        />
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -313,7 +310,11 @@ export function MentoriasLandingSection() {
                   5
                 </div>
                 <span className="text-sm leading-relaxed text-white/60">
-                  Mentores expertos en diferentes áreas listos para ayudarte.
+                  <EditableRichText
+                    value={bannerText}
+                    onSave={(v) => __onFieldChange?.('bannerText', v)}
+                    as="span"
+                  />
                 </span>
               </TimelineAnimation>
             </div>

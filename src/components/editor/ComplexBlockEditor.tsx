@@ -1,5 +1,6 @@
 'use client'
 
+import { getBlockSchema, type FieldSchema, type FieldType } from '@/lib/block-schema'
 import { useEditMode } from '@/context/EditModeContext'
 import { X } from 'lucide-react'
 import { useState } from 'react'
@@ -10,8 +11,6 @@ interface Props {
   onSave: (props: Record<string, unknown>) => void
   onClose: () => void
 }
-
-// ── Generic helpers ──
 
 function Input({
   label,
@@ -62,42 +61,124 @@ function TextArea({
   )
 }
 
-function ArrayEditor<T>({
+function NumberInput({
   label,
-  items,
-  defaultItem,
-  renderItem,
+  value,
   onChange,
 }: {
   label: string
-  items: T[]
-  defaultItem: T
-  renderItem: (item: T, index: number, update: (v: T) => void) => React.ReactNode
-  onChange: (items: T[]) => void
+  value: number
+  onChange: (v: number) => void
 }) {
-  const update = (i: number, v: T) => {
-    const next = [...items]
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">{label}</span>
+      <input
+        type="number"
+        value={value}
+        onChange={(e) => onChange(Number(e.target.value))}
+        className="border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-[#8ECAE6]"
+      />
+    </label>
+  )
+}
+
+function Checkbox({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: boolean
+  onChange: (v: boolean) => void
+}) {
+  return (
+    <label className="flex cursor-pointer items-center gap-2 border border-zinc-200 px-3 py-2 text-sm">
+      <input
+        type="checkbox"
+        checked={value}
+        onChange={(e) => onChange(e.target.checked)}
+        className="size-4 accent-[#023047]"
+      />
+      <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">{label}</span>
+    </label>
+  )
+}
+
+function ColorInput({
+  label,
+  value,
+  onChange,
+}: {
+  label: string
+  value: string
+  onChange: (v: string) => void
+}) {
+  return (
+    <label className="flex flex-col gap-1">
+      <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">{label}</span>
+      <div className="flex items-center gap-2">
+        <input
+          type="color"
+          value={value || '#000000'}
+          onChange={(e) => onChange(e.target.value)}
+          className="h-8 w-8 cursor-pointer border border-zinc-200"
+        />
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="#HEX"
+          className="flex-1 border border-zinc-200 px-3 py-2 text-sm outline-none focus:border-[#8ECAE6]"
+        />
+      </div>
+    </label>
+  )
+}
+
+function ArrayFieldEditor({
+  schema,
+  values,
+  onChange,
+}: {
+  schema: FieldSchema
+  values: Record<string, unknown>[]
+  onChange: (v: Record<string, unknown>[]) => void
+}) {
+  const add = () => {
+    const defaultItem: Record<string, unknown> = {}
+    if (schema.fields) {
+      for (const f of schema.fields) {
+        defaultItem[f.key] = f.default ?? ''
+      }
+    }
+    onChange([...values, defaultItem])
+  }
+
+  const remove = (i: number) => onChange(values.filter((_, idx) => idx !== i))
+
+  const updateItem = (i: number, v: Record<string, unknown>) => {
+    const next = [...values]
     next[i] = v
     onChange(next)
   }
-  const add = () => onChange([...items, { ...defaultItem }])
-  const remove = (i: number) => onChange(items.filter((_, idx) => idx !== i))
 
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
         <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
-          {label}
+          {schema.label} ({values.length})
         </span>
         <button
           type="button"
           onClick={add}
-          className="rounded-sm border border-[#8ECAE6] px-2 py-0.5 text-[9px] font-bold tracking-wider text-[#023047] uppercase hover:bg-[#8ECAE6]/20"
+          disabled={schema.maxItems ? values.length >= schema.maxItems : false}
+          className="rounded-sm border border-[#8ECAE6] px-2 py-0.5 text-[9px] font-bold tracking-wider text-[#023047] uppercase hover:bg-[#8ECAE6]/20 disabled:cursor-not-allowed disabled:opacity-40"
         >
           + Añadir
         </button>
       </div>
-      {items.map((item, i) => (
+      {values.map((item, i) => (
         <div key={i} className="relative rounded-sm border border-zinc-200 bg-zinc-50 p-3">
           <button
             type="button"
@@ -106,379 +187,159 @@ function ArrayEditor<T>({
           >
             <X size={12} />
           </button>
-          <div className="space-y-2 pr-5">{renderItem(item, i, (v) => update(i, v))}</div>
+          <div className="space-y-2 pr-5">
+            {schema.fields?.map((field) => (
+              <FieldRenderer
+                key={field.key}
+                schema={field}
+                value={item[field.key]}
+                onChange={(v) => updateItem(i, { ...item, [field.key]: v })}
+              />
+            ))}
+          </div>
         </div>
       ))}
     </div>
   )
 }
 
-// ── Hero Carousel Editor ──
+function ObjectFieldEditor({
+  schema,
+  values,
+  onChange,
+}: {
+  schema: FieldSchema
+  values: Record<string, unknown>
+  onChange: (v: Record<string, unknown>) => void
+}) {
+  return (
+    <div className="space-y-2 rounded-sm border border-zinc-200 bg-zinc-50 p-3">
+      <span className="block text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
+        {schema.label}
+      </span>
+      <div className="space-y-2">
+        {schema.fields?.map((field) => (
+          <FieldRenderer
+            key={field.key}
+            schema={field}
+            value={values[field.key]}
+            onChange={(v) => onChange({ ...values, [field.key]: v })}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
 
-function HeroCarouselEditor({
+function FieldRenderer({
+  schema,
+  value,
+  onChange,
+}: {
+  schema: FieldSchema
+  value: unknown
+  onChange: (v: unknown) => void
+}) {
+  const type: FieldType = schema.type
+
+  if (type === 'array') {
+    return (
+      <ArrayFieldEditor
+        schema={schema}
+        values={(value as Record<string, unknown>[]) || []}
+        onChange={onChange as (v: Record<string, unknown>[]) => void}
+      />
+    )
+  }
+
+  if (type === 'object') {
+    return (
+      <ObjectFieldEditor
+        schema={schema}
+        values={(value as Record<string, unknown>) || {}}
+        onChange={onChange as (v: Record<string, unknown>) => void}
+      />
+    )
+  }
+
+  if (type === 'richtext') {
+    return (
+      <TextArea
+        label={schema.label}
+        value={String(value ?? schema.default ?? '')}
+        onChange={onChange as (v: string) => void}
+      />
+    )
+  }
+
+  if (type === 'number') {
+    return (
+      <NumberInput
+        label={schema.label}
+        value={Number(value ?? schema.default ?? 0)}
+        onChange={onChange as (v: number) => void}
+      />
+    )
+  }
+
+  if (type === 'boolean') {
+    return (
+      <Checkbox
+        label={schema.label}
+        value={Boolean(value ?? schema.default ?? false)}
+        onChange={onChange as (v: boolean) => void}
+      />
+    )
+  }
+
+  if (type === 'color') {
+    return (
+      <ColorInput
+        label={schema.label}
+        value={String(value ?? schema.default ?? '')}
+        onChange={onChange as (v: string) => void}
+      />
+    )
+  }
+
+  // text, image, cta → default to Input
+  return (
+    <Input
+      label={schema.label}
+      value={String(value ?? schema.default ?? '')}
+      onChange={onChange as (v: string) => void}
+      placeholder={schema.placeholder}
+    />
+  )
+}
+
+function GenericBlockEditor({
+  blockType,
   props: p,
   onChange,
 }: {
+  blockType: string
   props: Record<string, unknown>
   onChange: (p: Record<string, unknown>) => void
 }) {
-  const slides = (p.slides as Array<Record<string, unknown>>) || []
-
-  const updateSlide = (i: number, v: Record<string, unknown>) => {
-    const next = [...slides]
-    next[i] = v
-    onChange({ ...p, slides: next })
+  const schema = getBlockSchema(blockType)
+  if (!schema || schema.fields.length === 0) {
+    return <RawJsonEditor props={p} onChange={onChange} />
   }
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
-          Slides ({slides.length})
-        </span>
-      </div>
-      {slides.map((s, i) => (
-        <div key={i} className="rounded-sm border border-zinc-200 bg-zinc-50 p-3">
-          <div className="mb-2">
-            <span className="text-[9px] font-bold tracking-wider text-zinc-400 uppercase">
-              Slide #{i + 1}
-            </span>
-          </div>
-          <div className="space-y-2">
-            <Input
-              label="Color acento"
-              value={String(s.accent || '')}
-              onChange={(v) => updateSlide(i, { ...s, accent: v })}
-              placeholder="#8ECAE6"
-            />
-            <Input
-              label="Bg gradient"
-              value={String(s.bg || '')}
-              onChange={(v) => updateSlide(i, { ...s, bg: v })}
-              placeholder="from-[...] to-[...]"
-            />
-            <Input
-              label="Bg imagen URL"
-              value={String(s.bgImage || '')}
-              onChange={(v) => updateSlide(i, { ...s, bgImage: v })}
-              placeholder="https://…"
-            />
-            <Input
-              label="CTA URL"
-              value={String((s.cta as Record<string, string>)?.href || '')}
-              onChange={(v) => updateSlide(i, { ...s, cta: { ...(s.cta as object), href: v } })}
-              placeholder="/ruta"
-            />
-            <Input
-              label="Sec. CTA URL"
-              value={String((s.secondaryCta as Record<string, string>)?.href || '')}
-              onChange={(v) =>
-                updateSlide(i, { ...s, secondaryCta: { ...(s.secondaryCta as object), href: v } })
-              }
-              placeholder="/ruta"
-            />
-          </div>
-        </div>
+      {schema.fields.map((field) => (
+        <FieldRenderer
+          key={field.key}
+          schema={field}
+          value={p[field.key] ?? field.default}
+          onChange={(v) => onChange({ ...p, [field.key]: v })}
+        />
       ))}
-      <p className="text-[10px] leading-relaxed text-zinc-400">
-        Los slides se añaden/eliminan desde la página en modo edición. Los textos (tag, headline,
-        subtexto, CTAs) se editan inline.
-      </p>
     </div>
   )
 }
-
-// ── What Is Editor ──
-
-function WhatIsEditor({
-  props: p,
-  onChange,
-}: {
-  props: Record<string, unknown>
-  onChange: (p: Record<string, unknown>) => void
-}) {
-  const cards = (p.cards as Array<Record<string, unknown>>) || []
-  return (
-    <div className="space-y-4">
-      <Input
-        label="Eyebrow"
-        value={String(p.eyebrow || '')}
-        onChange={(v) => onChange({ ...p, eyebrow: v })}
-      />
-      <Input
-        label="Heading"
-        value={String(p.heading || '')}
-        onChange={(v) => onChange({ ...p, heading: v })}
-      />
-      <TextArea
-        label="Descripción 1"
-        value={String(p.description || '')}
-        onChange={(v) => onChange({ ...p, description: v })}
-      />
-      <TextArea
-        label="Descripción 2"
-        value={String(p.description2 || '')}
-        onChange={(v) => onChange({ ...p, description2: v })}
-      />
-      <Input
-        label="Service Eyebrow"
-        value={String(p.serviceEyebrow || '')}
-        onChange={(v) => onChange({ ...p, serviceEyebrow: v })}
-      />
-      <Input
-        label="Service Heading"
-        value={String(p.serviceHeading || '')}
-        onChange={(v) => onChange({ ...p, serviceHeading: v })}
-      />
-      <ArrayEditor
-        label="Cards"
-        items={cards}
-        defaultItem={{ num: '', icon: 'Users', title: '', desc: '', accent: '', href: '' }}
-        onChange={(v) => onChange({ ...p, cards: v })}
-        renderItem={(c, _, update) => (
-          <>
-            <Input
-              label="Número"
-              value={String(c.num || '')}
-              onChange={(v) => update({ ...c, num: v })}
-            />
-            <Input
-              label="Icono (Users, CalendarDays, Compass, Layers)"
-              value={String(c.icon || '')}
-              onChange={(v) => update({ ...c, icon: v })}
-            />
-            <Input
-              label="Título"
-              value={String(c.title || '')}
-              onChange={(v) => update({ ...c, title: v })}
-            />
-            <TextArea
-              label="Descripción"
-              value={String(c.desc || '')}
-              onChange={(v) => update({ ...c, desc: v })}
-              rows={2}
-            />
-            <Input
-              label="Color acento"
-              value={String(c.accent || '')}
-              onChange={(v) => update({ ...c, accent: v })}
-            />
-            <Input
-              label="URL"
-              value={String(c.href || '')}
-              onChange={(v) => update({ ...c, href: v })}
-            />
-          </>
-        )}
-      />
-    </div>
-  )
-}
-
-// ── Testimonials Editor ──
-
-function TestimonialsEditor({
-  props: p,
-  onChange,
-}: {
-  props: Record<string, unknown>
-  onChange: (p: Record<string, unknown>) => void
-}) {
-  const items = (p.testimonials as Array<Record<string, unknown>>) || []
-  return (
-    <div className="space-y-4">
-      <Input
-        label="Headline"
-        value={String(p.headline || '')}
-        onChange={(v) => onChange({ ...p, headline: v })}
-      />
-      <Input
-        label="Eyebrow"
-        value={String(p.testimonialEyebrow || '')}
-        onChange={(v) => onChange({ ...p, testimonialEyebrow: v })}
-      />
-      <ArrayEditor
-        label="Testimonios"
-        items={items}
-        defaultItem={{ name: '', handle: '', text: '', avatar: '' }}
-        onChange={(v) => onChange({ ...p, testimonials: v })}
-        renderItem={(t, _, update) => (
-          <>
-            <Input
-              label="Nombre"
-              value={String(t.name || '')}
-              onChange={(v) => update({ ...t, name: v })}
-            />
-            <Input
-              label="Handle"
-              value={String(t.handle || '')}
-              onChange={(v) => update({ ...t, handle: v })}
-            />
-            <TextArea
-              label="Texto"
-              value={String(t.text || '')}
-              onChange={(v) => update({ ...t, text: v })}
-              rows={2}
-            />
-            <Input
-              label="Avatar URL"
-              value={String(t.avatar || '')}
-              onChange={(v) => update({ ...t, avatar: v })}
-            />
-          </>
-        )}
-      />
-    </div>
-  )
-}
-
-// ── Partners Editor ──
-
-function PartnersEditor({
-  props: p,
-  onChange,
-}: {
-  props: Record<string, unknown>
-  onChange: (p: Record<string, unknown>) => void
-}) {
-  return (
-    <div className="space-y-4">
-      <Input
-        label="Eyebrow"
-        value={String(p.eyebrow || '')}
-        onChange={(v) => onChange({ ...p, eyebrow: v })}
-      />
-      <Input
-        label="Heading"
-        value={String(p.heading || '')}
-        onChange={(v) => onChange({ ...p, heading: v })}
-      />
-      <TextArea
-        label="Descripción"
-        value={String(p.description || '')}
-        onChange={(v) => onChange({ ...p, description: v })}
-      />
-      <Input
-        label="CTA Texto"
-        value={String(p.ctaText || '')}
-        onChange={(v) => onChange({ ...p, ctaText: v })}
-      />
-      <Input
-        label="CTA Email"
-        value={String(p.ctaEmail || '')}
-        onChange={(v) => onChange({ ...p, ctaEmail: v })}
-      />
-      <p className="text-[10px] leading-relaxed text-zinc-400">
-        Los slots de aliados se administran directamente desde la página en modo edición.
-      </p>
-    </div>
-  )
-}
-
-// ── Comunidad CTA Editor ──
-
-function ComunidadCtaEditor({
-  props: p,
-  onChange,
-}: {
-  props: Record<string, unknown>
-  onChange: (p: Record<string, unknown>) => void
-}) {
-  const stats = (p.stats as Array<Record<string, unknown>>) || []
-  const primary = (p.primaryCta as Record<string, string>) || {}
-  const secondary = (p.secondaryCta as Record<string, string>) || {}
-  return (
-    <div className="space-y-4">
-      <Input
-        label="Eyebrow"
-        value={String(p.eyebrow || '')}
-        onChange={(v) => onChange({ ...p, eyebrow: v })}
-      />
-      <TextArea
-        label="Headline"
-        value={String(p.headline || '')}
-        onChange={(v) => onChange({ ...p, headline: v })}
-        rows={2}
-      />
-      <TextArea
-        label="Descripción"
-        value={String(p.description || '')}
-        onChange={(v) => onChange({ ...p, description: v })}
-        rows={3}
-      />
-      <div className="space-y-2 rounded-sm border border-zinc-200 bg-zinc-50 p-3">
-        <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
-          CTA Primario
-        </span>
-        <Input
-          label="Label"
-          value={primary.label || ''}
-          onChange={(v) => onChange({ ...p, primaryCta: { ...primary, label: v } })}
-        />
-        <Input
-          label="URL"
-          value={primary.href || ''}
-          onChange={(v) => onChange({ ...p, primaryCta: { ...primary, href: v } })}
-        />
-      </div>
-      <div className="space-y-2 rounded-sm border border-zinc-200 bg-zinc-50 p-3">
-        <span className="text-[10px] font-bold tracking-widest text-zinc-500 uppercase">
-          CTA Secundario
-        </span>
-        <Input
-          label="Label"
-          value={secondary.label || ''}
-          onChange={(v) => onChange({ ...p, secondaryCta: { ...secondary, label: v } })}
-        />
-        <Input
-          label="URL"
-          value={secondary.href || ''}
-          onChange={(v) => onChange({ ...p, secondaryCta: { ...secondary, href: v } })}
-        />
-      </div>
-      <ArrayEditor
-        label="Estadísticas"
-        items={stats}
-        defaultItem={{ icon: 'Users', end: 0, thousands: false, suffix: '+', label: '' }}
-        onChange={(v) => onChange({ ...p, stats: v })}
-        renderItem={(s, _, update) => (
-          <>
-            <Input
-              label="Icono (Users, Palette, Mic)"
-              value={String(s.icon || '')}
-              onChange={(v) => update({ ...s, icon: v })}
-            />
-            <Input
-              label="Valor final"
-              value={String(s.end || '0')}
-              onChange={(v) => update({ ...s, end: Number(v) || 0 })}
-            />
-            <label className="flex items-center gap-2 text-xs">
-              <input
-                type="checkbox"
-                checked={!!s.thousands}
-                onChange={(e) => update({ ...s, thousands: e.target.checked })}
-              />
-              Usar separador de miles
-            </label>
-            <Input
-              label="Sufijo"
-              value={String(s.suffix || '')}
-              onChange={(v) => update({ ...s, suffix: v })}
-            />
-            <Input
-              label="Label"
-              value={String(s.label || '')}
-              onChange={(v) => update({ ...s, label: v })}
-            />
-          </>
-        )}
-      />
-    </div>
-  )
-}
-
-// ── Fallback: edit raw JSON ──
 
 function RawJsonEditor({
   props: p,
@@ -519,37 +380,22 @@ function RawJsonEditor({
   )
 }
 
-// ── Main Component ──
-
-const COMPLEX_EDITORS: Record<
-  string,
-  React.FC<{ props: Record<string, unknown>; onChange: (p: Record<string, unknown>) => void }>
-> = {
-  'hero-carousel': HeroCarouselEditor,
-  'what-is': WhatIsEditor,
-  testimonials: TestimonialsEditor,
-  partners: PartnersEditor,
-  'comunidad-cta': ComunidadCtaEditor,
-}
-
 export function ComplexBlockEditor({ block, onSave, onClose }: Props) {
   const { isEditMode } = useEditMode()
   const [draft, setDraft] = useState(block.props)
 
   if (!isEditMode) return null
 
-  const EditorComponent = COMPLEX_EDITORS[block.type]
-
-  const displayName = block.type.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
+  const schema = getBlockSchema(block.type)
+  const hasFields = schema && schema.fields.length > 0
+  const displayName =
+    schema?.label || block.type.replace(/-/g, ' ').replace(/\b\w/g, (l) => l.toUpperCase())
 
   return (
     <div className="fixed inset-y-0 right-0 z-[100] flex">
-      {/* Backdrop */}
       <div className="absolute inset-0 bg-black/20" onClick={onClose} />
 
-      {/* Panel */}
       <div className="relative ml-auto flex w-full max-w-md flex-col border-l-2 border-zinc-900 bg-[#F0F8FF] shadow-[-8px_0_0_#111]">
-        {/* Header */}
         <div className="flex items-center justify-between border-b-2 border-zinc-200 px-5 py-4">
           <div>
             <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
@@ -566,16 +412,14 @@ export function ComplexBlockEditor({ block, onSave, onClose }: Props) {
           </button>
         </div>
 
-        {/* Body */}
         <div className="flex-1 overflow-y-auto px-5 py-5">
-          {EditorComponent ? (
-            <EditorComponent props={draft} onChange={setDraft} />
+          {hasFields ? (
+            <GenericBlockEditor blockType={block.type} props={draft} onChange={setDraft} />
           ) : (
             <RawJsonEditor props={draft} onChange={setDraft} />
           )}
         </div>
 
-        {/* Footer */}
         <div className="flex items-center justify-end gap-2 border-t-2 border-zinc-200 px-5 py-4">
           <button
             type="button"

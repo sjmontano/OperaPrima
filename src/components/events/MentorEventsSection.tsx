@@ -1,5 +1,7 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { MonthCalendar } from '@/components/events/MonthCalendar'
 import { createClient } from '@/lib/supabaseClient'
@@ -100,7 +102,25 @@ function mapEvent(evento: DbEvent): CalendarEvent {
   }
 }
 
-export function MentorEventsSection() {
+export function MentorEventsSection({
+  eyebrow = 'Eventos de Ópera Prima',
+  headingLogged = '¿Qué está pasando?',
+  headingGuest = 'Explora Ópera Prima',
+  emptyTitle = 'Sin resultados',
+  emptyDescription = 'No encontramos eventos con esos criterios.',
+  searchPlaceholder = 'Buscar eventos…',
+  createButtonText = '+ Crear evento',
+  __onFieldChange,
+}: {
+  eyebrow?: string
+  headingLogged?: string
+  headingGuest?: string
+  emptyTitle?: string
+  emptyDescription?: string
+  searchPlaceholder?: string
+  createButtonText?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
@@ -330,10 +350,20 @@ export function MentorEventsSection() {
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
           <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>
             <p className="text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
-              Eventos de Ópera Prima
+              <EditableText
+                value={eyebrow}
+                onSave={(v) => __onFieldChange?.('eyebrow', v)}
+                as="span"
+                singleLine
+              />
             </p>
             <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              {currentUser ? '¿Qué está pasando?' : 'Explora Ópera Prima'}
+              <EditableText
+                value={currentUser ? headingLogged : headingGuest}
+                onSave={(v) => __onFieldChange?.(currentUser ? 'headingLogged' : 'headingGuest', v)}
+                as="span"
+                singleLine
+              />
             </h2>
             <p className="mt-2 text-sm text-zinc-500">
               {dbEvents.length} evento{dbEvents.length !== 1 ? 's' : ''} registrado
@@ -357,7 +387,7 @@ export function MentorEventsSection() {
                 onChange={(e) => {
                   setQuery(e.target.value)
                 }}
-                placeholder="Buscar eventos…"
+                placeholder={searchPlaceholder}
                 className="w-full border-2 border-zinc-200 bg-white py-3 pr-10 pl-10 text-sm text-zinc-900 transition-all duration-150 placeholder:text-zinc-400 focus:border-[#023047] focus:shadow-[4px_4px_0_#023047] focus:outline-none"
               />
               {query && (
@@ -411,7 +441,12 @@ export function MentorEventsSection() {
                   setShowCreateModal(true)
                 }}
               >
-                + Crear evento
+                <EditableText
+                  value={createButtonText}
+                  onSave={(v) => __onFieldChange?.('createButtonText', v)}
+                  as="span"
+                  singleLine
+                />
               </button>
             )}
           </div>
@@ -443,9 +478,20 @@ export function MentorEventsSection() {
                   <span className="text-5xl select-none" aria-hidden>
                     🎨
                   </span>
-                  <p className="text-sm font-semibold text-zinc-900">Sin resultados</p>
+                  <p className="text-sm font-semibold text-zinc-900">
+                    <EditableText
+                      value={emptyTitle}
+                      onSave={(v) => __onFieldChange?.('emptyTitle', v)}
+                      as="span"
+                      singleLine
+                    />
+                  </p>
                   <p className="max-w-xs text-sm leading-relaxed text-zinc-500">
-                    No encontramos eventos con esos criterios.
+                    <EditableRichText
+                      value={emptyDescription}
+                      onSave={(v) => __onFieldChange?.('emptyDescription', v)}
+                      as="span"
+                    />
                   </p>
                 </div>
               ) : (

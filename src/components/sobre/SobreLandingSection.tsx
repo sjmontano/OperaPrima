@@ -1,5 +1,7 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TestimonialsWall, type Testimonial } from '@/components/shared/TestimonialsWall'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
@@ -240,7 +242,51 @@ function StatNumber({ end }: { end: number }) {
   return <span ref={ref}>{count}</span>
 }
 
-export function SobreLandingSection() {
+export function SobreLandingSection({
+  heroEyebrow = 'Sobre la plataforma',
+  heroHeading = 'Ópera <span class="text-[#F65B7F]">Prima</span>',
+  heroDescription = 'Una plataforma internacional que acompaña a artistas emergentes en sus primeros pasos hacia la vida profesional.',
+  heroDescription2 = 'Herramientas, oportunidades y una comunidad que impulsa tu desarrollo artístico y profesional, para que construyas tu camino con estrategia y propósito.',
+  heroCtaLoggedText = 'Ir a la comunidad',
+  heroCtaGuestText = 'Únete a la comunidad',
+  misionEyebrow = 'Nuestra Misión',
+  misionTitle = 'Acortar la distancia entre la formación y la profesión.',
+  misionDescription = 'Impulsar la transición profesional de artistas emergentes, facilitando el acceso a herramientas, oportunidades y redes que potencien su desarrollo en el sector cultural.',
+  visionEyebrow = 'Nuestra Visión',
+  visionTitle = 'Ser el puente que el talento hispanohablante necesita.',
+  visionDescription = 'Consolidar una comunidad activa y una red global de oportunidades que conecte el talento emergente con el sector cultural profesional.',
+  valoresEyebrow = 'Nuestros valores',
+  valoresTitle = 'Lo que nos mueve',
+  plataformaEyebrow = 'La plataforma',
+  plataformaTitle = 'Un espacio para <span class="text-[#F65B7F]">artistas emergentes.</span>',
+  testimonioEyebrow = 'La comunidad',
+  testimonioHeadline = 'Esto dicen los artistas de nuestra comunidad',
+  equipoEyebrow = 'El equipo',
+  equipoTitle = 'Detrás de Ópera Prima',
+  __onFieldChange,
+}: {
+  heroEyebrow?: string
+  heroHeading?: string
+  heroDescription?: string
+  heroDescription2?: string
+  heroCtaLoggedText?: string
+  heroCtaGuestText?: string
+  misionEyebrow?: string
+  misionTitle?: string
+  misionDescription?: string
+  visionEyebrow?: string
+  visionTitle?: string
+  visionDescription?: string
+  valoresEyebrow?: string
+  valoresTitle?: string
+  plataformaEyebrow?: string
+  plataformaTitle?: string
+  testimonioEyebrow?: string
+  testimonioHeadline?: string
+  equipoEyebrow?: string
+  equipoTitle?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const { currentUser } = authModal
@@ -275,23 +321,32 @@ export function SobreLandingSection() {
               timelineRef={sectionRef}
               className="flex flex-col gap-6"
             >
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                Sobre la plataforma
-              </p>
+              <EditableText
+                value={heroEyebrow}
+                onSave={(v) => __onFieldChange?.('heroEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                as="p"
+              />
 
-              <h1 className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-7xl lg:text-[5rem]">
-                Ópera <span className="text-[#F65B7F]">Prima</span>
-              </h1>
+              <EditableRichText
+                value={heroHeading}
+                onSave={(v) => __onFieldChange?.('heroHeading', v)}
+                className="text-5xl leading-[1.05] font-extrabold tracking-[-0.04em] text-white sm:text-7xl lg:text-[5rem]"
+              />
 
-              <p className="max-w-3xl text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl">
-                Una plataforma internacional que acompaña a artistas emergentes en sus primeros
-                pasos hacia la vida profesional.
-              </p>
+              <EditableRichText
+                value={heroDescription}
+                onSave={(v) => __onFieldChange?.('heroDescription', v)}
+                className="max-w-3xl text-xl leading-relaxed font-semibold text-white/90 sm:text-2xl"
+                as="p"
+              />
 
-              <p className="max-w-2xl text-base leading-relaxed text-white/60">
-                Herramientas, oportunidades y una comunidad que impulsa tu desarrollo artístico y
-                profesional, para que construyas tu camino con estrategia y propósito.
-              </p>
+              <EditableRichText
+                value={heroDescription2}
+                onSave={(v) => __onFieldChange?.('heroDescription2', v)}
+                className="max-w-2xl text-base leading-relaxed text-white/60"
+                as="p"
+              />
 
               <div className="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center">
                 <button
@@ -302,7 +357,7 @@ export function SobreLandingSection() {
                   }}
                   className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-7 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
-                  {currentUser ? 'Ir a la comunidad' : 'Únete a la comunidad'}
+                  {currentUser ? heroCtaLoggedText : heroCtaGuestText}
                   <ArrowRight size={16} />
                 </button>
               </div>
@@ -358,17 +413,23 @@ export function SobreLandingSection() {
                   <p className="text-[8rem] leading-[0.8] font-extrabold tracking-[-0.08em] text-[#4682B4]/20 select-none sm:text-[10rem]">
                     01
                   </p>
-                  <p className="mt-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#4682B4] uppercase">
-                    Nuestra Misión
-                  </p>
-                  <h2 className="mt-4 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-[2.2rem]">
-                    Acortar la distancia entre la formación y la profesión.
-                  </h2>
-                  <p className="mt-6 text-base leading-relaxed text-zinc-600">
-                    Impulsar la transición profesional de artistas emergentes, facilitando el acceso
-                    a herramientas, oportunidades y redes que potencien su desarrollo en el sector
-                    cultural.
-                  </p>
+                  <EditableText
+                    value={misionEyebrow}
+                    onSave={(v) => __onFieldChange?.('misionEyebrow', v)}
+                    className="mt-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#4682B4] uppercase"
+                    as="p"
+                  />
+                  <EditableRichText
+                    value={misionTitle}
+                    onSave={(v) => __onFieldChange?.('misionTitle', v)}
+                    className="mt-4 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-[2.2rem]"
+                  />
+                  <EditableRichText
+                    value={misionDescription}
+                    onSave={(v) => __onFieldChange?.('misionDescription', v)}
+                    className="mt-6 text-base leading-relaxed text-zinc-600"
+                    as="p"
+                  />
                 </TimelineAnimation>
               </div>
             </div>
@@ -380,16 +441,23 @@ export function SobreLandingSection() {
                   <p className="text-[8rem] leading-[0.8] font-extrabold tracking-[-0.08em] text-[#F65B7F]/15 select-none sm:text-[10rem]">
                     02
                   </p>
-                  <p className="mt-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                    Nuestra Visión
-                  </p>
-                  <h2 className="mt-4 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-[2.2rem]">
-                    Ser el puente que el talento hispanohablante necesita.
-                  </h2>
-                  <p className="mt-6 text-base leading-relaxed text-zinc-600">
-                    Consolidar una comunidad activa y una red global de oportunidades que conecte el
-                    talento emergente con el sector cultural profesional.
-                  </p>
+                  <EditableText
+                    value={visionEyebrow}
+                    onSave={(v) => __onFieldChange?.('visionEyebrow', v)}
+                    className="mt-4 text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                    as="p"
+                  />
+                  <EditableRichText
+                    value={visionTitle}
+                    onSave={(v) => __onFieldChange?.('visionTitle', v)}
+                    className="mt-4 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-[2.2rem]"
+                  />
+                  <EditableRichText
+                    value={visionDescription}
+                    onSave={(v) => __onFieldChange?.('visionDescription', v)}
+                    className="mt-6 text-base leading-relaxed text-zinc-600"
+                    as="p"
+                  />
                 </TimelineAnimation>
               </div>
             </div>
@@ -402,12 +470,17 @@ export function SobreLandingSection() {
         <div className="mx-[100px] border-zinc-200 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <div className="px-4 py-24 sm:px-2 lg:py-28">
             <TimelineAnimation as="div" animationNum={7} timelineRef={sectionRef} className="mb-12">
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                Nuestros valores
-              </p>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-5xl">
-                Lo que nos mueve
-              </h2>
+              <EditableText
+                value={valoresEyebrow}
+                onSave={(v) => __onFieldChange?.('valoresEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                as="p"
+              />
+              <EditableRichText
+                value={valoresTitle}
+                onSave={(v) => __onFieldChange?.('valoresTitle', v)}
+                className="mt-3 text-3xl font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-5xl"
+              />
             </TimelineAnimation>
 
             <TimelineAnimation as="div" animationNum={8} timelineRef={sectionRef}>
@@ -423,12 +496,17 @@ export function SobreLandingSection() {
         <div className="mx-[100px] border-zinc-200 px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <div className="px-4 py-24 sm:px-2 lg:py-28">
             <TimelineAnimation as="div" animationNum={9} timelineRef={sectionRef} className="mb-16">
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                La plataforma
-              </p>
-              <h2 className="mt-3 text-3xl font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-5xl">
-                Un espacio para <span className="text-[#F65B7F]">artistas emergentes.</span>
-              </h2>
+              <EditableText
+                value={plataformaEyebrow}
+                onSave={(v) => __onFieldChange?.('plataformaEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                as="p"
+              />
+              <EditableRichText
+                value={plataformaTitle}
+                onSave={(v) => __onFieldChange?.('plataformaTitle', v)}
+                className="mt-3 text-3xl font-extrabold tracking-[-0.04em] text-zinc-900 sm:text-4xl lg:text-5xl"
+              />
             </TimelineAnimation>
 
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
@@ -472,8 +550,8 @@ export function SobreLandingSection() {
       {/* ═══════════════ COMUNIDAD ═══════════════ */}
       <div className="bg-white">
         <TestimonialsWall
-          headline="Esto dicen los artistas de nuestra comunidad"
-          testimonialEyebrow="La comunidad"
+          headline={testimonioHeadline}
+          testimonialEyebrow={testimonioEyebrow}
           testimonials={COMUNIDAD_TESTIMONIALS}
           rows={1}
           fadeColor="#FFFFFF"
@@ -492,7 +570,12 @@ export function SobreLandingSection() {
               timelineRef={sectionRef}
               className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
             >
-              El equipo
+              <EditableText
+                value={equipoEyebrow}
+                onSave={(v) => __onFieldChange?.('equipoEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
+                as="span"
+              />
             </TimelineAnimation>
             <TimelineAnimation
               as="h2"
@@ -500,7 +583,11 @@ export function SobreLandingSection() {
               timelineRef={sectionRef}
               className="mt-3 text-4xl font-extrabold tracking-[-0.04em] text-white lg:text-5xl"
             >
-              Detrás de Ópera Prima
+              <EditableRichText
+                value={equipoTitle}
+                onSave={(v) => __onFieldChange?.('equipoTitle', v)}
+                className="mt-3 text-4xl font-extrabold tracking-[-0.04em] text-white lg:text-5xl"
+              />
             </TimelineAnimation>
           </div>
 

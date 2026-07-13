@@ -2,6 +2,7 @@
 
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
+import { useEditMode } from '@/context/EditModeContext'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, BookOpen, CalendarDays, Sparkles, Users } from 'lucide-react'
@@ -109,6 +110,7 @@ export function EventsLandingSection({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isEditMode } = useEditMode()
   const { currentUser } = useAuthModal()
   const router = useRouter()
   const visibleWord = useRotatingTypewriter(typewriterWords)
@@ -298,6 +300,7 @@ export function EventsLandingSection({
               <button
                 type="button"
                 onClick={() => {
+                  if (isEditMode) return
                   if (currentUser) router.push('/eventos')
                   else router.push('/registro')
                 }}
@@ -314,6 +317,7 @@ export function EventsLandingSection({
 
               <a
                 href="#proximos"
+                onClick={(e) => isEditMode && e.preventDefault()}
                 className="inline-flex items-center justify-center border-2 border-white/20 px-7 py-3 text-xs font-bold tracking-widest text-white/70 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-white/50 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
                 <EditableText

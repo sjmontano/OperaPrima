@@ -1,8 +1,12 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { useEditMode } from '@/context/EditModeContext'
+import { useInlineCrud } from '@/lib/useInlineCrud'
 import { createClient } from '@/lib/supabaseClient'
-import { CalendarDays, Clock, MapPin, Search, X } from 'lucide-react'
+import { CalendarDays, Clock, MapPin, Plus, Search, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProyectosFormModal, type ProyectoFormData } from './ProyectosFormModal'
@@ -64,10 +68,39 @@ function daysUntil(dateStr: string): number {
   return Math.max(0, Math.ceil(diff / 86400000))
 }
 
-export function ProyectosSection() {
+export function ProyectosSection({
+  eyebrow = 'Proyectos activos',
+  heading = 'Explora oportunidades',
+  searchPlaceholder = 'Buscar proyectos…',
+  createButtonText = '+ Publicar proyecto',
+  emptyTitle = 'Sin resultados',
+  emptyDescription = 'No encontramos proyectos con esos criterios.',
+  viewMoreText = 'Ver más',
+  viewMoreGuestText = 'Ver más →',
+  contactTermsText = 'Al contactar, aceptas los términos de uso de Ópera Prima.',
+  __onFieldChange,
+}: {
+  eyebrow?: string
+  heading?: string
+  searchPlaceholder?: string
+  createButtonText?: string
+  emptyTitle?: string
+  emptyDescription?: string
+  viewMoreText?: string
+  viewMoreGuestText?: string
+  contactTermsText?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const auth = useAuthModal()
-  const [proyectos, setProyectos] = useState<DbProyecto[]>([])
+  const { isEditMode } = useEditMode()
+  const {
+    items: proyectos,
+    loading,
+    addItem: addProyecto,
+    deleteItem: deleteProyecto,
+  } = useInlineCrud<DbProyecto>({ endpoint: '/api/proyectos' })
+  const proyectosLoaded = !loading
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
   const [query, setQuery] = useState('')
   const [tipoFilter, setTipoFilter] = useState<string>('todas')
@@ -86,24 +119,6 @@ export function ProyectosSection() {
       return matchQuery && matchTipo
     })
   }, [proyectos, query, tipoFilter])
-
-  const loadProyectos = useCallback(async () => {
-    try {
-      const res = await fetch('/api/proyectos')
-      if (!res.ok) return
-      const data = await res.json()
-      setProyectos(data.proyectos)
-    } catch {
-      /* ignore */
-    }
-  }, [])
-
-  useEffect(() => {
-    fetch('/api/proyectos')
-      .then((r) => r.ok && r.json())
-      .then((d) => d && setProyectos(d.proyectos))
-      .catch(() => {})
-  }, [])
 
   useEffect(() => {
     const supabase = createClient()
@@ -136,6 +151,7 @@ export function ProyectosSection() {
   const expandAfterAuthRef = useRef<string | null>(null)
 
   function handleExpandClick(id: string) {
+    if (isEditMode) return
     if (!currentUser) {
       expandAfterAuthRef.current = id
       auth.open('registro')
@@ -153,11 +169,6 @@ export function ProyectosSection() {
   }, [currentUser])
 
   async function createProyecto(data: ProyectoFormData) {
-    const supabase = createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-
     let imageUrl = ''
     if (data.imagen) {
       const fd = new FormData()
@@ -168,29 +179,19 @@ export function ProyectosSection() {
         imageUrl = uploadData.url
       }
     }
-
-    const headers: Record<string, string> = { 'Content-Type': 'application/json' }
-    if (session) headers['Authorization'] = `Bearer ${session.access_token}`
-
-    const res = await fetch('/api/proyectos', {
-      method: 'POST',
-      headers,
-      body: JSON.stringify({
-        nombre: data.nombre,
-        representante: data.representante,
-        disciplinas: data.disciplinas,
-        ubicacion: data.ubicacion,
-        descripcion: data.descripcion,
-        queBuscan: data.queBuscan,
-        requisitos: data.requisitos,
-        proceso: data.proceso,
-        imagen: imageUrl,
-        contacto: data.contacto,
-        fechaLimite: data.fechaLimite,
-      }),
+    await addProyecto({
+      nombre: data.nombre,
+      representante: data.representante,
+      disciplinas: data.disciplinas,
+      ubicacion: data.ubicacion,
+      descripcion: data.descripcion,
+      queBuscan: data.queBuscan,
+      requisitos: data.requisitos,
+      proceso: data.proceso,
+      imagen: imageUrl,
+      contacto: data.contacto,
+      fechaLimite: data.fechaLimite,
     })
-    if (!res.ok) throw new Error('Error')
-    await loadProyectos()
   }
 
   return (
@@ -202,12 +203,17 @@ export function ProyectosSection() {
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {/* Header */}
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
-          <p className="mb-2 text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
-            Proyectos activos
-          </p>
-          <h2 className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-            Explora oportunidades
-          </h2>
+          <EditableText
+            value={eyebrow}
+            onSave={(v) => __onFieldChange?.('eyebrow', v)}
+            className="mb-2 text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase"
+            as="p"
+          />
+          <EditableRichText
+            value={heading}
+            onSave={(v) => __onFieldChange?.('heading', v)}
+            className="text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl"
+          />
           <p className="mt-2 text-sm text-zinc-500">
             {proyectos.length} proyecto{proyectos.length !== 1 ? 's' : ''} disponibles
           </p>
@@ -225,7 +231,7 @@ export function ProyectosSection() {
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Buscar proyectos…"
+                placeholder={searchPlaceholder}
                 className="w-full border-2 border-zinc-200 bg-white py-3 pr-10 pl-10 text-sm text-zinc-900 transition-all placeholder:text-zinc-400 focus:border-[#023047] focus:shadow-[4px_4px_0_#023047] focus:outline-none"
               />
               {query && (
@@ -270,7 +276,12 @@ export function ProyectosSection() {
               onClick={() => setShowForm(true)}
               className="border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-white hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535]"
             >
-              + Publicar proyecto
+              <EditableText
+                value={createButtonText}
+                onSave={(v) => __onFieldChange?.('createButtonText', v)}
+                as="span"
+                singleLine
+              />
             </button>
           </div>
         </div>
@@ -282,15 +293,40 @@ export function ProyectosSection() {
           onSubmit={createProyecto}
         />
 
+        {/* Admin inline controls */}
+        {isEditMode && currentUser?.rol === 'ADMIN' && (
+          <div className="mx-8 mb-6 flex items-center justify-between border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4">
+            <p className="text-xs font-bold tracking-widest text-[#E63946] uppercase">
+              Modo edición — Proyectos
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowForm(true)}
+              className="inline-flex items-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#E63946]"
+            >
+              <Plus size={14} />
+              {createButtonText}
+            </button>
+          </div>
+        )}
+
         {/* Cards grid */}
         <div className="px-8 py-10">
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center gap-4 py-20 text-center">
               <span className="text-5xl">📋</span>
-              <p className="text-sm font-semibold text-zinc-900">Sin resultados</p>
-              <p className="max-w-xs text-sm text-zinc-500">
-                No encontramos proyectos con esos criterios.
-              </p>
+              <EditableText
+                value={emptyTitle}
+                onSave={(v) => __onFieldChange?.('emptyTitle', v)}
+                className="text-sm font-semibold text-zinc-900"
+                as="p"
+              />
+              <EditableRichText
+                value={emptyDescription}
+                onSave={(v) => __onFieldChange?.('emptyDescription', v)}
+                className="max-w-xs text-sm text-zinc-500"
+                as="p"
+              />
             </div>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
@@ -316,6 +352,24 @@ export function ProyectosSection() {
                           className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 hover:shadow-[4px_4px_0_#111] hover:ring-[#023047]"
                           style={{ borderTop: `3px solid ${accent}` }}
                         >
+                          {isEditMode && currentUser?.rol === 'ADMIN' && (
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (
+                                  !window.confirm(
+                                    `¿Eliminar "${proyecto.nombre}"? Esta acción no se puede deshacer.`
+                                  )
+                                )
+                                  return
+                                await deleteProyecto(proyecto.id)
+                              }}
+                              className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#E63946] hover:text-white"
+                              title="Eliminar proyecto"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          )}
                           {proyecto.imagen && (
                             <div className="relative h-40 overflow-hidden">
                               <img
@@ -374,7 +428,7 @@ export function ProyectosSection() {
                               onClick={() => handleExpandClick(proyecto.id)}
                               className="w-full border-2 border-zinc-200 py-2 text-[0.6rem] font-bold tracking-widest text-zinc-600 uppercase transition hover:border-[#023047] hover:text-[#023047]"
                             >
-                              {!currentUser ? 'Ver más →' : 'Ver más'}
+                              {!currentUser ? viewMoreGuestText : viewMoreText}
                             </button>
                           </div>
                         </div>
@@ -489,15 +543,19 @@ export function ProyectosSection() {
                                     ? proyecto.contacto
                                     : `mailto:${proyecto.contacto}`
                                 }
+                                onClick={(e) => isEditMode && e.preventDefault()}
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 className="flex items-center justify-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition hover:bg-white hover:text-[#E63946]"
                               >
                                 Contactar
                               </a>
-                              <p className="text-center text-[0.55rem] leading-relaxed text-zinc-400">
-                                Al contactar, aceptas los términos de uso de Ópera Prima.
-                              </p>
+                              <EditableText
+                                value={contactTermsText}
+                                onSave={(v) => __onFieldChange?.('contactTermsText', v)}
+                                className="text-center text-[0.55rem] leading-relaxed text-zinc-400"
+                                as="p"
+                              />
                             </div>
                           </div>
                         </div>

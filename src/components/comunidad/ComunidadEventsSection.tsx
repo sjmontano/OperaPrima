@@ -1,5 +1,7 @@
 'use client'
 
+import { EditableRichText } from '@/components/editor/EditableRichText'
+import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { MonthCalendar } from '@/components/events/MonthCalendar'
 import { createClient } from '@/lib/supabaseClient'
@@ -95,7 +97,17 @@ function mapEvent(evento: DbEvent): CalendarEvent {
   }
 }
 
-export function ComunidadEventsSection() {
+export function ComunidadEventsSection({
+  eyebrow = 'Eventos de la comunidad',
+  headingLogged = '¿Qué está pasando?',
+  headingGuest = 'Explora la comunidad',
+  __onFieldChange,
+}: {
+  eyebrow?: string
+  headingLogged?: string
+  headingGuest?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
@@ -326,12 +338,17 @@ export function ComunidadEventsSection() {
         {/* Header */}
         <div className="border-b-2 border-zinc-200 px-8 pt-16 pb-10 text-center">
           <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>
-            <p className="text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase">
-              Eventos de la comunidad
-            </p>
-            <h2 className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl">
-              {currentUser ? '¿Qué está pasando?' : 'Explora la comunidad'}
-            </h2>
+            <EditableText
+              value={eyebrow}
+              onSave={(v) => __onFieldChange?.('eyebrow', v)}
+              className="text-[0.62rem] font-bold tracking-[0.28em] text-zinc-400 uppercase"
+              as="p"
+            />
+            <EditableRichText
+              value={currentUser ? headingLogged : headingGuest}
+              onSave={(v) => __onFieldChange?.(currentUser ? 'headingLogged' : 'headingGuest', v)}
+              className="mt-3 text-3xl font-extrabold tracking-tight text-zinc-900 sm:text-4xl"
+            />
             <p className="mt-2 text-sm text-zinc-500">
               {dbEvents.length} evento{dbEvents.length !== 1 ? 's' : ''} registrado
               {dbEvents.length !== 1 ? 's' : ''}

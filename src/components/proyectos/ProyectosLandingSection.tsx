@@ -2,6 +2,7 @@
 
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
+import { useEditMode } from '@/context/EditModeContext'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, Briefcase, ChevronRight, Sparkles } from 'lucide-react'
 import { useRef } from 'react'
@@ -51,6 +52,7 @@ export function ProyectosLandingSection({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isEditMode } = useEditMode()
   const { currentUser } = useAuthModal()
   const router = useRouter()
 
@@ -135,6 +137,7 @@ export function ProyectosLandingSection({
               <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
                 <a
                   href="#proyectos"
+                  onClick={(e) => isEditMode && e.preventDefault()}
                   className="inline-flex items-center justify-center gap-2 border-2 border-[#8ECAE6] bg-[#8ECAE6] px-7 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase transition-all duration-150 hover:bg-transparent hover:text-[#8ECAE6] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
                 >
                   <EditableText
@@ -148,6 +151,7 @@ export function ProyectosLandingSection({
                 <button
                   type="button"
                   onClick={() => {
+                    if (isEditMode) return
                     if (currentUser) router.push('/comunidad?tab=proyectos')
                     else router.push('/registro')
                   }}

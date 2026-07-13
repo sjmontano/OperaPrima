@@ -2,91 +2,78 @@
 
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
+import { useEditMode } from '@/context/EditModeContext'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TestimonialsWall, type Testimonial } from '@/components/shared/TestimonialsWall'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Plus, Trash2 } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
 
-const VALORES = [
+const VALORES_ACCENTS = ['#F65B7F', '#8ECAE6', '#023047', '#F65B7F', '#8ECAE6', '#4682B4']
+
+const DEFAULT_VALORES = [
   {
-    number: '01',
     name: 'Pasión',
     desc: 'Creemos en el arte como motor de transformación. Cada proyecto nace del deseo genuino de crear.',
-    accent: '#F65B7F',
   },
   {
-    number: '02',
     name: 'Colaboración',
     desc: 'Construimos en red. El talento crece cuando se comparte, no cuando compite.',
-    accent: '#8ECAE6',
   },
   {
-    number: '03',
     name: 'Accesibilidad',
     desc: 'Democratizamos el acceso a herramientas profesionales. El contexto no debería limitar el potencial.',
-    accent: '#023047',
   },
   {
-    number: '04',
     name: 'Autonomía',
     desc: 'Te damos herramientas, no recetas. Queremos artistas independientes, con criterio propio.',
-    accent: '#F65B7F',
   },
   {
-    number: '05',
     name: 'Diversidad',
     desc: 'Todas las disciplinas, regiones y voces tienen lugar. La riqueza está en la diferencia.',
-    accent: '#8ECAE6',
   },
   {
-    number: '06',
     name: 'Internacionalización',
     desc: 'Conectamos el talento emergente con oportunidades globales. Sin fronteras.',
-    accent: '#4682B4',
   },
 ]
 
-const SERVICIOS = [
+const SERVICIOS_HREFS = ['/comunidad', '/tablero', '/eventos', '/mentorias', '/eventos', '/tablero']
+
+const DEFAULT_SERVICIOS = [
   {
     eyebrow: 'Calendario de la comunidad',
     title: 'Descubre lo que otros artistas están creando',
     desc: 'Un espacio para compartir y descubrir lo que otros artistas emergentes están creando cerca de ti: obras, exposiciones, estrenos, conciertos, muestras, procesos y mucho más.',
-    href: '/comunidad',
   },
   {
     eyebrow: 'Tablero de Oportunidades',
     title: 'Prácticas, convocatorias y proyectos',
     desc: 'Prácticas, voluntariados, convocatorias, proyectos colaborativos y experiencias para empezar a ganar recorrido en el sector cultural.',
-    href: '/tablero',
   },
   {
     eyebrow: 'Networking Sessions',
     title: 'Conecta con artistas de otros países',
     desc: 'Eventos online para conectar con artistas emergentes de diferentes países, compartir experiencias, crear redes y abrir nuevas posibilidades de colaboración.',
-    href: '/eventos',
   },
   {
     eyebrow: 'Mentorías Online',
     title: 'Sesiones personalizadas con profesionales',
     desc: 'Sesiones personalizadas con profesionales del sector que te ayudarán a resolver dudas, orientar tu camino y aterrizar tus ideas.',
-    href: '/mentorias',
   },
   {
     eyebrow: 'Talleres',
     title: 'Herramientas reales para vivir del arte',
     desc: 'Espacios formativos sobre herramientas reales para vivir del arte: convocatorias, portafolio, gestión cultural, visibilidad, proyectos, bienestar creativo y mucho más.',
-    href: '/eventos',
   },
   {
     eyebrow: 'Proyectos',
     title: 'Alianzas con entidades',
     desc: 'Nos aliamos con diferentes entidades para desarrollar proyectos con artistas de nuestra comunidad, creando oportunidades para que puedan ganar experiencia real.',
-    href: '/tablero',
   },
 ]
 
@@ -117,9 +104,8 @@ const COMUNIDAD_TESTIMONIALS: Testimonial[] = [
   },
 ]
 
-const TEAM = [
+const DEFAULT_TEAM = [
   {
-    id: 'angela-rodriguez',
     name: 'Ángela Rodríguez',
     role: 'Fundadora',
     bio: 'Gestora cultural con más de una década impulsando proyectos artísticos en Colombia y América Latina.',
@@ -127,7 +113,6 @@ const TEAM = [
       'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&auto=format&fit=crop&q=80',
   },
   {
-    id: 'catalina-cruz',
     name: 'Catalina Cruz',
     role: 'Coordinadora',
     bio: 'Artista visual y productora cultural. Coordina la agenda de mentorías, talleres y eventos.',
@@ -144,7 +129,17 @@ const FALLBACK_STATS = [
 ]
 
 /* ── Valores carousel ── */
-function ValoresCarousel() {
+function ValoresCarousel({
+  valores,
+  isEditMode,
+  __onFieldChange,
+  onDelete,
+}: {
+  valores: Array<{ name: string; desc: string }>
+  isEditMode: boolean
+  __onFieldChange?: (path: string, value: unknown) => void
+  onDelete?: (index: number) => void
+}) {
   const scrollRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(0)
 
@@ -172,31 +167,54 @@ function ValoresCarousel() {
         onScroll={handleScroll}
         className="flex snap-x snap-mandatory gap-5 overflow-x-auto pb-4 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
       >
-        {VALORES.map((valor) => (
-          <article
-            key={valor.name}
-            className="flex w-[85vw] shrink-0 snap-center flex-col border-2 border-zinc-200 bg-white p-7 sm:w-[70vw] lg:w-[30%]"
-          >
-            <div
-              className="flex size-10 items-center justify-center text-sm font-bold text-white"
-              style={{ background: valor.accent }}
+        {valores.map((valor, i) => {
+          const accent = VALORES_ACCENTS[i % VALORES_ACCENTS.length]
+          return (
+            <article
+              key={i}
+              className="group relative flex w-[85vw] shrink-0 snap-center flex-col border-2 border-zinc-200 bg-white p-7 sm:w-[70vw] lg:w-[30%]"
             >
-              {valor.number}
-            </div>
-            <p
-              className="mt-5 text-[0.62rem] font-bold tracking-[0.28em] uppercase"
-              style={{ color: valor.accent }}
-            >
-              {valor.name}
-            </p>
-            <p className="mt-2 text-sm leading-relaxed text-zinc-600">{valor.desc}</p>
-          </article>
-        ))}
+              {isEditMode && onDelete && (
+                <button
+                  type="button"
+                  onClick={() => onDelete(i)}
+                  className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
+                  title="Eliminar valor"
+                >
+                  <Trash2 size={13} />
+                </button>
+              )}
+              <div
+                className="flex size-10 items-center justify-center text-sm font-bold text-white"
+                style={{ background: accent }}
+              >
+                {String(i + 1).padStart(2, '0')}
+              </div>
+              <p
+                className="mt-5 text-[0.62rem] font-bold tracking-[0.28em] uppercase"
+                style={{ color: accent }}
+              >
+                <EditableText
+                  value={valor.name}
+                  onSave={(v) => __onFieldChange?.(`valores.${i}.name`, v)}
+                  as="span"
+                  singleLine
+                />
+              </p>
+              <EditableRichText
+                value={valor.desc}
+                onSave={(v) => __onFieldChange?.(`valores.${i}.desc`, v)}
+                className="mt-2 text-sm leading-relaxed text-zinc-600"
+                as="p"
+              />
+            </article>
+          )
+        })}
       </div>
 
       {/* Dots */}
       <div className="mt-4 flex items-center justify-center gap-2">
-        {VALORES.map((_, i) => (
+        {valores.map((_, i) => (
           <button
             key={i}
             type="button"
@@ -263,6 +281,9 @@ export function SobreLandingSection({
   testimonioHeadline = 'Esto dicen los artistas de nuestra comunidad',
   equipoEyebrow = 'El equipo',
   equipoTitle = 'Detrás de Ópera Prima',
+  servicios = DEFAULT_SERVICIOS,
+  valores = DEFAULT_VALORES,
+  team = DEFAULT_TEAM,
   __onFieldChange,
 }: {
   heroEyebrow?: string
@@ -285,14 +306,79 @@ export function SobreLandingSection({
   testimonioHeadline?: string
   equipoEyebrow?: string
   equipoTitle?: string
+  servicios?: Array<{ eyebrow: string; title: string; desc: string }>
+  valores?: Array<{ name: string; desc: string }>
+  team?: Array<{ name: string; role: string; bio: string; image: string }>
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isEditMode } = useEditMode()
   const authModal = useAuthModal()
   const { currentUser } = authModal
   const router = useRouter()
 
   const [stats, setStats] = useState<Record<string, number> | null>(null)
+  const [localValores, setLocalValores] = useState(valores)
+  const [localServicios, setLocalServicios] = useState(servicios)
+  const [localTeam, setLocalTeam] = useState(team)
+
+  useEffect(() => {
+    setLocalValores(valores)
+  }, [valores])
+  useEffect(() => {
+    setLocalServicios(servicios)
+  }, [servicios])
+  useEffect(() => {
+    setLocalTeam(team)
+  }, [team])
+
+  const handleAddValor = () => {
+    const next = [...localValores, { name: 'Nuevo valor', desc: 'Descripción del valor.' }]
+    setLocalValores(next)
+    __onFieldChange?.('valores', next)
+  }
+
+  const handleDeleteValor = (i: number) => {
+    const next = localValores.filter((_, idx) => idx !== i)
+    setLocalValores(next)
+    __onFieldChange?.('valores', next)
+  }
+
+  const handleAddServicio = () => {
+    const next = [
+      ...localServicios,
+      { eyebrow: 'Nuevo', title: 'Nuevo servicio', desc: 'Descripción del servicio.' },
+    ]
+    setLocalServicios(next)
+    __onFieldChange?.('servicios', next)
+  }
+
+  const handleDeleteServicio = (i: number) => {
+    const next = localServicios.filter((_, idx) => idx !== i)
+    setLocalServicios(next)
+    __onFieldChange?.('servicios', next)
+  }
+
+  const handleAddTeam = () => {
+    const next = [
+      ...localTeam,
+      {
+        name: 'Nuevo miembro',
+        role: 'Rol',
+        bio: 'Biografía del miembro.',
+        image:
+          'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&auto=format&fit=crop&q=80',
+      },
+    ]
+    setLocalTeam(next)
+    __onFieldChange?.('team', next)
+  }
+
+  const handleDeleteTeam = (i: number) => {
+    const next = localTeam.filter((_, idx) => idx !== i)
+    setLocalTeam(next)
+    __onFieldChange?.('team', next)
+  }
 
   useEffect(() => {
     fetch('/api/stats/public')
@@ -352,6 +438,7 @@ export function SobreLandingSection({
                 <button
                   type="button"
                   onClick={() => {
+                    if (isEditMode) return
                     if (currentUser) router.push('/comunidad')
                     else authModal.open('registro')
                   }}
@@ -483,8 +570,28 @@ export function SobreLandingSection({
               />
             </TimelineAnimation>
 
+            {isEditMode && (
+              <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
+                <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">
+                  Valores
+                </p>
+                <button
+                  type="button"
+                  onClick={handleAddValor}
+                  className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
+                >
+                  <Plus size={14} />
+                  Agregar valor
+                </button>
+              </div>
+            )}
             <TimelineAnimation as="div" animationNum={8} timelineRef={sectionRef}>
-              <ValoresCarousel />
+              <ValoresCarousel
+                valores={localValores}
+                isEditMode={isEditMode}
+                __onFieldChange={__onFieldChange}
+                onDelete={isEditMode ? handleDeleteValor : undefined}
+              />
             </TimelineAnimation>
           </div>
         </div>
@@ -509,37 +616,75 @@ export function SobreLandingSection({
               />
             </TimelineAnimation>
 
+            {isEditMode && (
+              <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
+                <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">
+                  Servicios
+                </p>
+                <button
+                  type="button"
+                  onClick={handleAddServicio}
+                  className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
+                >
+                  <Plus size={14} />
+                  Agregar servicio
+                </button>
+              </div>
+            )}
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {SERVICIOS.map((svc, i) => {
+              {localServicios.map((svc, i) => {
                 const isPink = i % 2 === 0
                 const accent = isPink ? '#F65B7F' : '#8ECAE6'
+                const href = SERVICIOS_HREFS[i] || '/'
 
                 return (
-                  <Link key={svc.eyebrow} href={svc.href}>
-                    <TimelineAnimation
-                      as="article"
-                      animationNum={10 + i}
-                      timelineRef={sectionRef}
-                      className="group border-2 border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1"
-                      style={{
-                        boxShadow: `4px 4px 0 ${accent}30`,
-                        borderColor: '#e4e4e7',
-                      }}
-                    >
-                      <div className="flex items-center gap-3">
-                        <div
-                          className="flex size-10 shrink-0 items-center justify-center text-sm font-bold text-white"
-                          style={{ background: accent }}
-                        >
-                          {String(i + 1).padStart(2, '0')}
+                  <div key={i} className="group relative">
+                    {isEditMode && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteServicio(i)}
+                        className="absolute -top-2 -right-2 z-20 flex size-7 items-center justify-center bg-white text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
+                        title="Eliminar servicio"
+                      >
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                    <Link href={href} onClick={(e) => isEditMode && e.preventDefault()}>
+                      <TimelineAnimation
+                        as="article"
+                        animationNum={10 + i}
+                        timelineRef={sectionRef}
+                        className="border-2 border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1"
+                        style={{
+                          boxShadow: `4px 4px 0 ${accent}30`,
+                          borderColor: '#e4e4e7',
+                        }}
+                      >
+                        <div className="flex items-center gap-3">
+                          <div
+                            className="flex size-10 shrink-0 items-center justify-center text-sm font-bold text-white"
+                            style={{ background: accent }}
+                          >
+                            {String(i + 1).padStart(2, '0')}
+                          </div>
+                          <h3 className="text-sm font-bold tracking-[-0.02em] text-zinc-900">
+                            <EditableText
+                              value={svc.title}
+                              onSave={(v) => __onFieldChange?.(`servicios.${i}.title`, v)}
+                              as="span"
+                              singleLine
+                            />
+                          </h3>
                         </div>
-                        <h3 className="text-sm font-bold tracking-[-0.02em] text-zinc-900">
-                          {svc.title}
-                        </h3>
-                      </div>
-                      <p className="mt-4 text-sm leading-relaxed text-zinc-600">{svc.desc}</p>
-                    </TimelineAnimation>
-                  </Link>
+                        <EditableRichText
+                          value={svc.desc}
+                          onSave={(v) => __onFieldChange?.(`servicios.${i}.desc`, v)}
+                          className="mt-4 text-sm leading-relaxed text-zinc-600"
+                          as="p"
+                        />
+                      </TimelineAnimation>
+                    </Link>
+                  </div>
                 )
               })}
             </div>
@@ -548,7 +693,14 @@ export function SobreLandingSection({
       </section>
 
       {/* ═══════════════ COMUNIDAD ═══════════════ */}
-      <div className="bg-white">
+      <div className="relative bg-white">
+        {isEditMode && (
+          <div className="absolute inset-0 z-30 flex items-center justify-center bg-white/60 backdrop-blur-sm">
+            <span className="rounded-sm border border-zinc-300 bg-white px-4 py-2 text-xs font-bold tracking-widest text-zinc-500 uppercase shadow-sm">
+              Testimonios cargados desde la base de datos — no editable en línea
+            </span>
+          </div>
+        )}
         <TestimonialsWall
           headline={testimonioHeadline}
           testimonialEyebrow={testimonioEyebrow}
@@ -591,9 +743,32 @@ export function SobreLandingSection({
             </TimelineAnimation>
           </div>
 
+          {isEditMode && (
+            <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
+              <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">Equipo</p>
+              <button
+                type="button"
+                onClick={handleAddTeam}
+                className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
+              >
+                <Plus size={14} />
+                Agregar miembro
+              </button>
+            </div>
+          )}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20">
-            {TEAM.map((member, i) => (
-              <Link key={member.id} href={`/perfil/${member.id}`}>
+            {localTeam.map((member, i) => (
+              <div key={i} className="group relative">
+                {isEditMode && (
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteTeam(i)}
+                    className="absolute -top-2 -right-2 z-20 flex size-7 items-center justify-center bg-white text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
+                    title="Eliminar miembro"
+                  >
+                    <Trash2 size={13} />
+                  </button>
+                )}
                 <TimelineAnimation
                   as="article"
                   animationNum={18 + i}
@@ -612,20 +787,27 @@ export function SobreLandingSection({
                     <div className="absolute inset-0 transition-all duration-300 group-hover:bg-white/5" />
                   </div>
                   <div className="flex flex-col justify-center">
-                    <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
-                      {member.role}
-                    </p>
-                    <h3 className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white">
-                      {member.name}
-                    </h3>
-                    <p className="mt-3 text-sm leading-relaxed text-white/65">{member.bio}</p>
-                    <span className="mt-4 inline-flex items-center gap-1.5 text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase transition-all duration-200 group-hover:translate-x-1">
-                      Conocer más
-                      <ArrowRight size={12} />
-                    </span>
+                    <EditableText
+                      value={member.role}
+                      onSave={(v) => __onFieldChange?.(`team.${i}.role`, v)}
+                      className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
+                      as="p"
+                      singleLine
+                    />
+                    <EditableRichText
+                      value={member.name}
+                      onSave={(v) => __onFieldChange?.(`team.${i}.name`, v)}
+                      className="mt-2 text-2xl font-bold tracking-[-0.03em] text-white"
+                    />
+                    <EditableRichText
+                      value={member.bio}
+                      onSave={(v) => __onFieldChange?.(`team.${i}.bio`, v)}
+                      className="mt-3 text-sm leading-relaxed text-white/65"
+                      as="p"
+                    />
                   </div>
                 </TimelineAnimation>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

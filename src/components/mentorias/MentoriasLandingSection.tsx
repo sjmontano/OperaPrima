@@ -20,10 +20,11 @@ import {
   Search,
   Sparkles,
   Star,
+  Trash2,
 } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ExpandingMentorsGallery } from './ExpandingMentorsGallery'
 import type { MentorCard } from './ExpandingMentorsGallery'
 import type { MentorDB, MentorFormData } from './MentorEditModal'
@@ -37,42 +38,32 @@ const ROTATING_TOPICS = [
   'Necesitas estructurar un proyecto cultural.',
 ] as const
 
-const STEPS = [
+const STEP_ICONS = [Search, Compass, ClipboardList, FileText, MessageCircle, CheckCircle2]
+
+const DEFAULT_STEPS = [
   {
-    number: 1,
     title: 'Explora los perfiles',
     desc: 'Revisa los perfiles de nuestros mentores y elige a la persona que mejor se ajuste a lo que necesitas trabajar.',
-    icon: Search,
   },
   {
-    number: 2,
     title: 'Define tu tema',
     desc: 'Cada mentoría se enfoca en un tema concreto: tu portafolio, una convocatoria, un proyecto, una gira o cualquier reto específico.',
-    icon: Compass,
   },
   {
-    number: 3,
     title: 'Reserva tu sesión',
     desc: 'Completa el formulario y cuéntanos qué quieres trabajar. Mientras más claro seas, mejor podrá prepararse tu mentor.',
-    icon: ClipboardList,
   },
   {
-    number: 4,
     title: 'Adjunta material',
     desc: 'Documentos, enlaces, portafolios o cualquier archivo que ayude a entender tu caso.',
-    icon: FileText,
   },
   {
-    number: 5,
     title: 'Mentoría 1:1',
     desc: '60 minutos privados para conversar, recibir orientación y aterrizar acciones concretas.',
-    icon: MessageCircle,
   },
   {
-    number: 6,
     title: 'Resumen final',
     desc: 'Recibe los puntos clave trabajados y recomendaciones para seguir avanzando.',
-    icon: CheckCircle2,
   },
 ]
 
@@ -96,6 +87,23 @@ export function MentoriasLandingSection({
   asideEyebrow = 'Puedes trabajar en',
   asideItems = DEFAULT_ASIDE_ITEMS,
   bannerText = 'Mentores expertos en diferentes áreas listos para ayudarte.',
+  stepsEyebrow = '¿Cómo funcionan?',
+  stepsHeading = 'Un proceso claro para que cada sesión <span class="text-[#F65B7F]">tenga foco y resultado.</span>',
+  steps = DEFAULT_STEPS,
+  stepsCtaLoggedText = 'Ver mentores',
+  stepsCtaGuestText = 'Reservar mentoría',
+  ctaBlueHeading = 'Tu práctica artística merece un acompañamiento real.',
+  ctaBlueDescription = 'No dejes que la falta de orientación frene las metas por las que trabajas fuertemente.',
+  ctaBlueLoggedText = 'Ver mentores',
+  ctaBlueGuestText = 'Reservar mentoría',
+  mentoresEyebrow = 'Nuestros mentores',
+  mentoresHeading = 'Profesionales listos para <span class="text-[#F65B7F]">impulsar tu camino.</span>',
+  adminModeLabel = 'Modo edición — Mentores',
+  addMentorText = 'Agregar mentor',
+  emptyMentorText = 'Próximamente estaremos anunciando nuestros mentores.',
+  ctaDarkEyebrow = '¿Quieres ser mentor?',
+  ctaDarkDescription = 'Si eres profesional del sector cultural y te gustaría compartir tu experiencia con artistas emergentes, escríbenos.',
+  ctaDarkButtonText = 'Escribir al equipo',
   __onFieldChange,
 }: {
   eyebrow?: string
@@ -109,6 +117,23 @@ export function MentoriasLandingSection({
   asideEyebrow?: string
   asideItems?: string[]
   bannerText?: string
+  stepsEyebrow?: string
+  stepsHeading?: string
+  steps?: Array<{ title: string; desc: string }>
+  stepsCtaLoggedText?: string
+  stepsCtaGuestText?: string
+  ctaBlueHeading?: string
+  ctaBlueDescription?: string
+  ctaBlueLoggedText?: string
+  ctaBlueGuestText?: string
+  mentoresEyebrow?: string
+  mentoresHeading?: string
+  adminModeLabel?: string
+  addMentorText?: string
+  emptyMentorText?: string
+  ctaDarkEyebrow?: string
+  ctaDarkDescription?: string
+  ctaDarkButtonText?: string
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -126,6 +151,23 @@ export function MentoriasLandingSection({
   const mentoresLoaded = !loading
   const [editingMentor, setEditingMentor] = useState<MentorDB | null>(null)
   const [showEditModal, setShowEditModal] = useState(false)
+  const [localSteps, setLocalSteps] = useState(steps)
+
+  useEffect(() => {
+    setLocalSteps(steps)
+  }, [steps])
+
+  const handleAddStep = () => {
+    const next = [...localSteps, { title: 'Nuevo paso', desc: 'Descripción del paso.' }]
+    setLocalSteps(next)
+    __onFieldChange?.('steps', next)
+  }
+
+  const handleDeleteStep = (i: number) => {
+    const next = localSteps.filter((_, idx) => idx !== i)
+    setLocalSteps(next)
+    __onFieldChange?.('steps', next)
+  }
 
   const mentores: MentorCard[] = mentorDBs.map((m) => ({
     id: m.id,
@@ -235,6 +277,7 @@ export function MentoriasLandingSection({
                   <button
                     type="button"
                     onClick={() => {
+                      if (isEditMode) return
                       if (currentUser) router.push('/mentorias')
                       else authModal.open('registro')
                     }}
@@ -253,6 +296,7 @@ export function MentoriasLandingSection({
                   <button
                     type="button"
                     onClick={() => {
+                      if (isEditMode) return
                       if (currentUser) router.push('/comunidad')
                       else authModal.open('login')
                     }}
@@ -329,47 +373,85 @@ export function MentoriasLandingSection({
         <div className="mx-[100px] px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <div className="px-4 py-24 sm:px-2 lg:py-28">
             <TimelineAnimation as="div" animationNum={3} timelineRef={sectionRef} className="mb-16">
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                ¿Cómo funcionan?
-              </p>
-              <h2 className="mt-3 text-4xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 lg:text-[3rem]">
-                Un proceso claro para que cada sesión{' '}
-                <span className="text-[#F65B7F]">tenga foco y resultado.</span>
-              </h2>
+              <EditableText
+                value={stepsEyebrow}
+                onSave={(v) => __onFieldChange?.('stepsEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                as="p"
+              />
+              <EditableRichText
+                value={stepsHeading}
+                onSave={(v) => __onFieldChange?.('stepsHeading', v)}
+                className="mt-3 text-4xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 lg:text-[3rem]"
+              />
             </TimelineAnimation>
+            {isEditMode && (
+              <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
+                <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">Pasos</p>
+                <button
+                  type="button"
+                  onClick={handleAddStep}
+                  className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
+                >
+                  <Plus size={14} />
+                  Agregar paso
+                </button>
+              </div>
+            )}
             <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-              {STEPS.map((step, index) => {
-                const Icon = step.icon
+              {localSteps.map((step, index) => {
+                const Icon = STEP_ICONS[index] || Search
                 const isPink = index % 2 === 0
                 const accent = isPink ? '#F65B7F' : '#8ECAE6'
                 return (
-                  <TimelineAnimation
-                    key={step.title}
-                    as="article"
-                    animationNum={index + 4}
-                    timelineRef={sectionRef}
-                    className="group border-2 border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1"
-                    style={{ boxShadow: `4px 4px 0 ${accent}30`, borderColor: '#e4e4e7' }}
-                  >
-                    <div className="flex items-center gap-3">
-                      <div
-                        className="flex size-10 shrink-0 items-center justify-center text-sm font-bold text-white"
-                        style={{ background: accent }}
+                  <div key={index} className="group relative">
+                    {isEditMode && (
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteStep(index)}
+                        className="absolute -top-2 -right-2 z-20 flex size-7 items-center justify-center bg-white text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
+                        title="Eliminar paso"
                       >
-                        {step.number}
+                        <Trash2 size={13} />
+                      </button>
+                    )}
+                    <TimelineAnimation
+                      as="article"
+                      animationNum={index + 4}
+                      timelineRef={sectionRef}
+                      className="border-2 border-zinc-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1"
+                      style={{ boxShadow: `4px 4px 0 ${accent}30`, borderColor: '#e4e4e7' }}
+                    >
+                      <div className="flex items-center gap-3">
+                        <div
+                          className="flex size-10 shrink-0 items-center justify-center text-sm font-bold text-white"
+                          style={{ background: accent }}
+                        >
+                          {index + 1}
+                        </div>
+                        <div>
+                          <h3 className="text-sm font-bold tracking-[-0.02em] text-zinc-900">
+                            <EditableText
+                              value={step.title}
+                              onSave={(v) => __onFieldChange?.(`steps.${index}.title`, v)}
+                              as="span"
+                              singleLine
+                            />
+                          </h3>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-sm font-bold tracking-[-0.02em] text-zinc-900">
-                          {step.title}
-                        </h3>
+                      <EditableRichText
+                        value={step.desc}
+                        onSave={(v) => __onFieldChange?.(`steps.${index}.desc`, v)}
+                        className="mt-4 text-sm leading-relaxed text-zinc-600"
+                        as="p"
+                      />
+                      <div className="mt-5 flex items-center gap-2">
+                        <div className="h-px flex-1 bg-zinc-200" />
+                        <Icon size={14} className="shrink-0 text-zinc-400" />
                       </div>
-                    </div>
-                    <p className="mt-4 text-sm leading-relaxed text-zinc-600">{step.desc}</p>
-                    <div className="mt-5 flex items-center gap-2">
-                      <div className="h-px flex-1 bg-zinc-200" />
-                      <Icon size={14} className="shrink-0 text-zinc-400" />
-                    </div>
-                  </TimelineAnimation>
+                    </TimelineAnimation>
+                  </div>
                 )
               })}
             </div>
@@ -382,12 +464,20 @@ export function MentoriasLandingSection({
               <button
                 type="button"
                 onClick={() => {
+                  if (isEditMode) return
                   if (currentUser) router.push('/mentorias')
                   else authModal.open('registro')
                 }}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-8 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {currentUser ? 'Ver mentores' : 'Reservar mentoría'}
+                <EditableText
+                  value={currentUser ? stepsCtaLoggedText : stepsCtaGuestText}
+                  onSave={(v) =>
+                    __onFieldChange?.(currentUser ? 'stepsCtaLoggedText' : 'stepsCtaGuestText', v)
+                  }
+                  as="span"
+                  singleLine
+                />
                 <ArrowRight size={16} />
               </button>
             </TimelineAnimation>
@@ -406,22 +496,34 @@ export function MentoriasLandingSection({
               className="mx-auto max-w-2xl"
             >
               <Sparkles size={28} className="mx-auto text-white/60" />
-              <h2 className="mt-6 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-white [text-shadow:2px_2px_0_#023047] sm:text-4xl lg:text-[2.8rem]">
-                Tu práctica artística merece un acompañamiento real.
-              </h2>
-              <p className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-[#023047]">
-                No dejes que la falta de orientación frene las metas por las que trabajas
-                fuertemente.
-              </p>
+              <EditableRichText
+                value={ctaBlueHeading}
+                onSave={(v) => __onFieldChange?.('ctaBlueHeading', v)}
+                className="mt-6 text-3xl leading-[1.1] font-extrabold tracking-[-0.04em] text-white [text-shadow:2px_2px_0_#023047] sm:text-4xl lg:text-[2.8rem]"
+              />
+              <EditableRichText
+                value={ctaBlueDescription}
+                onSave={(v) => __onFieldChange?.('ctaBlueDescription', v)}
+                className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-[#023047]"
+                as="p"
+              />
               <button
                 type="button"
                 onClick={() => {
+                  if (isEditMode) return
                   if (currentUser) router.push('/mentorias')
                   else authModal.open('registro')
                 }}
                 className="mt-8 inline-flex items-center justify-center gap-2 border-2 border-white bg-white px-8 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.12)] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(0,0,0,0.2)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                {currentUser ? 'Ver mentores' : 'Reservar mentoría'}
+                <EditableText
+                  value={currentUser ? ctaBlueLoggedText : ctaBlueGuestText}
+                  onSave={(v) =>
+                    __onFieldChange?.(currentUser ? 'ctaBlueLoggedText' : 'ctaBlueGuestText', v)
+                  }
+                  as="span"
+                  singleLine
+                />
                 <ArrowRight size={16} />
               </button>
             </TimelineAnimation>
@@ -439,19 +541,28 @@ export function MentoriasLandingSection({
               timelineRef={sectionRef}
               className="max-w-2xl"
             >
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase">
-                Nuestros mentores
-              </p>
-              <h2 className="mt-3 text-4xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 lg:text-[3rem]">
-                Profesionales listos para{' '}
-                <span className="text-[#F65B7F]">impulsar tu camino.</span>
-              </h2>
+              <EditableText
+                value={mentoresEyebrow}
+                onSave={(v) => __onFieldChange?.('mentoresEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#F65B7F] uppercase"
+                as="p"
+              />
+              <EditableRichText
+                value={mentoresHeading}
+                onSave={(v) => __onFieldChange?.('mentoresHeading', v)}
+                className="mt-3 text-4xl leading-[1.1] font-extrabold tracking-[-0.04em] text-zinc-900 lg:text-[3rem]"
+              />
             </TimelineAnimation>
             <div className="mt-12">
               {showInlineAdmin && (
                 <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#8ECAE6] bg-[#8ECAE6]/10 px-6 py-4">
                   <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">
-                    Modo edición — Mentores
+                    <EditableText
+                      value={adminModeLabel}
+                      onSave={(v) => __onFieldChange?.('adminModeLabel', v)}
+                      as="span"
+                      singleLine
+                    />
                   </p>
                   <button
                     type="button"
@@ -462,7 +573,12 @@ export function MentoriasLandingSection({
                     className="inline-flex items-center gap-2 border-2 border-[#023047] bg-[#023047] px-4 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition hover:bg-transparent hover:text-[#023047]"
                   >
                     <Plus size={14} />
-                    Agregar mentor
+                    <EditableText
+                      value={addMentorText}
+                      onSave={(v) => __onFieldChange?.('addMentorText', v)}
+                      as="span"
+                      singleLine
+                    />
                   </button>
                 </div>
               )}
@@ -476,9 +592,16 @@ export function MentoriasLandingSection({
               ) : (
                 <div className="border-2 border-zinc-200 p-12 text-center">
                   <p className="text-sm text-zinc-500">
-                    {mentoresLoaded
-                      ? 'Próximamente estaremos anunciando nuestros mentores.'
-                      : 'Cargando mentores...'}
+                    {mentoresLoaded ? (
+                      <EditableText
+                        value={emptyMentorText}
+                        onSave={(v) => __onFieldChange?.('emptyMentorText', v)}
+                        as="span"
+                        singleLine
+                      />
+                    ) : (
+                      'Cargando mentores...'
+                    )}
                   </p>
                 </div>
               )}
@@ -497,18 +620,29 @@ export function MentoriasLandingSection({
               timelineRef={sectionRef}
               className="mx-auto max-w-xl"
             >
-              <p className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase">
-                ¿Quieres ser mentor?
-              </p>
-              <p className="mt-4 text-xl leading-relaxed font-semibold tracking-[-0.02em] text-white">
-                Si eres profesional del sector cultural y te gustaría compartir tu experiencia con
-                artistas emergentes, escríbenos.
-              </p>
+              <EditableText
+                value={ctaDarkEyebrow}
+                onSave={(v) => __onFieldChange?.('ctaDarkEyebrow', v)}
+                className="text-[0.62rem] font-bold tracking-[0.28em] text-[#8ECAE6] uppercase"
+                as="p"
+              />
+              <EditableRichText
+                value={ctaDarkDescription}
+                onSave={(v) => __onFieldChange?.('ctaDarkDescription', v)}
+                className="mt-4 text-xl leading-relaxed font-semibold tracking-[-0.02em] text-white"
+                as="p"
+              />
               <Link
                 href="mailto:direccion@operaprimacultura.com"
+                onClick={(e) => isEditMode && e.preventDefault()}
                 className="mt-8 inline-flex items-center justify-center gap-2 border-2 border-[#023047] bg-[#8ECAE6] px-8 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.2)] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-white hover:bg-white hover:text-[#023047] hover:shadow-[6px_6px_0_rgba(0,0,0,0.3)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >
-                Escribir al equipo
+                <EditableText
+                  value={ctaDarkButtonText}
+                  onSave={(v) => __onFieldChange?.('ctaDarkButtonText', v)}
+                  as="span"
+                  singleLine
+                />
                 <ArrowRight size={16} />
               </Link>
             </TimelineAnimation>
@@ -530,6 +664,7 @@ export function MentoriasLandingSection({
                 ¿Tienes dudas? Escríbenos a{' '}
                 <a
                   href="mailto:direccion@operaprimacultura.com"
+                  onClick={(e) => isEditMode && e.preventDefault()}
                   className="font-semibold text-[#F65B7F] underline underline-offset-2 transition-colors hover:text-[#023047]"
                 >
                   direccion@operaprimacultura.com

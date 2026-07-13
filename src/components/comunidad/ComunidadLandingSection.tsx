@@ -2,6 +2,7 @@
 
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
+import { useEditMode } from '@/context/EditModeContext'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -49,6 +50,7 @@ export function ComunidadLandingSection({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
+  const { isEditMode } = useEditMode()
   const { currentUser } = useAuthModal()
   const router = useRouter()
 
@@ -134,6 +136,7 @@ export function ComunidadLandingSection({
                 <button
                   type="button"
                   onClick={() => {
+                    if (isEditMode) return
                     if (currentUser) router.push('/comunidad')
                     else router.push('/registro')
                   }}
@@ -151,6 +154,7 @@ export function ComunidadLandingSection({
                 </button>
                 <a
                   href="#eventos"
+                  onClick={(e) => isEditMode && e.preventDefault()}
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/20 bg-white/5 px-7 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-white"
                 >
                   <EditableText

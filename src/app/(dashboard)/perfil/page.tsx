@@ -226,17 +226,13 @@ export default function PerfilPage() {
           },
         })
 
-        if (!response.ok) {
-          router.replace('/')
-          return
-        }
+        if (!response.ok) return
 
         const data = await response.json()
 
         setUser(mapUser(data.usuario))
       } catch (error) {
         console.error(error)
-        router.replace('/')
       }
     }
 

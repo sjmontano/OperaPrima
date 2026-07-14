@@ -14,6 +14,8 @@ export const metadata: Metadata = {
     'Explora proyectos, convocatorias y oportunidades para artistas emergentes. Publica tu proyecto gratuitamente.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function ProyectosPage() {
   return (
     <>

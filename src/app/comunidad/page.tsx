@@ -13,6 +13,8 @@ export const metadata: Metadata = {
     'Únete a la comunidad de artistas emergentes. Eventos, calendario, artistas destacados y más.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function ComunidadPage() {
   return (
     <>

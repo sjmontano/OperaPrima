@@ -12,6 +12,8 @@ export const metadata: Metadata = {
   description: 'Talleres prácticos y eventos de networking para artistas emergentes.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function EventosPage() {
   return (
     <>

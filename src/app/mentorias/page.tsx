@@ -11,6 +11,8 @@ export const metadata: Metadata = {
     'Mentorías 1:1 para artistas emergentes: portafolio, becas, proyectos culturales y ruta profesional.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function MentoriasPage() {
   return (
     <>

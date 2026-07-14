@@ -12,6 +12,8 @@ export const metadata: Metadata = {
     'Conoce la plataforma que acompaña a artistas emergentes con mentorías, eventos y comunidad.',
 }
 
+export const dynamic = 'force-dynamic'
+
 export default function SobrePage() {
   return (
     <>

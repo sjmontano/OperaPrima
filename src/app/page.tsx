@@ -10,6 +10,8 @@ import { PartnersStrip } from '@/components/shared/PartnersStrip'
 import { TestimonialsWall } from '@/components/shared/TestimonialsWall'
 import { WhatIsSection } from '@/components/shared/WhatIsSection'
 
+export const dynamic = 'force-dynamic'
+
 export default function Home() {
   return (
     <>

@@ -479,13 +479,7 @@ export function FlipAuthCard({
   // ── Helpers ────────────────────────────────────────────────────────────
   const hidden = (face: 'front' | 'back') => (face === 'front' ? isSignUp : !isSignUp)
 
-  const cardClass = [
-    'flip-auth-card',
-    isSignUp ? 'flipped' : '',
-    isSignUp && regStep === 2 ? 'reg-step2' : isSignUp ? 'reg-active' : '',
-  ]
-    .filter(Boolean)
-    .join(' ')
+  const cardClass = ['flip-auth-card', isSignUp ? 'flipped' : ''].filter(Boolean).join(' ')
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (

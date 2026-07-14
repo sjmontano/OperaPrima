@@ -598,11 +598,12 @@
 /* Flip card container */
 .flip-auth-card {
   width: 340px;
-  height: 500px;
+  height: auto;
   position: relative;
   perspective: 1200px;
+  display: grid;
+  grid-template-areas: 'faces';
   transition:
-    height 0.45s cubic-bezier(0.16, 1, 0.3, 1),
     transform 0.75s cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 0.2s ease;
 }
@@ -623,8 +624,7 @@
 
 /* Card faces */
 .flip-auth-face {
-  position: absolute;
-  inset: 0;
+  grid-area: faces;
   padding: 1.75rem 2rem 1.5rem;
   background: oklch(0.985 0.004 340);
   border-top: 3px solid #f65b7f;
@@ -945,7 +945,6 @@
 @media (max-width: 400px) {
   .flip-auth-card {
     width: calc(100vw - 2rem);
-    height: 520px;
   }
 }
 
@@ -1076,21 +1075,6 @@
 @media (max-width: 400px) {
   .flip-auth-social {
     width: calc(100vw - 2rem);
-  }
-}
-
-/* ── Register: taller card heights ───────────────────────────────── */
-.flip-auth-card.reg-active {
-  height: 480px;
-}
-
-.flip-auth-card.reg-step2 {
-  height: 640px;
-}
-
-@media (max-width: 400px) {
-  .flip-auth-card.reg-step2 {
-    height: 680px;
   }
 }
 

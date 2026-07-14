@@ -660,30 +660,52 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
   )
 
   const handleSave = useCallback(async () => {
-    if (!slug) return
+    const logs: string[] = []
+    function log(msg: string) {
+      logs.push(msg)
+      console.log('[OP DEBUG]', msg)
+    }
+
+    if (!slug) {
+      log('slug vacío — abortando')
+      return
+    }
     const supabase = createClient()
 
     let token: string | undefined
 
+    log('1. getSession()...')
     const {
       data: { session },
     } = await supabase.auth.getSession()
     if (session?.access_token) {
       token = session.access_token
+      log('2. getSession() → token OK (primeros 20: ' + token.slice(0, 20) + '...)')
     } else {
+      log('2. getSession() → sin sesion, probando getUser()...')
       const {
         data: { user },
       } = await supabase.auth.getUser()
       if (user) {
+        log('3. getUser() → user encontrado: ' + user.email)
         const { data: refreshed } = await supabase.auth.refreshSession()
         token = refreshed.session?.access_token
+        if (token) {
+          log('4. refreshSession() → token OK')
+        } else {
+          log('4. refreshSession() → no obtuvo token')
+        }
+      } else {
+        log('3. getUser() → sin usuario')
       }
     }
 
     if (!token) {
+      log('5. SIN TOKEN — lanzando error')
       throw new Error('No se encontró una sesión activa. Inicia sesión nuevamente.')
     }
 
+    log('5. Token disponible, haciendo PUT /api/pages/' + slug + ' ...')
     const res = await fetch(`/api/pages/${slug}`, {
       method: 'PUT',
       headers: {
@@ -692,10 +714,14 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
       },
       body: JSON.stringify({ blocks }),
     })
+
     if (!res.ok) {
       const body = await res.json().catch(() => ({}))
+      log('6. PUT respondio ' + res.status + ': ' + JSON.stringify(body))
       throw new Error(body.error || `Error del servidor (${res.status})`)
     }
+
+    log('6. PUT OK — guardado exitoso')
     setLastSavedBlocks(blocks)
     setHistoryMeta({ stack: [blocks], index: 0 })
   }, [slug, blocks])

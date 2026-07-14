@@ -723,7 +723,7 @@ export function FlipAuthCard({
                         {fortaleza.requisitos.map((req) => (
                           <li
                             key={req.texto}
-                            className={`flip-auth-req-item${req.met ? 'met' : ''}`}
+                            className={`flip-auth-req-item${req.met ? ' met' : ''}`}
                           >
                             <span className="flip-auth-req-icon">{req.met ? '✓' : '×'}</span>
                             <span>{req.texto}</span>

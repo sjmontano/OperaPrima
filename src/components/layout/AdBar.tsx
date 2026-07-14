@@ -7,7 +7,7 @@ import { Check, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 
-const ICON_OPTIONS = ['✦', '★', '◆', '●', '▸', '◆', '✧', '★']
+const ICON_OPTIONS = ['✦', '★', '◆', '●', '▸', '✧', '⬟', '♦']
 
 const DEFAULT_CONFIG = {
   icon: '✦',

@@ -662,19 +662,40 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
   const handleSave = useCallback(async () => {
     if (!slug) return
     const supabase = createClient()
+
+    let token: string | undefined
+
     const {
       data: { session },
     } = await supabase.auth.getSession()
-    const token = session?.access_token
+    if (session?.access_token) {
+      token = session.access_token
+    } else {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser()
+      if (user) {
+        const { data: refreshed } = await supabase.auth.refreshSession()
+        token = refreshed.session?.access_token
+      }
+    }
+
+    if (!token) {
+      throw new Error('No se encontró una sesión activa. Inicia sesión nuevamente.')
+    }
+
     const res = await fetch(`/api/pages/${slug}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify({ blocks }),
     })
-    if (!res.ok) throw new Error('Error al guardar')
+    if (!res.ok) {
+      const body = await res.json().catch(() => ({}))
+      throw new Error(body.error || `Error del servidor (${res.status})`)
+    }
     setLastSavedBlocks(blocks)
     setHistoryMeta({ stack: [blocks], index: 0 })
   }, [slug, blocks])

@@ -1,18 +1,52 @@
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabaseClient'
+import { createServerClient } from '@supabase/ssr'
 import { Rol } from '@prisma/client'
+
+function parseCookies(cookieHeader: string | null): Map<string, string> {
+  const map = new Map<string, string>()
+  if (!cookieHeader) return map
+  for (const pair of cookieHeader.split(';')) {
+    const eq = pair.indexOf('=')
+    if (eq === -1) continue
+    map.set(pair.slice(0, eq).trim(), pair.slice(eq + 1).trim())
+  }
+  return map
+}
 
 async function getAdmin(req: Request) {
   const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-  if (!token) return null
+  const cookieMap = parseCookies(req.headers.get('Cookie'))
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser(token)
-  if (!user) return null
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => Array.from(cookieMap.entries()).map(([name, value]) => ({ name, value })),
+        setAll: () => {},
+      },
+    }
+  )
 
-  const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
+  let userId: string | null = null
+
+  if (token) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(token)
+    if (user) userId = user.id
+  }
+
+  if (!userId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (user) userId = user.id
+  }
+
+  if (!userId) return null
+
+  const usuario = await prisma.usuario.findUnique({ where: { supabaseId: userId } })
   if (!usuario || usuario.rol !== Rol.ADMIN) return null
 
   return usuario
@@ -35,15 +69,38 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-  if (!token) return Response.json({ error: 'No autorizado' }, { status: 401 })
+  const cookieMap = parseCookies(req.headers.get('Cookie'))
 
-  const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser(token)
-  if (!user) return Response.json({ error: 'No autorizado' }, { status: 401 })
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => Array.from(cookieMap.entries()).map(([name, value]) => ({ name, value })),
+        setAll: () => {},
+      },
+    }
+  )
 
-  const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
+  let userId: string | null = null
+
+  if (token) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(token)
+    if (user) userId = user.id
+  }
+
+  if (!userId) {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser()
+    if (user) userId = user.id
+  }
+
+  if (!userId) return Response.json({ error: 'No autorizado' }, { status: 401 })
+
+  const usuario = await prisma.usuario.findUnique({ where: { supabaseId: userId } })
   if (!usuario || usuario.rol !== Rol.ADMIN) {
     return Response.json({ error: 'Se requieren permisos de administrador' }, { status: 403 })
   }

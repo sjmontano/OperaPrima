@@ -76,15 +76,6 @@ export async function PUT(req: Request, { params }: { params: Promise<{ slug: st
     const { slug } = await params
     const body = await req.json()
 
-    console.log(
-      '[PUT /api/pages] slug:',
-      slug,
-      'blocks:',
-      body.blocks?.length,
-      'title:',
-      body.title
-    )
-
     const page = await prisma.pageContent.upsert({
       where: { slug },
       update: {

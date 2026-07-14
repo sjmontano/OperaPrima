@@ -142,6 +142,7 @@
     transform: translateY(100%);
     opacity: 0;
   }
+
   to {
     transform: translateY(0);
     opacity: 1;
@@ -821,6 +822,7 @@
   transition: color 0.2s ease;
   line-height: 1;
   min-height: 1em;
+  white-space: nowrap;
 }
 
 .flip-auth-req-item.met {
@@ -1079,7 +1081,7 @@
 
 /* ── Register: taller card heights ───────────────────────────────── */
 .flip-auth-card.reg-active {
-  height: 540px;
+  height: 480px;
 }
 
 .flip-auth-card.reg-step2 {
@@ -1410,6 +1412,7 @@
   gap: 0.55rem;
   cursor: pointer;
 }
+
 .flip-auth-checkbox-input {
   width: 15px;
   height: 15px;

@@ -79,10 +79,10 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   }, [])
 
   const logout = useCallback(async () => {
+    setCurrentUser(null)
+    localStorage.removeItem('user')
     const supabase = createClient()
     await supabase.auth.signOut()
-
-    setCurrentUser(null)
   }, [])
 
   const refreshUser = useCallback(async () => {

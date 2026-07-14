@@ -663,7 +663,6 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
     const logs: string[] = []
     function log(msg: string) {
       logs.push(msg)
-      console.log('[OP DEBUG]', msg)
     }
 
     if (!slug) {

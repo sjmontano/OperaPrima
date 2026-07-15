@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { Camera, Check, Loader, Plus, Upload, X } from 'lucide-react'
+import { Check, Loader, Plus, Upload, X } from 'lucide-react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabaseClient'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
@@ -13,9 +13,20 @@ import {
 import type { AvatarConfig } from '@/components/shared/AvatarCustomizer'
 
 const INTERESTS = [
-  'Artes plásticas', 'Danza', 'Teatro', 'Música', 'Literatura',
-  'Cine', 'Fotografía', 'Artesanías', 'Diseño', 'Arte digital',
-  'Performance', 'Gastronomía', 'Arte urbano', 'Gestión cultural',
+  'Artes plásticas',
+  'Danza',
+  'Teatro',
+  'Música',
+  'Literatura',
+  'Cine',
+  'Fotografía',
+  'Artesanías',
+  'Diseño',
+  'Arte digital',
+  'Performance',
+  'Gastronomía',
+  'Arte urbano',
+  'Gestión cultural',
 ]
 
 const SOCIAL_PLATFORMS = [
@@ -103,8 +114,8 @@ export default function OnboardingPage() {
       setUsernameError('Mínimo 3 caracteres')
       return false
     }
-    if (!/^[a-z0-9_]+$/.test(val)) {
-      setUsernameError('Solo minúsculas, números y _')
+    if (!/^[a-zA-Z0-9_.\-]+$/.test(val)) {
+      setUsernameError('Solo letras, números, puntos, guiones y _')
       return false
     }
     setUsernameError('')
@@ -246,13 +257,17 @@ export default function OnboardingPage() {
       className="relative flex min-h-screen items-center justify-center overflow-hidden px-4"
       style={{ fontFamily: 'var(--font-poppins)' }}
     >
-      <div className="absolute inset-0 -z-10" aria-hidden
+      <div
+        className="absolute inset-0 -z-10"
+        aria-hidden
         style={{
           background:
             'linear-gradient(135deg, oklch(0.97 0.004 340) 0%, oklch(0.93 0.008 340) 40%, oklch(0.88 0.012 165) 100%)',
         }}
       />
-      <div className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]" aria-hidden
+      <div
+        className="pointer-events-none absolute inset-0 -z-10 opacity-[0.06]"
+        aria-hidden
         style={{
           backgroundImage:
             'linear-gradient(#111 1px, transparent 1px), linear-gradient(90deg, #111 1px, transparent 1px)',
@@ -316,13 +331,19 @@ export default function OnboardingPage() {
                   <h1 className="text-xl font-bold tracking-tight" style={{ color: '#023047' }}>
                     Tu identidad
                   </h1>
-                  <p className="mt-1 text-sm leading-relaxed" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  <p
+                    className="mt-1 text-sm leading-relaxed"
+                    style={{ color: 'oklch(0.52 0.010 350)' }}
+                  >
                     Define tu nombre de usuario y cómo quieres aparecer en Ópera Prima.
                   </p>
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Nombre de usuario *
                   </label>
                   <input
@@ -340,12 +361,17 @@ export default function OnboardingPage() {
                     }}
                   />
                   {usernameError && (
-                    <p className="mt-1 text-xs" style={{ color: '#DC2626' }}>{usernameError}</p>
+                    <p className="mt-1 text-xs" style={{ color: '#DC2626' }}>
+                      {usernameError}
+                    </p>
                   )}
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Nombre real
                   </label>
                   <input
@@ -358,7 +384,10 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Nombre artístico
                   </label>
                   <input
@@ -397,83 +426,58 @@ export default function OnboardingPage() {
                   <h1 className="text-xl font-bold tracking-tight" style={{ color: '#023047' }}>
                     Tu avatar
                   </h1>
-                  <p className="mt-1 text-sm leading-relaxed" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  <p
+                    className="mt-1 text-sm leading-relaxed"
+                    style={{ color: 'oklch(0.52 0.010 350)' }}
+                  >
                     Elige un avatar generado o sube tu propia foto.
                   </p>
                 </div>
 
-                <div className="flex items-center gap-4">
-                  <div className="relative shrink-0">
-                    {avatarUrl ? (
-                      <Image
-                        src={avatarUrl}
-                        alt="Avatar"
-                        width={80}
-                        height={80}
-                        className="size-20 rounded-full border-2 object-cover"
-                        style={{ borderColor: '#8ECAE6' }}
-                        unoptimized
-                      />
-                    ) : (
-                      <div
-                        className="flex size-20 items-center justify-center rounded-full border-2 text-xl font-bold text-white"
-                        style={{ borderColor: '#8ECAE6', background: '#023047' }}
-                      >
-                        ?
-                      </div>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => avatarInputRef.current?.click()}
-                      className="absolute -bottom-1 -right-1 flex size-7 items-center justify-center rounded-full border-2 text-white transition-all hover:scale-105"
-                      style={{ background: '#023047', borderColor: '#8ECAE6' }}
-                    >
-                      <Camera size={12} />
-                    </button>
-                    <input
-                      ref={avatarInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleAvatarUpload}
-                    />
-                  </div>
-
-                  <div className="flex flex-col gap-2">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setUseDicebear(true)
-                        setAvatarUrl(buildDicebearUrl(avatarConfig))
-                      }}
-                      className={`border-2 px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-all ${
-                        useDicebear ? 'bg-[#023047] text-white' : ''
-                      }`}
-                      style={{
-                        borderColor: '#023047',
-                        color: useDicebear ? '#fff' : '#023047',
-                        backgroundColor: useDicebear ? '#023047' : 'transparent',
-                      }}
-                    >
-                      Avatar generado
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => avatarInputRef.current?.click()}
-                      className={`border-2 px-3 py-1.5 text-[10px] font-bold tracking-wider uppercase transition-all ${
-                        !useDicebear ? 'bg-[#023047] text-white' : ''
-                      }`}
-                      style={{
-                        borderColor: '#023047',
-                        color: !useDicebear ? '#fff' : '#023047',
-                        backgroundColor: !useDicebear ? '#023047' : 'transparent',
-                      }}
-                    >
-                      {uploadingAvatar ? 'Subiendo...' : 'Subir foto'}
-                    </button>
-                  </div>
+                {/* Mode selector pills */}
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUseDicebear(true)
+                      setAvatarUrl(buildDicebearUrl(avatarConfig))
+                    }}
+                    className={`border-2 px-4 py-2 text-[11px] font-bold tracking-wider uppercase transition-all ${
+                      useDicebear ? 'text-white' : ''
+                    }`}
+                    style={{
+                      borderColor: '#023047',
+                      color: useDicebear ? '#fff' : '#023047',
+                      backgroundColor: useDicebear ? '#023047' : 'transparent',
+                    }}
+                  >
+                    Generado
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => avatarInputRef.current?.click()}
+                    className={`border-2 px-4 py-2 text-[11px] font-bold tracking-wider uppercase transition-all ${
+                      !useDicebear ? 'text-white' : ''
+                    }`}
+                    style={{
+                      borderColor: '#023047',
+                      color: !useDicebear ? '#fff' : '#023047',
+                      backgroundColor: !useDicebear ? '#023047' : 'transparent',
+                    }}
+                  >
+                    {uploadingAvatar ? 'Subiendo...' : 'Foto'}
+                  </button>
                 </div>
 
+                <input
+                  ref={avatarInputRef}
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  onChange={handleAvatarUpload}
+                />
+
+                {/* DiceBear avatar customizer */}
                 {useDicebear && (
                   <AvatarCustomizer
                     initialStyle={avatarConfig.style}
@@ -485,6 +489,31 @@ export default function OnboardingPage() {
                     }}
                     size={140}
                   />
+                )}
+
+                {/* Uploaded photo preview */}
+                {!useDicebear && avatarUrl && (
+                  <div className="flex items-center gap-4">
+                    <Image
+                      src={avatarUrl}
+                      alt="Foto subida"
+                      width={80}
+                      height={80}
+                      className="size-20 rounded-full border-2 object-cover"
+                      style={{ borderColor: '#8ECAE6' }}
+                      unoptimized
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setUseDicebear(true)
+                        setAvatarUrl(buildDicebearUrl(avatarConfig))
+                      }}
+                      className="border-2 border-[#DC2626] px-3 py-1.5 text-[10px] font-bold tracking-wider text-[#DC2626] uppercase transition-all hover:bg-[#DC2626] hover:text-white"
+                    >
+                      Quitar foto
+                    </button>
+                  </div>
                 )}
 
                 <div className="flex gap-3 pt-2">
@@ -513,13 +542,19 @@ export default function OnboardingPage() {
                   <h1 className="text-xl font-bold tracking-tight" style={{ color: '#023047' }}>
                     Sobre ti
                   </h1>
-                  <p className="mt-1 text-sm leading-relaxed" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  <p
+                    className="mt-1 text-sm leading-relaxed"
+                    style={{ color: 'oklch(0.52 0.010 350)' }}
+                  >
                     Cuéntanos de ti y qué te apasiona.
                   </p>
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Biografía
                   </label>
                   <textarea
@@ -533,10 +568,13 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Tags
                   </label>
-                  <div className="flex flex-wrap gap-1.5 mb-2">
+                  <div className="mb-2 flex flex-wrap gap-1.5">
                     {tags.map((tag) => (
                       <span
                         key={tag}
@@ -544,7 +582,11 @@ export default function OnboardingPage() {
                         style={{ borderColor: '#023047', color: '#023047' }}
                       >
                         {tag}
-                        <button type="button" onClick={() => removeTag(tag)} className="hover:opacity-60">
+                        <button
+                          type="button"
+                          onClick={() => removeTag(tag)}
+                          className="hover:opacity-60"
+                        >
                           <X size={10} />
                         </button>
                       </span>
@@ -561,7 +603,7 @@ export default function OnboardingPage() {
                         }
                       }}
                       placeholder="Escribe un tag y presiona Enter"
-                      className="flex-1 border-2 border-[oklch(0.88_0.010_350)] px-3 py-2 text-sm outline-none transition-all focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-[3px_3px_0_#353535]"
+                      className="flex-1 border-2 border-[oklch(0.88_0.010_350)] px-3 py-2 text-sm transition-all outline-none focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-[3px_3px_0_#353535]"
                       style={{ color: '#353535' }}
                     />
                     <button
@@ -576,7 +618,10 @@ export default function OnboardingPage() {
                 </div>
 
                 <div>
-                  <label className="mb-1 block text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                  <label
+                    className="mb-1 block text-[11px] font-bold tracking-wider uppercase"
+                    style={{ color: 'oklch(0.45 0 0)' }}
+                  >
                     Intereses creativos
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -627,7 +672,10 @@ export default function OnboardingPage() {
                   <h1 className="text-xl font-bold tracking-tight" style={{ color: '#023047' }}>
                     Redes sociales
                   </h1>
-                  <p className="mt-1 text-sm leading-relaxed" style={{ color: 'oklch(0.52 0.010 350)' }}>
+                  <p
+                    className="mt-1 text-sm leading-relaxed"
+                    style={{ color: 'oklch(0.52 0.010 350)' }}
+                  >
                     Conecta tus perfiles para que te encuentren fácilmente.
                   </p>
                 </div>
@@ -637,8 +685,11 @@ export default function OnboardingPage() {
                   const isActive = !!social
                   return (
                     <div key={platform.label}>
-                      <div className="flex items-center justify-between mb-1">
-                        <label className="text-[11px] font-bold tracking-wider uppercase" style={{ color: 'oklch(0.45 0 0)' }}>
+                      <div className="mb-1 flex items-center justify-between">
+                        <label
+                          className="text-[11px] font-bold tracking-wider uppercase"
+                          style={{ color: 'oklch(0.45 0 0)' }}
+                        >
                           {platform.label}
                         </label>
                         <button
@@ -650,7 +701,7 @@ export default function OnboardingPage() {
                               setSocialHandle(platform.label, '')
                             }
                           }}
-                          className="text-[10px] font-bold uppercase tracking-wider transition-all hover:opacity-60"
+                          className="text-[10px] font-bold tracking-wider uppercase transition-all hover:opacity-60"
                           style={{ color: isActive ? '#DC2626' : '#023047' }}
                         >
                           {isActive ? 'Eliminar' : 'Agregar'}
@@ -661,7 +712,7 @@ export default function OnboardingPage() {
                           value={social.handle}
                           onChange={(e) => setSocialHandle(platform.label, e.target.value)}
                           placeholder={platform.placeholder}
-                          className="w-full border-2 border-[oklch(0.88_0.010_350)] px-3 py-2.5 text-sm outline-none transition-all focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-[3px_3px_0_#353535]"
+                          className="w-full border-2 border-[oklch(0.88_0.010_350)] px-3 py-2.5 text-sm transition-all outline-none focus:-translate-x-0.5 focus:-translate-y-0.5 focus:shadow-[3px_3px_0_#353535]"
                           style={{ color: '#353535' }}
                         />
                       )}

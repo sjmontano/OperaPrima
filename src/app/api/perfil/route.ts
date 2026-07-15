@@ -29,9 +29,19 @@ export async function PATCH(req: Request) {
     const body = await req.json()
     const { avatar, banner, artisticName, realName, bio, tags, interests } = body
 
-    const updated = await prisma.perfil.update({
+    const updated = await prisma.perfil.upsert({
       where: { usuarioId: usuario.id },
-      data: {
+      create: {
+        usuarioId: usuario.id,
+        ...(avatar !== undefined && { avatar }),
+        ...(banner !== undefined && { banner }),
+        ...(artisticName !== undefined && { artisticName }),
+        ...(realName !== undefined && { realName }),
+        ...(bio !== undefined && { bio }),
+        ...(tags !== undefined && { tags }),
+        ...(interests !== undefined && { interests }),
+      },
+      update: {
         ...(avatar !== undefined && { avatar }),
         ...(banner !== undefined && { banner }),
         ...(artisticName !== undefined && { artisticName }),

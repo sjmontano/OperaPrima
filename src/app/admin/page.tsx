@@ -16,6 +16,7 @@ import {
   TrendingUp,
   MessageCircle,
   GraduationCap,
+  ArrowLeft,
 } from 'lucide-react'
 import Link from 'next/link'
 import {
@@ -198,13 +199,24 @@ export default function AdminDashboard() {
               </p>
             </div>
           </div>
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2 border-2 border-zinc-200 px-3 py-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase transition-all hover:border-[#E63946] hover:text-[#E63946]"
-          >
-            <LogOut size={14} />
-            Cerrar sesión
-          </button>
+
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => router.push('/')}
+              className="flex items-center gap-2 border-2 border-zinc-200 px-3 py-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase transition-all hover:border-[#023047] hover:text-[#023047]"
+            >
+              <ArrowLeft size={14} />
+              Dashboard
+            </button>
+
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-2 border-2 border-zinc-200 px-3 py-2 text-[10px] font-bold tracking-widest text-zinc-500 uppercase transition-all hover:border-[#E63946] hover:text-[#E63946]"
+            >
+              <LogOut size={14} />
+              Cerrar sesión
+            </button>
+          </div>
         </div>
       </div>
 

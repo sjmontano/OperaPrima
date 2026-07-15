@@ -2,10 +2,10 @@
 
 import type { LocalUser } from '@/lib/localUsers'
 import { isFieldTaken } from '@/lib/localUsers'
-import Link from 'next/link'
-import { Eye, EyeOff } from 'lucide-react'
-import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 import { createClient } from '@/lib/supabaseClient'
+import { Eye, EyeOff } from 'lucide-react'
+import Link from 'next/link'
+import { Fragment, useEffect, useMemo, useRef, useState } from 'react'
 
 // ── Password requirements ──────────────────────────────────────────────────
 const REQUISITOS = [
@@ -126,8 +126,8 @@ function CountryCodePicker({
 
   const filtered = search.trim()
     ? COUNTRY_CODES.filter(
-        (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search)
-      )
+      (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search)
+    )
     : null
 
   const handleSelect = (code: string) => {
@@ -1064,10 +1064,10 @@ function FacebookIcon() {
 
 function AppleIcon() {
   return (
-    <svg width="15" height="16" viewBox="0 0 814 1000" aria-hidden>
+    <svg width="18" height="18" viewBox="0 0 24 24" aria-hidden>
       <path
         fill="currentColor"
-        d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76.5 0-103.7 40.8-165.9 40.8s-105-43.4-150.3-109.1C74 500.5 32 339.8 32 185.8c0-159.3 104.6-244.5 205.8-244.5 92.9 0 150.4 61.4 201.4 61.4 49 0 114.3-66.3 217.9-66.3zm-101.4-100.5c15.7-21.3 25.9-50.7 25.9-80.1 0-35.5-13.1-72.5-38.5-101.8C866.7 31.5 831.5 10 794.7 10c-27.1 0-54.3 17.1-73.3 42.4-17.7 23.2-30.5 53.2-30.5 83.3 0 35.5 12.2 70.5 36.7 99.1 22.3 26.1 56.4 44.6 91.7 44.6z"
+        d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"
       />
     </svg>
   )

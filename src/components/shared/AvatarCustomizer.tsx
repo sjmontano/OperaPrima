@@ -411,10 +411,27 @@ export function AvatarCustomizer({
       'd4a59a',
       '007582',
     ]
-    const randomBg = bgColors[Math.floor(Math.random() * bgColors.length)]
-    const next = { ...options, backgroundColor: randomBg }
+    const next: Record<string, string> = { ...options }
+    next.backgroundColor = bgColors[Math.floor(Math.random() * bgColors.length)]
+    for (const part of parts) {
+      const randomVariant = part.variants[Math.floor(Math.random() * part.variants.length)]
+      next[part.key] = randomVariant.value
+      const base = part.key.replace(/Variant$/, '')
+      if (OPTIONAL_COMPONENTS.has(base)) {
+        next[`${base}Probability`] = '100'
+      }
+    }
     setOptions(next)
     onChange({ style, seed: newSeed, ...next })
+  }
+
+  function removeOption(key: string) {
+    const base = key.replace(/Variant$/, '')
+    const next = { ...options }
+    delete next[key]
+    next[`${base}Probability`] = '0'
+    setOptions(next)
+    onChange({ style, seed, ...next })
   }
 
   function thumbUrl(partKey: string, partValue: string): string {
@@ -555,6 +572,8 @@ export function AvatarCustomizer({
                 {parts.map((part) => {
                   const isOpen = expandedSection === part.key
                   const currentValue = options[part.key]
+                  const partBase = part.key.replace(/Variant$/, '')
+                  const isOptional = OPTIONAL_COMPONENTS.has(partBase)
                   return (
                     <div key={part.key} className="border border-[#E4E4E7]">
                       <button
@@ -571,39 +590,53 @@ export function AvatarCustomizer({
                         />
                       </button>
                       {isOpen && (
-                        <div className="grid grid-cols-5 gap-1.5 border-t border-[#E4E4E7] px-3 py-2 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8">
-                          {part.variants.map((v) => {
-                            const active = currentValue === v.value
-                            const url = thumbUrl(part.key, v.value)
-                            return (
-                              <button
-                                key={v.value}
-                                type="button"
-                                onClick={() => updateOption(part.key, v.value)}
-                                className="flex flex-col items-center gap-0.5 p-1 transition-all"
-                                style={{
-                                  border: active ? '2px solid #023047' : '2px solid transparent',
-                                  borderRadius: 0,
-                                  background: active ? '#F0F8FF' : 'transparent',
-                                }}
-                              >
-                                <img
-                                  src={url}
-                                  alt={v.label}
-                                  width={THUMB_SIZE}
-                                  height={THUMB_SIZE}
-                                  className="block"
-                                  loading="lazy"
-                                />
-                                <span
-                                  className="text-[0.45rem] leading-tight font-semibold uppercase"
-                                  style={{ color: active ? '#023047' : '#71717A' }}
+                        <div>
+                          <div className="grid grid-cols-5 gap-1.5 border-t border-[#E4E4E7] px-3 py-2 sm:grid-cols-6 md:grid-cols-7 lg:grid-cols-8">
+                            {part.variants.map((v) => {
+                              const active = currentValue === v.value
+                              const url = thumbUrl(part.key, v.value)
+                              return (
+                                <button
+                                  key={v.value}
+                                  type="button"
+                                  onClick={() => updateOption(part.key, v.value)}
+                                  className="flex flex-col items-center gap-0.5 p-1 transition-all"
+                                  style={{
+                                    border: active ? '2px solid #023047' : '2px solid transparent',
+                                    borderRadius: 0,
+                                    background: active ? '#F0F8FF' : 'transparent',
+                                  }}
                                 >
-                                  {v.label}
-                                </span>
+                                  <img
+                                    src={url}
+                                    alt={v.label}
+                                    width={THUMB_SIZE}
+                                    height={THUMB_SIZE}
+                                    className="block"
+                                    loading="lazy"
+                                  />
+                                  <span
+                                    className="text-[0.45rem] leading-tight font-semibold uppercase"
+                                    style={{ color: active ? '#023047' : '#71717A' }}
+                                  >
+                                    {v.label}
+                                  </span>
+                                </button>
+                              )
+                            })}
+                          </div>
+                          {isOptional && currentValue && (
+                            <div className="border-t border-[#E4E4E7] px-3 py-1.5">
+                              <button
+                                type="button"
+                                onClick={() => removeOption(part.key)}
+                                className="flex items-center gap-1 text-[0.5rem] font-bold tracking-wider uppercase transition-all hover:text-[#DC2626]"
+                                style={{ color: '#71717A' }}
+                              >
+                                <X size={10} /> Quitar
                               </button>
-                            )
-                          })}
+                            </div>
+                          )}
                         </div>
                       )}
                     </div>

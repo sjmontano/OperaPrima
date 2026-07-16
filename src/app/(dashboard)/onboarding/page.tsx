@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
-import { Check, Loader, Plus, Upload, X } from 'lucide-react'
+import { Check, Loader, Plus, X } from 'lucide-react'
 import Image from 'next/image'
 import { createClient } from '@/lib/supabaseClient'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
@@ -43,10 +43,9 @@ const STEP_LABELS = ['Identidad', 'Avatar', 'Sobre ti', 'Redes']
 export default function OnboardingPage() {
   const router = useRouter()
   const supabase = createClient()
-  const { refreshUser } = useAuthModal()
+  const { currentUser, login } = useAuthModal()
 
   const [step, setStep] = useState(0)
-  const [loading, setLoading] = useState(false)
   const [saving, setSaving] = useState(false)
 
   const [username, setUsername] = useState('')
@@ -240,7 +239,8 @@ export default function OnboardingPage() {
       }
     }
 
-    await refreshUser()
+    const updatedUser = { ...currentUser, perfil: { avatar } }
+    login(updatedUser)
     router.push('/perfil')
   }
 

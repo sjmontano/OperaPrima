@@ -19,6 +19,15 @@ export interface LocalUser {
   gender: string
   newsletter: boolean
   createdAt: string
+  perfil?: {
+    avatar?: string | null
+    artisticName?: string | null
+    realName?: string | null
+    bio?: string | null
+    tags?: string[]
+    interests?: string[]
+    redes?: { label: string; handle: string; href?: string }[]
+  } | null
 }
 
 // ── Storage key ────────────────────────────────────────────────────────────

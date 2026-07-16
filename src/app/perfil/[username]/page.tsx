@@ -1,13 +1,11 @@
 import { ContentFrame } from '@/components/layout/ContentFrame'
-import { DefaultAvatar } from '@/components/shared/DefaultAvatar'
-import { generateBannerUrl } from '@/lib/banner'
+import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'
 import { ProfileTestimonials } from '@/components/profile/ProfileTestimonials'
 import { CommunityMembersSection } from '@/components/comunidad/CommunityMembersSection'
 import { prisma } from '@/lib/prisma'
-import Image from 'next/image'
 import { notFound } from 'next/navigation'
 
 interface Props {
@@ -42,46 +40,16 @@ export default async function PublicProfilePage({ params }: Props) {
         }}
       >
         <ContentFrame>
-          {/* Banner */}
-          <div
-            className="relative h-48 overflow-hidden sm:h-64"
-            style={{
-              background: `url(${perfil?.banner || generateBannerUrl(usuario.username)}) center/cover no-repeat`,
-            }}
-          >
-            <div
-              className="absolute inset-0"
-              style={{
-                background:
-                  'linear-gradient(to bottom, transparent 50%, oklch(0.98 0.005 350) 100%)',
-              }}
-            />
-          </div>
-          <div className="mx-auto px-6 pb-2" style={{ maxWidth: '1024px' }}>
-            <div className="-mt-16 mb-6 flex items-end gap-5">
-              <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-lg">
-                {perfil?.avatar ? (
-                  <Image
-                    src={perfil.avatar}
-                    alt={usuario.username}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                ) : (
-                  <DefaultAvatar seed={usuario.username} size={112} className="h-full w-full" />
-                )}
-              </div>
-              <div className="pb-1">
-                <h1 className="text-xl font-bold tracking-tight" style={{ color: '#023047' }}>
-                  {perfil?.artisticName || `${usuario.firstName} ${usuario.lastName}`}
-                </h1>
-                <p className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
-                  @{usuario.username}
-                </p>
-              </div>
-            </div>
+          <ProfileHeader
+            artisticName={perfil?.artisticName || `${usuario.firstName} ${usuario.lastName}`}
+            realName={perfil?.realName}
+            username={usuario.username}
+            avatar={perfil?.avatar ?? null}
+            banner={perfil?.banner ?? null}
+            isOwner={false}
+          />
 
+          <div className="mx-auto px-6 pb-2" style={{ maxWidth: '1024px' }}>
             {/* Bio */}
             {perfil?.bio && (
               <section className="mb-8">

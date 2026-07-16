@@ -66,7 +66,7 @@ export function ComunidadArtistsSection() {
             discipline: mapDiscipline(u.perfil?.tags || []),
             location: 'Colombia',
             image:
-              u.perfil?.avatar || `https://api.dicebear.com/9.x/lorelei/svg?seed=${u.username}`,
+              u.perfil?.avatar || `https://api.dicebear.com/10.x/lorelei/svg?seed=${u.username}`,
             href: `/perfil/${u.username}`,
           })
         )

@@ -135,7 +135,7 @@ function MemberCard({ member }: { member: Member }) {
       onMouseLeave={() => setHovered(false)}
     >
       {/* Image */}
-      <div className="relative aspect-[4/3] overflow-hidden bg-zinc-100">
+      <div className="relative aspect-square overflow-hidden bg-zinc-100">
         {member.image ? (
           <img
             src={member.image}

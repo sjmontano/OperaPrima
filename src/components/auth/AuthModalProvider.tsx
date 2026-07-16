@@ -38,6 +38,18 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(null)
 
   useEffect(() => {
+    const stored = localStorage.getItem('user')
+    if (stored) {
+      try {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        setCurrentUser(JSON.parse(stored))
+      } catch {
+        /* ignore */
+      }
+    }
+  }, [])
+
+  useEffect(() => {
     const supabase = createClient()
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
@@ -57,6 +69,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
       const data = await response.json()
 
       setCurrentUser(data.usuario)
+      localStorage.setItem('user', JSON.stringify(data.usuario))
     })
 
     return () => {

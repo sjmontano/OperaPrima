@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabaseClient'
+import { Rol } from '@prisma/client'
 
 export async function GET() {
   try {
@@ -16,29 +17,27 @@ export async function GET() {
 export async function POST(req: Request) {
   try {
     const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-    let usuarioId: string | null = null
-    let tipo = 'COMUNIDAD'
+    if (!token) {
+      return Response.json({ error: 'No autorizado' }, { status: 401 })
+    }
 
-    if (token) {
-      const supabase = await createClient()
-      const {
-        data: { user },
-      } = await supabase.auth.getUser(token)
-      if (user) {
-        const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-        if (usuario) {
-          usuarioId = usuario.id
-          tipo = 'COMUNIDAD'
-        }
-      }
-    } else {
-      tipo = 'ENTIDAD'
+    const supabase = await createClient()
+    const {
+      data: { user },
+    } = await supabase.auth.getUser(token)
+    if (!user) {
+      return Response.json({ error: 'No autorizado' }, { status: 401 })
+    }
+
+    const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
+    if (!usuario || usuario.rol !== Rol.ADMIN) {
+      return Response.json({ error: 'No autorizado' }, { status: 403 })
     }
 
     const body = await req.json()
     const proyecto = await prisma.proyecto.create({
       data: {
-        tipo: tipo as 'COMUNIDAD' | 'ENTIDAD',
+        tipo: 'ENTIDAD',
         nombre: body.nombre,
         representante: body.representante,
         descripcion: body.descripcion,
@@ -51,7 +50,7 @@ export async function POST(req: Request) {
         ubicacion: body.ubicacion,
         destacado: false,
         fechaLimite: new Date(body.fechaLimite),
-        usuarioId,
+        usuarioId: usuario.id,
       },
     })
 

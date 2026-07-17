@@ -431,7 +431,7 @@ export function MentorEventsSection({
             </div>
 
             {/* Create event */}
-            {currentUser && (
+            {isAdmin && (
               <button
                 type="button"
                 className="border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-white hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535]"
@@ -505,8 +505,7 @@ export function MentorEventsSection({
                             : 'terracota'
                         ]
                       const dbEvent = dbEvents.find((de) => de.id === event.id)
-                      const isOwn = dbEvent ? ownEventIds.has(dbEvent.id) : false
-                      const canEdit = isOwn || isAdmin
+                      const canEdit = isAdmin
                       return (
                         <motion.article
                           layout

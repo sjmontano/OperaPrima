@@ -85,6 +85,10 @@ export async function POST(req: Request) {
       )
     }
 
+    if (usuario.rol === Rol.MENTOR) {
+      return Response.json({ error: 'Los mentores no pueden crear eventos' }, { status: 403 })
+    }
+
     if (!body.titulo?.trim()) {
       return Response.json({ error: 'El título es obligatorio' }, { status: 400 })
     }

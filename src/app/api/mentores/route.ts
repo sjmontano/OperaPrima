@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Rol } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +23,7 @@ export async function GET(req: Request) {
         return Response.json({ error: 'Token inválido' }, { status: 401 })
       }
       const dbUser = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-      if (!dbUser || dbUser.rol !== 'ADMIN') {
+      if (!dbUser || dbUser.rol !== Rol.ADMIN) {
         return Response.json({ error: 'No autorizado' }, { status: 403 })
       }
 
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
     }
 
     const dbUser = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-    if (!dbUser || dbUser.rol !== 'ADMIN') {
+    if (!dbUser || dbUser.rol !== Rol.ADMIN) {
       return Response.json({ error: 'No autorizado' }, { status: 403 })
     }
 
@@ -79,10 +80,10 @@ export async function POST(req: Request) {
       if (!usuario) {
         return Response.json({ error: 'Usuario no encontrado' }, { status: 404 })
       }
-      if (usuario.rol !== 'ADMIN') {
+      if (usuario.rol !== Rol.ADMIN) {
         await prisma.usuario.update({
           where: { id: usuarioId },
-          data: { rol: 'MENTOR' },
+          data: { rol: Rol.MENTOR },
         })
       }
     }

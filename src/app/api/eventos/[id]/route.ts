@@ -59,6 +59,10 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return Response.json({ error: 'Evento no encontrado' }, { status: 404 })
     }
 
+    if (usuario.rol === Rol.MENTOR) {
+      return Response.json({ error: 'Los mentores no pueden modificar eventos' }, { status: 403 })
+    }
+
     const isOwner = evento.usuarioId === usuario.id
     const isAdmin = usuario.rol === Rol.ADMIN
 
@@ -118,6 +122,10 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     const evento = await prisma.evento.findUnique({ where: { id } })
     if (!evento) {
       return Response.json({ error: 'Evento no encontrado' }, { status: 404 })
+    }
+
+    if (usuario.rol === Rol.MENTOR) {
+      return Response.json({ error: 'Los mentores no pueden eliminar eventos' }, { status: 403 })
     }
 
     const isOwner = evento.usuarioId === usuario.id

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabaseClient'
+import { Rol } from '@prisma/client'
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
@@ -14,7 +15,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
     if (!user) return Response.json({ error: 'No autorizado' }, { status: 401 })
 
     const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-    if (!usuario || usuario.rol !== 'ADMIN')
+    if (!usuario || usuario.rol !== Rol.ADMIN)
       return Response.json({ error: 'No autorizado' }, { status: 401 })
 
     const body = await req.json()
@@ -56,7 +57,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (!user) return Response.json({ error: 'No autorizado' }, { status: 401 })
 
     const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-    if (!usuario || usuario.rol !== 'ADMIN')
+    if (!usuario || usuario.rol !== Rol.ADMIN)
       return Response.json({ error: 'No autorizado' }, { status: 401 })
 
     await prisma.proyecto.delete({ where: { id } })

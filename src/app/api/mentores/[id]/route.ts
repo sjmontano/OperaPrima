@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Rol } from '@prisma/client'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,7 +32,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       return Response.json({ error: 'Mentor no encontrado' }, { status: 404 })
     }
 
-    const isAdmin = dbUser.rol === 'ADMIN'
+    const isAdmin = dbUser.rol === Rol.ADMIN
     const isOwner = mentor.usuarioId === dbUser.id
     if (!isAdmin && !isOwner) {
       return Response.json({ error: 'No autorizado' }, { status: 403 })
@@ -45,16 +46,16 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       if (!usuario) {
         return Response.json({ error: 'Usuario no encontrado' }, { status: 404 })
       }
-      if (usuario.rol !== 'ADMIN') {
+      if (usuario.rol !== Rol.ADMIN) {
         await prisma.usuario.update({
           where: { id: usuarioId },
-          data: { rol: 'MENTOR' },
+          data: { rol: Rol.MENTOR },
         })
       }
       if (mentor.usuarioId && mentor.usuarioId !== usuarioId) {
         await prisma.usuario.update({
           where: { id: mentor.usuarioId },
-          data: { rol: 'USUARIO' },
+          data: { rol: Rol.USUARIO },
         })
       }
     }
@@ -86,7 +87,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
   try {
     const { id } = await params
     const dbUser = await getAuthUser(req)
-    if (!dbUser || dbUser.rol !== 'ADMIN') {
+    if (!dbUser || dbUser.rol !== Rol.ADMIN) {
       return Response.json({ error: 'No autorizado' }, { status: 403 })
     }
 
@@ -98,7 +99,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
     if (mentor.usuarioId) {
       await prisma.usuario.update({
         where: { id: mentor.usuarioId },
-        data: { rol: 'USUARIO' },
+        data: { rol: Rol.USUARIO },
       })
     }
 

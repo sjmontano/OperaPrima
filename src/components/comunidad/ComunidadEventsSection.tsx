@@ -136,10 +136,9 @@ export function ComunidadEventsSection({
 
   const loadEvents = useCallback(async () => {
     try {
-      const res = await fetch('/api/eventos?rol=USUARIO')
+      const res = await fetch('/api/eventos?tipo=COMUNIDAD')
       if (!res.ok) return
       const data: { eventos: DbEvent[] } = await res.json()
-      console.log(data.eventos)
       setDbEvents(data.eventos)
     } catch {
       /* ignore */
@@ -147,7 +146,7 @@ export function ComunidadEventsSection({
   }, [])
 
   useEffect(() => {
-    fetch('/api/eventos?rol=USUARIO')
+    fetch('/api/eventos?tipo=COMUNIDAD')
       .then((r) => r.ok && r.json())
       .then((d) => d && setDbEvents(d.eventos))
       .catch(() => {})
@@ -415,7 +414,7 @@ export function ComunidadEventsSection({
             </div>
 
             {/* Create event */}
-            {currentUser && (
+            {currentUser && currentUser.rol !== 'MENTOR' && (
               <button
                 type="button"
                 className="border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-white hover:text-[#E63946] hover:shadow-[4px_4px_0_#353535]"
@@ -503,7 +502,7 @@ export function ComunidadEventsSection({
                         ]
                       const dbEvent = dbEvents.find((de) => de.id === event.id)
                       const isOwn = dbEvent ? ownEventIds.has(dbEvent.id) : false
-                      const canEdit = isOwn || isAdmin
+                      const canEdit = (isOwn && currentUser?.rol !== 'MENTOR') || isAdmin
                       return (
                         <motion.article
                           layout

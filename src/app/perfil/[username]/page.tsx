@@ -3,6 +3,7 @@ import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'
+import { Gallery } from '@/components/gallery/Gallery'
 import { ProfileTestimonials } from '@/components/profile/ProfileTestimonials'
 import { CommunityMembersSection } from '@/components/comunidad/CommunityMembersSection'
 import { prisma } from '@/lib/prisma'
@@ -134,6 +135,8 @@ export default async function PublicProfilePage({ params }: Props) {
                 </div>
               </section>
             )}
+
+            <Gallery userId={usuario.id} />
 
             <ProfileTestimonials
               username={usuario.username}

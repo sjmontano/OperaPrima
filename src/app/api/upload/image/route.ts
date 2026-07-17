@@ -22,18 +22,25 @@ export async function POST(req: Request) {
     const file = formData.get('file')
     const folder = (formData.get('folder') as string) || 'general'
 
-    if (!(file instanceof File)) {
+    if (!file) {
       return Response.json({ error: 'No file provided' }, { status: 400 })
     }
 
-    if (!ALLOWED_TYPES.includes(file.type)) {
+    if (typeof file === 'string') {
+      return Response.json({ error: 'Invalid file' }, { status: 400 })
+    }
+
+    const fileBuffer = Buffer.from(await file.arrayBuffer())
+    const mimeType = file.type || ''
+
+    if (mimeType && !ALLOWED_TYPES.includes(mimeType)) {
       return Response.json(
         { error: `Tipo de archivo no permitido. Tipos aceptados: PNG, JPG, WebP, GIF, AVIF, TIFF` },
         { status: 400 }
       )
     }
 
-    if (file.size > MAX_SIZE) {
+    if (fileBuffer.length > MAX_SIZE) {
       return Response.json({ error: 'El archivo excede el límite de 10 MB' }, { status: 400 })
     }
 
@@ -43,8 +50,6 @@ export async function POST(req: Request) {
         { status: 400 }
       )
     }
-
-    const buffer = Buffer.from(await file.arrayBuffer())
 
     const result = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
       cloudinary.uploader
@@ -70,7 +75,7 @@ export async function POST(req: Request) {
             })
           }
         )
-        .end(buffer)
+        .end(fileBuffer)
     })
 
     return Response.json({

@@ -79,6 +79,8 @@ model Usuario {
   proyectos     Proyecto[]
 
   testimonios   Testimonial[]
+
+  gallery       UserGallery[]
 }
 
 model Mentor {
@@ -138,6 +140,32 @@ model Perfil {
   updatedAt     DateTime @updatedAt
 
   redes         Social[]
+}
+
+model UserGallery {
+  id        String   @id @default(uuid())
+
+  usuarioId String
+
+  usuario   Usuario  @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  src       String
+
+  publicId  String?
+
+  title     String?
+
+  alt       String?
+
+  span      String?
+
+  orden     Int      @default(0)
+
+  createdAt DateTime @default(now())
+
+  updatedAt DateTime @updatedAt
+
+  @@index([usuarioId])
 }
 
 model Social {

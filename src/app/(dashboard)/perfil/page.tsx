@@ -5,7 +5,7 @@ import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'
 import { ContentFrame } from '@/components/layout/ContentFrame'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
-import { GalleryMasonry, type GalleryItem } from '@/components/profile/GalleryMasonry'
+import { Gallery } from '@/components/gallery/Gallery'
 import { createClient } from '@/lib/supabaseClient'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -58,54 +58,6 @@ function mapUser(usuario: UsuarioApi): PerfilUsuario {
       usuario.perfil?.redes?.map((r) => ({ label: r.label, handle: r.handle, href: r.href })) ?? [],
   }
 }
-
-const GALLERY_ITEMS: GalleryItem[] = [
-  {
-    src: 'https://images.unsplash.com/photo-1508700115892-45ecd05ae2ad?w=600&auto=format&fit=crop&q=70',
-    title: 'Fragmentos del silencio',
-    date: 'Mar 2025',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1547153760-18fc86324498?w=600&auto=format&fit=crop&q=70',
-    title: 'Cuerpo y territorio',
-    date: 'Ene 2025',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?w=600&auto=format&fit=crop&q=70',
-    title: 'Ensayo abierto #3',
-    date: 'Oct 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1536924940846-227afb31e2a5?w=600&auto=format&fit=crop&q=70',
-    title: 'Residencia Bogotá',
-    date: 'Sep 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1571019613576-2b22c76fd955?w=600&auto=format&fit=crop&q=70',
-    title: 'La piel que habito',
-    date: 'Ago 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?w=600&auto=format&fit=crop&q=70',
-    title: 'Duelo coreográfico',
-    date: 'Jul 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1545959570-a94084071b5d?w=600&auto=format&fit=crop&q=70',
-    title: 'Festival Iberoamericano',
-    date: 'Jun 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1614859324967-bdf413c35703?w=600&auto=format&fit=crop&q=70',
-    title: 'Improvisación en sitio',
-    date: 'May 2024',
-  },
-  {
-    src: 'https://images.unsplash.com/photo-1480714378408-67cf0d13bc1b?w=600&auto=format&fit=crop&q=70',
-    title: 'Arquitecturas del cuerpo',
-    date: 'Mar 2024',
-  },
-]
 
 export default function PerfilPage() {
   const [user, setUser] = useState<PerfilUsuario | null>(null)
@@ -296,21 +248,7 @@ export default function PerfilPage() {
               </section>
             )}
 
-            {/* Gallery */}
-            <section className="mb-8 border-t border-zinc-200 pt-8">
-              <div className="mb-6 flex items-baseline gap-3">
-                <h2
-                  className="text-lg font-bold tracking-wide uppercase"
-                  style={{ color: '#353535' }}
-                >
-                  Galería
-                </h2>
-                <span className="text-sm" style={{ color: 'oklch(0.52 0.010 350)' }}>
-                  {GALLERY_ITEMS.length} obras
-                </span>
-              </div>
-              <GalleryMasonry items={GALLERY_ITEMS} showUpload />
-            </section>
+            <Gallery />
 
             {/* Tickets */}
             <section className="border-t border-zinc-200 pt-8">

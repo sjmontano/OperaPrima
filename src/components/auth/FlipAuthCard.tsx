@@ -126,8 +126,8 @@ function CountryCodePicker({
 
   const filtered = search.trim()
     ? COUNTRY_CODES.filter(
-      (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search)
-    )
+        (c) => c.name.toLowerCase().includes(search.toLowerCase()) || c.code.includes(search)
+      )
     : null
 
   const handleSelect = (code: string) => {
@@ -415,29 +415,36 @@ export function FlipAuthCard({
     setLoginLoading(true)
 
     try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: loginId,
-          password: loginPw,
-        }),
+      const supabase = createClient()
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email: loginId,
+        password: loginPw,
       })
 
-      const data = await response.json()
-      console.log(data)
-
-      if (!response.ok) {
-        throw new Error(data.error)
+      if (error) {
+        throw new Error(error.message)
       }
 
-      setLoginSuccess(`¡Bienvenido ${data.usuario.firstName}!`)
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
 
-      const usuario: LocalUser = data.usuario
+      const meRes = await fetch('/api/auth/me', {
+        headers: {
+          Authorization: `Bearer ${session?.access_token ?? ''}`,
+        },
+      })
 
-      onLoginSuccess?.(usuario)
+      if (!meRes.ok) {
+        throw new Error('No se pudo obtener el usuario')
+      }
+
+      const meData = await meRes.json()
+
+      setLoginSuccess(`¡Bienvenido ${meData.usuario.firstName}!`)
+
+      onLoginSuccess?.(meData.usuario)
 
       // Redirect to onboarding if user just registered
       if (localStorage.getItem('justRegistered')) {
@@ -717,7 +724,7 @@ export function FlipAuthCard({
                         {fortaleza.requisitos.map((req) => (
                           <li
                             key={req.texto}
-                            className={`flip-auth-req-item${req.met ? ' met' : ''}`}
+                            className={`flip-auth-req-item${req.met ? 'met' : ''}`}
                           >
                             <span className="flip-auth-req-icon">{req.met ? '✓' : '×'}</span>
                             <span>{req.texto}</span>

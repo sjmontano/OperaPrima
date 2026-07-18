@@ -11,8 +11,10 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ProyectosFormModal, type ProyectoFormData } from './ProyectosFormModal'
 import type { Session } from '@supabase/supabase-js'
+import ProyectoExpandido from './ProyectoExpandido'
+import ProyectoDetalleModal from './ProyectoExpandido'
 
-interface DbProyecto {
+export interface DbProyecto {
   id: string
   tipo: 'OPERA_PRIMA' | 'COMUNIDAD' | 'ENTIDAD'
   nombre: string
@@ -105,7 +107,7 @@ export function ProyectosSection({
   const [query, setQuery] = useState('')
   const [tipoFilter, setTipoFilter] = useState<string>('todas')
   const [showForm, setShowForm] = useState(false)
-  const [expandedId, setExpandedId] = useState<string | null>(null)
+  const [selectedProyecto, setSelectedProyecto] = useState<DbProyecto | null>(null)
 
   const filtered = useMemo(() => {
     const q = query.toLowerCase().trim()
@@ -150,23 +152,29 @@ export function ProyectosSection({
 
   const expandAfterAuthRef = useRef<string | null>(null)
 
-  function handleExpandClick(id: string) {
+  function handleExpandClick(proyecto: DbProyecto) {
     if (isEditMode) return
+
     if (!currentUser) {
-      expandAfterAuthRef.current = id
+      expandAfterAuthRef.current = proyecto.id
       auth.open('registro')
       return
     }
-    setExpandedId((prev) => (prev === id ? null : id))
+
+    setSelectedProyecto(proyecto)
   }
 
   useEffect(() => {
     if (currentUser && expandAfterAuthRef.current) {
-      const id = expandAfterAuthRef.current
+      const proyecto = proyectos.find((p) => p.id === expandAfterAuthRef.current)
+
       expandAfterAuthRef.current = null
-      setExpandedId(id)
+
+      if (proyecto) {
+        setSelectedProyecto(proyecto)
+      }
     }
-  }, [currentUser])
+  }, [currentUser, proyectos])
 
   async function createProyecto(data: ProyectoFormData) {
     let imageUrl = ''
@@ -334,7 +342,6 @@ export function ProyectosSection({
                 {filtered.map((proyecto, idx) => {
                   const tStyle = TIPO_STYLES[proyecto.tipo]
                   const accent = CARD_ACCENT[proyecto.tipo]
-                  const isExpanded = expandedId === proyecto.id
                   const daysLeft = daysUntil(proyecto.fechaLimite)
                   const isExpired = daysLeft === 0
 
@@ -346,220 +353,90 @@ export function ProyectosSection({
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ duration: 0.4, delay: (idx % 6) * 0.06 }}
                     >
-                      {/* Card preview */}
-                      {!isExpanded ? (
-                        <div
-                          className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 hover:shadow-[4px_4px_0_#111] hover:ring-[#023047]"
-                          style={{ borderTop: `3px solid ${accent}` }}
-                        >
-                          {isEditMode && currentUser?.rol === 'ADMIN' && (
-                            <button
-                              type="button"
-                              onClick={async () => {
-                                if (
-                                  !window.confirm(
-                                    `¿Eliminar "${proyecto.nombre}"? Esta acción no se puede deshacer.`
-                                  )
+                      <div
+                        className="group relative flex flex-col bg-white ring-2 ring-transparent transition-all duration-200 hover:shadow-[4px_4px_0_#111] hover:ring-[#023047]"
+                        style={{ borderTop: `3px solid ${accent}` }}
+                      >
+                        {isEditMode && currentUser?.rol === 'ADMIN' && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              if (
+                                !window.confirm(
+                                  `¿Eliminar "${proyecto.nombre}"? Esta acción no se puede deshacer.`
                                 )
-                                  return
-                                await deleteProyecto(proyecto.id)
-                              }}
-                              className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#E63946] hover:text-white"
-                              title="Eliminar proyecto"
-                            >
-                              <Trash2 size={13} />
-                            </button>
-                          )}
-                          {proyecto.imagen && (
-                            <div className="relative h-40 overflow-hidden">
-                              <img
-                                src={proyecto.imagen}
-                                alt={proyecto.nombre}
-                                className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
-                              />
-                            </div>
-                          )}
-                          <div className="flex flex-col gap-2 p-5">
-                            <span
-                              className="self-start px-2 py-0.5 text-[0.55rem] font-bold tracking-[0.18em] uppercase"
-                              style={{
-                                color: tStyle.color,
-                                backgroundColor: tStyle.bg,
-                                outline: `1px solid ${tStyle.border}`,
-                              }}
-                            >
-                              {tStyle.label}
+                              )
+                                return
+                              await deleteProyecto(proyecto.id)
+                            }}
+                            className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#E63946] hover:text-white"
+                            title="Eliminar proyecto"
+                          >
+                            <Trash2 size={13} />
+                          </button>
+                        )}
+                        {proyecto.imagen && (
+                          <div className="relative h-40 overflow-hidden">
+                            <img
+                              src={proyecto.imagen}
+                              alt={proyecto.nombre}
+                              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+                            />
+                          </div>
+                        )}
+                        <div className="flex flex-col gap-2 p-5">
+                          <span
+                            className="self-start px-2 py-0.5 text-[0.55rem] font-bold tracking-[0.18em] uppercase"
+                            style={{
+                              color: tStyle.color,
+                              backgroundColor: tStyle.bg,
+                              outline: `1px solid ${tStyle.border}`,
+                            }}
+                          >
+                            {tStyle.label}
+                          </span>
+                          <h3 className="text-sm font-bold tracking-tight text-zinc-900">
+                            {proyecto.nombre}
+                          </h3>
+                          <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">
+                            {proyecto.queBuscan}
+                          </p>
+                          <div className="flex flex-wrap gap-1.5 pt-1">
+                            {proyecto.disciplinas.slice(0, 3).map((d) => (
+                              <span
+                                key={d}
+                                className="text-[0.55rem] font-bold tracking-widest text-zinc-400 uppercase"
+                              >
+                                #{d}
+                              </span>
+                            ))}
+                            {proyecto.disciplinas.length > 3 && (
+                              <span className="text-[0.55rem] text-zinc-400">
+                                +{proyecto.disciplinas.length - 3}
+                              </span>
+                            )}
+                          </div>
+                          <div className="flex items-center gap-4 pt-1 text-[0.65rem] text-zinc-500">
+                            <span className="flex items-center gap-1">
+                              <MapPin size={10} /> {proyecto.ubicacion}
                             </span>
-                            <h3 className="text-sm font-bold tracking-tight text-zinc-900">
-                              {proyecto.nombre}
-                            </h3>
-                            <p className="line-clamp-2 text-xs leading-relaxed text-zinc-500">
-                              {proyecto.queBuscan}
-                            </p>
-                            <div className="flex flex-wrap gap-1.5 pt-1">
-                              {proyecto.disciplinas.slice(0, 3).map((d) => (
-                                <span
-                                  key={d}
-                                  className="text-[0.55rem] font-bold tracking-widest text-zinc-400 uppercase"
-                                >
-                                  #{d}
-                                </span>
-                              ))}
-                              {proyecto.disciplinas.length > 3 && (
-                                <span className="text-[0.55rem] text-zinc-400">
-                                  +{proyecto.disciplinas.length - 3}
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-4 pt-1 text-[0.65rem] text-zinc-500">
-                              <span className="flex items-center gap-1">
-                                <MapPin size={10} /> {proyecto.ubicacion}
-                              </span>
-                              <span
-                                className={`flex items-center gap-1 ${isExpired ? 'text-[#E63946]' : ''}`}
-                              >
-                                <Clock size={10} /> {isExpired ? 'Vencido' : `${daysLeft} días`}
-                              </span>
-                            </div>
-                          </div>
-                          <div className="mt-auto border-t border-zinc-200 px-5 py-3">
-                            <button
-                              type="button"
-                              onClick={() => handleExpandClick(proyecto.id)}
-                              className="w-full border-2 border-zinc-200 py-2 text-[0.6rem] font-bold tracking-widest text-zinc-600 uppercase transition hover:border-[#023047] hover:text-[#023047]"
+                            <span
+                              className={`flex items-center gap-1 ${isExpired ? 'text-[#E63946]' : ''}`}
                             >
-                              {!currentUser ? viewMoreGuestText : viewMoreText}
-                            </button>
+                              <Clock size={10} /> {isExpired ? 'Vencido' : `${daysLeft} días`}
+                            </span>
                           </div>
                         </div>
-                      ) : (
-                        /* Expanded full info */
-                        <div className="col-span-full border-2 border-zinc-900 bg-white shadow-[6px_6px_0_#111]">
-                          <div className="flex items-start justify-between border-b-2 border-zinc-200 p-6">
-                            <div className="flex items-center gap-3">
-                              <span
-                                className="px-2 py-0.5 text-[0.55rem] font-bold tracking-[0.18em] uppercase"
-                                style={{
-                                  color: tStyle.color,
-                                  backgroundColor: tStyle.bg,
-                                  outline: `1px solid ${tStyle.border}`,
-                                }}
-                              >
-                                {tStyle.label}
-                              </span>
-                              <span className="text-[0.6rem] text-zinc-400">
-                                {proyecto.representante}
-                              </span>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => setExpandedId(null)}
-                              className="text-zinc-400 hover:text-zinc-700"
-                            >
-                              <X size={16} />
-                            </button>
-                          </div>
-                          <div className="grid gap-8 p-6 lg:grid-cols-[1.2fr_1fr]">
-                            <div className="space-y-6">
-                              {proyecto.imagen && (
-                                <img
-                                  src={proyecto.imagen}
-                                  alt={proyecto.nombre}
-                                  className="max-h-64 w-full border-2 border-zinc-200 object-cover"
-                                />
-                              )}
-                              <div>
-                                <h3 className="text-2xl font-extrabold text-zinc-900">
-                                  {proyecto.nombre}
-                                </h3>
-                                <p className="mt-1 text-sm text-zinc-500">
-                                  por {proyecto.representante}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="mb-1 text-xs font-bold tracking-widest text-zinc-400 uppercase">
-                                  Descripción
-                                </p>
-                                <p className="text-sm leading-relaxed text-zinc-700">
-                                  {proyecto.descripcion}
-                                </p>
-                              </div>
-                              <div>
-                                <p className="mb-1 text-xs font-bold tracking-widest text-zinc-400 uppercase">
-                                  ¿Qué buscan?
-                                </p>
-                                <p className="text-sm leading-relaxed text-zinc-700">
-                                  {proyecto.queBuscan}
-                                </p>
-                              </div>
-                              {proyecto.requisitos && (
-                                <div>
-                                  <p className="mb-1 text-xs font-bold tracking-widest text-zinc-400 uppercase">
-                                    Requisitos
-                                  </p>
-                                  <p className="text-sm leading-relaxed whitespace-pre-line text-zinc-700">
-                                    {proyecto.requisitos}
-                                  </p>
-                                </div>
-                              )}
-                              {proyecto.proceso && (
-                                <div>
-                                  <p className="mb-1 text-xs font-bold tracking-widest text-zinc-400 uppercase">
-                                    Proceso de postulación
-                                  </p>
-                                  <p className="text-sm leading-relaxed whitespace-pre-line text-zinc-700">
-                                    {proyecto.proceso}
-                                  </p>
-                                </div>
-                              )}
-                            </div>
-                            <div className="space-y-4 lg:border-l-2 lg:border-zinc-200 lg:pl-6">
-                              <div className="space-y-3 border-2 border-zinc-200 p-4">
-                                <div className="flex items-center gap-2 text-sm">
-                                  <CalendarDays size={14} className="text-zinc-400" />
-                                  <span className="text-zinc-700">
-                                    <span className="font-bold">Límite:</span>{' '}
-                                    {new Date(proyecto.fechaLimite).toLocaleDateString('es-CO')}
-                                  </span>
-                                </div>
-                                <div className="flex items-center gap-2 text-sm">
-                                  <MapPin size={14} className="text-zinc-400" />
-                                  <span className="text-zinc-700">{proyecto.ubicacion}</span>
-                                </div>
-                                <div className="flex flex-wrap gap-1.5 pt-1">
-                                  {proyecto.disciplinas.map((d) => (
-                                    <span
-                                      key={d}
-                                      className="border border-zinc-200 px-2 py-0.5 text-[0.55rem] font-bold tracking-widest text-zinc-500 uppercase"
-                                    >
-                                      {d}
-                                    </span>
-                                  ))}
-                                </div>
-                              </div>
-                              <a
-                                href={
-                                  proyecto.contacto.startsWith('http')
-                                    ? proyecto.contacto
-                                    : `mailto:${proyecto.contacto}`
-                                }
-                                onClick={(e) => isEditMode && e.preventDefault()}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="flex items-center justify-center gap-2 border-2 border-[#E63946] bg-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-white uppercase transition hover:bg-white hover:text-[#E63946]"
-                              >
-                                Contactar
-                              </a>
-                              <EditableText
-                                value={contactTermsText}
-                                onSave={(v) => __onFieldChange?.('contactTermsText', v)}
-                                className="text-center text-[0.55rem] leading-relaxed text-zinc-400"
-                                as="p"
-                              />
-                            </div>
-                          </div>
+                        <div className="mt-auto border-t border-zinc-200 px-5 py-3">
+                          <button
+                            type="button"
+                            onClick={() => handleExpandClick(proyecto)}
+                            className="w-full border-2 border-zinc-200 py-2 text-[0.6rem] font-bold tracking-widest text-zinc-600 uppercase transition hover:border-[#023047] hover:text-[#023047]"
+                          >
+                            {!currentUser ? viewMoreGuestText : viewMoreText}
+                          </button>
                         </div>
-                      )}
+                      </div>
                     </motion.div>
                   )
                 })}
@@ -568,6 +445,13 @@ export function ProyectosSection({
           )}
         </div>
       </div>
+      {/* Proyecto expandido modal */}
+      <ProyectoExpandido
+        proyecto={selectedProyecto}
+        open={!!selectedProyecto}
+        onClose={() => setSelectedProyecto(null)}
+        contactTermsText={contactTermsText}
+      />
     </section>
   )
 }

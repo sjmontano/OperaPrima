@@ -135,8 +135,18 @@ export function ComunidadEventsSection({
   }, [events, query])
 
   const loadEvents = useCallback(async () => {
+    const supabase = createClient()
+
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+
     try {
-      const res = await fetch('/api/eventos?tipo=COMUNIDAD')
+      const res = await fetch('/api/eventos?tipo=COMUNIDAD', {
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      })
       if (!res.ok) return
       const data: { eventos: DbEvent[] } = await res.json()
       setDbEvents(data.eventos)
@@ -146,10 +156,30 @@ export function ComunidadEventsSection({
   }, [])
 
   useEffect(() => {
-    fetch('/api/eventos?tipo=COMUNIDAD')
-      .then((r) => r.ok && r.json())
-      .then((d) => d && setDbEvents(d.eventos))
-      .catch(() => {})
+    const cargarEventos = async () => {
+      try {
+        const supabase = createClient()
+
+        const {
+          data: { session },
+        } = await supabase.auth.getSession()
+
+        const res = await fetch('/api/eventos?rol=USUARIO', {
+          headers: {
+            Authorization: session?.access_token ? `Bearer ${session.access_token}` : '',
+          },
+        })
+
+        if (!res.ok) return
+
+        const data = await res.json()
+        setDbEvents(data.eventos)
+      } catch (error) {
+        console.error(error)
+      }
+    }
+
+    cargarEventos()
   }, [])
 
   useEffect(() => {

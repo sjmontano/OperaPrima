@@ -4,6 +4,7 @@ import { Prisma, Rol } from '@prisma/client'
 
 async function getUsuario(req: Request) {
   const token = req.headers.get('Authorization')?.replace('Bearer ', '')
+  console.log('token:', token)
   if (!token) return null
 
   const supabase = await createClient()
@@ -22,6 +23,7 @@ export async function GET(req: Request) {
     const tipoParam = searchParams.get('tipo')
 
     const usuario = await getUsuario(req)
+    console.log('usuario:', usuario)
     const isAuthenticated = !!usuario
 
     const where: Prisma.EventoWhereInput = {}
@@ -36,6 +38,7 @@ export async function GET(req: Request) {
       rawWhere.usuario = { rol: rolParam as Rol }
     }
 
+    console.log('isAuthenticated:', isAuthenticated)
     if (!isAuthenticated) {
       rawWhere.usuario = { ...((rawWhere.usuario as object) || {}), rol: { not: Rol.USUARIO } }
     }

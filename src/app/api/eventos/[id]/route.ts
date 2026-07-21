@@ -174,7 +174,7 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       }
     }
 
-    await prisma.evento.delete({ where: { id } })
+    await prisma.evento.deleteMany({ where: { id } })
 
     return Response.json({ ok: true })
   } catch (error) {

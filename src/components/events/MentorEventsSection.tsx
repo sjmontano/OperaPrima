@@ -130,6 +130,7 @@ export function MentorEventsSection({
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
   const [editData, setEditData] = useState<Partial<EventFormData> | undefined>(undefined)
+  const [deleting, setDeleting] = useState(false)
 
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
@@ -288,25 +289,30 @@ export function MentorEventsSection({
 
   async function deleteEvent() {
     if (!editingEvent) return
-    const supabase = createClient()
-    const {
-      data: { session },
-    } = await supabase.auth.getSession()
-    if (!session) return
+    setDeleting(true)
+    try {
+      const supabase = createClient()
+      const {
+        data: { session },
+      } = await supabase.auth.getSession()
+      if (!session) return
 
-    const res = await fetch(`/api/eventos/${editingEvent.id}`, {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${session.access_token}` },
-    })
+      const res = await fetch(`/api/eventos/${editingEvent.id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
 
-    if (!res.ok) {
-      throw new Error('No se pudo eliminar el evento')
+      if (!res.ok) {
+        throw new Error('No se pudo eliminar el evento')
+      }
+
+      setEditingEvent(null)
+      setEditData(undefined)
+      setShowCreateModal(false)
+      await loadEvents()
+    } finally {
+      setDeleting(false)
     }
-
-    setEditingEvent(null)
-    setEditData(undefined)
-    setShowCreateModal(false)
-    await loadEvents()
   }
 
   function openEdit(event: DbEvent) {
@@ -464,6 +470,7 @@ export function MentorEventsSection({
           }}
           onSubmit={editingEvent ? updateEvent : createEvent}
           onDelete={editingEvent ? deleteEvent : undefined}
+          deleting={deleting}
         />
 
         {/* Events content */}

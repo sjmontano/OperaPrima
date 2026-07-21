@@ -23,6 +23,7 @@ interface Props {
   onClose: () => void
   onSubmit: (data: EventFormData) => Promise<void>
   onDelete?: () => Promise<void>
+  deleting?: boolean
 }
 
 const INITIAL_FORM: EventFormData = {
@@ -47,6 +48,7 @@ export function ComunidadCreateEventModal({
   onClose,
   onSubmit,
   onDelete,
+  deleting,
 }: Props) {
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [loading, setLoading] = useState(false)
@@ -398,9 +400,10 @@ export function ComunidadCreateEventModal({
                 <button
                   type="button"
                   onClick={onDelete}
-                  className="border-2 border-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-[#E63946] uppercase transition hover:bg-[#E63946] hover:text-white"
+                  disabled={deleting}
+                  className="border-2 border-[#E63946] px-6 py-3 text-xs font-bold tracking-widest text-[#E63946] uppercase transition hover:bg-[#E63946] hover:text-white disabled:cursor-not-allowed disabled:opacity-40"
                 >
-                  Eliminar
+                  {deleting ? 'Eliminando...' : 'Eliminar'}
                 </button>
               )}
             </div>

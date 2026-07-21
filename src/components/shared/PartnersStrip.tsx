@@ -204,7 +204,7 @@ export function PartnersStrip({
                           alt={partner.name}
                           onSave={(v) => __onFieldChange?.(`partners.${i}.src`, v)}
                           uploadFolder="partners"
-                          style={{ height: '80px', width: 'auto', maxWidth: '100%' }}
+                          style={{ height: '120px', width: 'auto', maxWidth: '100%' }}
                           className="object-contain opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
                         />
                         <input
@@ -410,7 +410,7 @@ function PartnerItem({
         src={partner.src}
         alt={partner.name}
         onSave={(v) => __onFieldChange?.(`partners.${partnerIndex}.src`, v)}
-        style={{ height: '120px', width: 'auto' }}
+        style={{ height: 'auto', width: '120px' }}
         className="opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0"
       />
     </div>

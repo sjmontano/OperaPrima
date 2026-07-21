@@ -98,8 +98,7 @@ const sectionLinks = [
     title: 'Multimedia',
     description: 'Gestionar imágenes y archivos',
     icon: Image,
-    href: '#',
-    disabled: true,
+    href: '/admin/imagenes',
   },
   {
     title: 'Configuración',

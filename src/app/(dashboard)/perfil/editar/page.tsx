@@ -82,6 +82,7 @@ export default function EditarPerfilPage() {
   const [usuarioId, setUsuarioId] = useState<string | null>(null)
   const [perfilId, setPerfilId] = useState<string | null>(null)
   const [username, setUsername] = useState('')
+  const [newsletter, setNewsletter] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
   const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>({ style: 'lorelei', seed: '' })
@@ -116,6 +117,7 @@ export default function EditarPerfilPage() {
         setUsuarioId(u.id)
         setPerfilId(u.perfil?.id ?? null)
         setUsername(u.username)
+        setNewsletter(u.newsletter ?? false)
         const savedAvatar = u.perfil?.avatar
         if (savedAvatar?.includes('dicebear.com')) {
           try {
@@ -323,6 +325,21 @@ export default function EditarPerfilPage() {
             }),
           })
         }
+      }
+
+      // Save newsletter preference
+      const newsRes = await fetch('/api/auth/newsletter', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+        },
+        body: JSON.stringify({ newsletter }),
+      })
+
+      if (!newsRes.ok) {
+        const err = await newsRes.json()
+        throw new Error(err.error || 'Error al guardar preferencia de newsletter')
       }
 
       setSaved(true)
@@ -669,6 +686,31 @@ export default function EditarPerfilPage() {
                     </div>
                   )}
                 </div>
+              </div>
+
+              {/* Newsletter */}
+              <div className="flex items-center justify-between border-2 border-zinc-200 p-4">
+                <div>
+                  <p className="text-xs font-bold tracking-widest text-[#023047] uppercase">
+                    Newsletter
+                  </p>
+                  <p className="mt-1 text-xs text-zinc-500">
+                    Recibe convocatorias, eventos y novedades en tu correo
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setNewsletter(!newsletter)}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    newsletter ? 'bg-[#023047]' : 'bg-zinc-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block size-5 rounded-full bg-white shadow-sm transition-transform ${
+                      newsletter ? 'translate-x-5' : 'translate-x-0.5'
+                    }`}
+                  />
+                </button>
               </div>
 
               {/* Error / Success */}

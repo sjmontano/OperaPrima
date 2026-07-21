@@ -1,6 +1,8 @@
 ﻿'use client'
 
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { createClient } from '@/lib/supabaseClient'
 import { ArrowRight, Link2, Mail, PlayCircle } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -31,11 +33,32 @@ const SOCIAL_LINKS = [
 // -- Componente --
 export function Footer() {
   const [email, setEmail] = useState('')
+  const [subscribed, setSubscribed] = useState(false)
   const footerRef = useRef<HTMLElement>(null)
+  const authModal = useAuthModal()
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
-    // TODO: conectar con Resend / lista de correos
+    const supabase = createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session) {
+      authModal.open('login')
+      return
+    }
+
+    const res = await fetch('/api/auth/newsletter', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ newsletter: true }),
+    })
+
+    if (!res.ok) return
+    setSubscribed(true)
     setEmail('')
   }
 
@@ -147,23 +170,27 @@ export function Footer() {
               Recibe convocatorias, eventos y novedades directamente en tu correo.
             </TimelineAnimation>
             <TimelineAnimation as="div" animationNum={4} timelineRef={footerRef}>
-              <form onSubmit={handleSubmit} className="relative">
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Tu correo electrónico"
-                  className="w-full border-2 border-white/15 bg-white/8 px-3 py-2 pr-10 text-sm text-white transition-all duration-150 placeholder:text-white/40 hover:border-white/40 hover:shadow-[4px_4px_0_rgba(255,255,255,0.15)] focus:border-[#8ECAE6] focus:shadow-[4px_4px_0_#8ECAE6] focus:outline-none"
-                />
-                <button
-                  type="submit"
-                  aria-label="Suscríbete"
-                  className="absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center bg-[#E63946] text-white transition-colors hover:bg-[#4682B4]"
-                >
-                  <ArrowRight size={14} />
-                </button>
-              </form>
+              {subscribed ? (
+                <p className="text-sm text-[#8ECAE6]">¡Gracias por suscribirte!</p>
+              ) : (
+                <form onSubmit={handleSubmit} className="relative">
+                  <input
+                    type="email"
+                    required
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Tu correo electrónico"
+                    className="w-full border-2 border-white/15 bg-white/8 px-3 py-2 pr-10 text-sm text-white transition-all duration-150 placeholder:text-white/40 hover:border-white/40 hover:shadow-[4px_4px_0_rgba(255,255,255,0.15)] focus:border-[#8ECAE6] focus:shadow-[4px_4px_0_#8ECAE6] focus:outline-none"
+                  />
+                  <button
+                    type="submit"
+                    aria-label="Suscríbete"
+                    className="absolute top-1/2 right-1 flex size-7 -translate-y-1/2 items-center justify-center bg-[#E63946] text-white transition-colors hover:bg-[#4682B4]"
+                  >
+                    <ArrowRight size={14} />
+                  </button>
+                </form>
+              )}
             </TimelineAnimation>
           </div>
         </div>

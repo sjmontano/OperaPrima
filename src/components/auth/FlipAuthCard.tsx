@@ -369,6 +369,8 @@ export function FlipAuthCard({
           gender: s2Gender.trim().toUpperCase(),
 
           rol: 'USUARIO',
+
+          newsletter: s2Newsletter,
         }),
       })
 

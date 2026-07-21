@@ -32,7 +32,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
     fetch('/api/testimonios')
       .then((r) => r.json())
       .then((data) => {
-        const mine = (data.testimonials || []).find(
+        const mine = (data.testimonios || []).find(
           (t: { usuario: { username: string } }) => t.usuario.username === username
         )
         if (mine) {

@@ -75,7 +75,7 @@ export function TestimonialsWall({
     fetch('/api/testimonios')
       .then((r) => r.json())
       .then((data) => {
-        const mapped: Testimonial[] = (data.testimonials || []).map(
+        const mapped: Testimonial[] = (data.testimonios || []).map(
           (t: {
             id: string
             text: string
@@ -94,7 +94,7 @@ export function TestimonialsWall({
             text: t.text,
             avatar:
               t.usuario.perfil?.avatar ||
-              `https://api.dicebear.com/9.x/lorelei/svg?seed=${t.usuario.username}`,
+              `https://api.dicebear.com/10.x/lorelei/svg?seed=${t.usuario.username}`,
             username: t.usuario.username,
           })
         )
@@ -143,7 +143,7 @@ export function TestimonialsWall({
         text: t.text,
         avatar:
           t.usuario.perfil?.avatar ||
-          `https://api.dicebear.com/9.x/lorelei/svg?seed=${t.usuario.username}`,
+          `https://api.dicebear.com/10.x/lorelei/svg?seed=${t.usuario.username}`,
         username: t.usuario.username,
       }
       setDbTestimonials((prev) => [newTestimonial, ...prev])

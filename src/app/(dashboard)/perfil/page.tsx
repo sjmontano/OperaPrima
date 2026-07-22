@@ -7,7 +7,7 @@ import { AdBar } from '@/components/layout/AdBar'
 import { ContentFrame } from '@/components/layout/ContentFrame'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { Gallery } from '@/components/gallery/Gallery'
-import { createClient } from '@/lib/supabaseClient'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -61,33 +61,21 @@ function mapUser(usuario: UsuarioApi): PerfilUsuario {
 }
 
 export default function PerfilPage() {
+  const { currentUser, ready } = useAuthModal()
   const [user, setUser] = useState<PerfilUsuario | null>(null)
   const router = useRouter()
 
   useEffect(() => {
-    async function loadUser() {
-      try {
-        const supabase = createClient()
-        const {
-          data: { session },
-        } = await supabase.auth.getSession()
-        if (!session) {
-          router.replace('/')
-          return
-        }
-        const { access_token } = session
-        const response = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${access_token}` },
-        })
-        if (!response.ok) return
-        const data = await response.json()
-        setUser(mapUser(data.usuario))
-      } catch (error) {
-        console.error(error)
-      }
+    if (!ready) return
+    if (!currentUser) {
+      router.replace('/')
+      return
     }
-    loadUser()
-  }, [router])
+    const id = requestAnimationFrame(() =>
+      setUser(mapUser(currentUser as unknown as Record<string, unknown>))
+    )
+    return () => cancelAnimationFrame(id)
+  }, [currentUser, ready, router])
 
   if (!user)
     return (

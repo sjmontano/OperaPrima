@@ -15,6 +15,7 @@ interface AuthModalContextValue {
   isOpen: boolean
   mode: AuthMode
   currentUser: LocalUser | null
+  ready: boolean
   login: (user: LocalUser) => void
   logout: () => void
   refreshUser: () => Promise<void>
@@ -36,6 +37,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     mode: 'login',
   })
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(null)
+  const [ready, setReady] = useState(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
@@ -51,6 +53,27 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const supabase = createClient()
+
+    // Fetch inicial: ver si hay sesión activa al montar
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (!session) {
+        setReady(true)
+        return
+      }
+
+      fetch('/api/auth/me', {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+      })
+        .then((r) => (r.ok ? r.json() : null))
+        .then((data) => {
+          if (data?.usuario) {
+            setCurrentUser(data.usuario)
+            localStorage.setItem('user', JSON.stringify(data.usuario))
+          }
+        })
+        .catch(() => {})
+        .finally(() => setReady(true))
+    })
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
@@ -135,7 +158,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
 
   return (
     <AuthModalContext.Provider
-      value={{ ...state, open, close, currentUser, login, logout, refreshUser }}
+      value={{ ...state, open, close, ready, currentUser, login, logout, refreshUser }}
     >
       {children}
 

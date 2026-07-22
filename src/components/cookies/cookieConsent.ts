@@ -4,12 +4,14 @@ export interface CookiePreferences {
   essential: boolean
   functional: boolean
   analytics: boolean
+  marketing: boolean
 }
 
 export const DEFAULT_PREFERENCES: CookiePreferences = {
   essential: true,
   functional: false,
   analytics: false,
+  marketing: false,
 }
 
 export function getStoredConsent(): CookiePreferences | null {

@@ -11,6 +11,10 @@ const nextConfig: NextConfig = {
         hostname: 'res.cloudinary.com',
         pathname: '/dxknd9hpx/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'pagead2.googlesyndication.com',
+      },
     ],
   },
 }

@@ -27,6 +27,11 @@ const CATEGORIES: {
     title: 'Analíticas',
     desc: 'Recogen información anónima sobre el uso del sitio para ayudarnos a mejorar.',
   },
+  {
+    key: 'marketing',
+    title: 'Marketing / Publicidad',
+    desc: 'Permiten mostrar anuncios personalizados y medir su rendimiento. Sin esta categoría solo verás anuncios no personalizados.',
+  },
 ]
 
 export function CookieConsentBanner() {
@@ -44,7 +49,12 @@ export function CookieConsentBanner() {
   }, [])
 
   const acceptAll = useCallback(() => {
-    const all: CookiePreferences = { essential: true, functional: true, analytics: true }
+    const all: CookiePreferences = {
+      essential: true,
+      functional: true,
+      analytics: true,
+      marketing: true,
+    }
     saveConsent(all)
     setPrefs(all)
     setVisible(false)

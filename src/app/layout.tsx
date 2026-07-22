@@ -1,3 +1,4 @@
+import { AdSenseScript } from '@/components/ads/AdSenseScript'
 import { AuthModalProvider } from '@/components/auth/AuthModalProvider'
 import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner'
 import { DevLoginToolbar } from '@/components/dev/DevLoginToolbar'
@@ -34,6 +35,7 @@ export default function RootLayout({
       className={`${poppins.variable} ${geistMono.variable} h-full antialiased${process.env.NEXT_PUBLIC_LINES === 'off' ? 'lines-off' : ''}`}
     >
       <body className="flex min-h-full flex-col">
+        <AdSenseScript />
         <AuthModalProvider>
           <EditModeProvider>
             {children}

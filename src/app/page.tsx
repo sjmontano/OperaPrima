@@ -1,4 +1,5 @@
-﻿import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
+﻿import { AdUnit } from '@/components/ads/AdUnit'
+import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { EventsSection } from '@/components/events/EventsSection'
 import { AdBar } from '@/components/layout/AdBar'
@@ -23,14 +24,18 @@ export default function Home() {
           fallback={
             <>
               <HeroCarousel />
+              <AdUnit slot="home-hero-whatis" format="horizontal" />
               <WhatIsSection />
               <EventsSection />
+              <AdUnit slot="home-events-cta" format="horizontal" />
               <ComunidadCTA />
               <TestimonialsWall />
               <PartnersStrip />
+              <AdUnit slot="home-before-footer" format="horizontal" />
             </>
           }
         />
+        <AdUnit slot="home-post-db" format="horizontal" />
         <FloatingEditButton />
       </main>
       <Footer />

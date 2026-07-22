@@ -1,5 +1,6 @@
 'use client'
 
+import { AdUnit } from '@/components/ads/AdUnit'
 import { Footer } from '@/components/layout/Footer'
 import { Navbar } from '@/components/layout/Navbar'
 import { AdBar } from '@/components/layout/AdBar'
@@ -248,6 +249,7 @@ export default function PerfilPage() {
               </section>
             )}
 
+            <AdUnit slot="perfil-gallery-tickets" format="horizontal" />
             <Gallery />
 
             {/* Tickets */}

@@ -55,6 +55,11 @@ const privacySections = [
       'Ópera Prima adopta las medidas técnicas y organizativas necesarias para garantizar la seguridad e integridad de los datos personales, incluyendo el cifrado de conexiones mediante HTTPS, el almacenamiento cifrado de contraseñas, la autenticación segura de usuarios y la monitorización de accesos no autorizados.',
   },
   {
+    title: 'PUBLICIDAD Y GOOGLE ADSENSE',
+    content:
+      'Esta plataforma utiliza Google AdSense, un servicio de publicidad proporcionado por Google LLC ("Google"). Google AdSense utiliza cookies y tecnologías similares para mostrar anuncios basados en las visitas del usuario a este sitio web y a otros sitios en Internet. El uso de cookies por parte de Google AdSense se rige por las políticas de privacidad de Google. Los usuarios pueden gestionar sus preferencias de cookies de publicidad a través del banner de cookies dispuesto en la plataforma, donde pueden aceptar o rechazar la categoría "Marketing / Publicidad". En caso de rechazar esta categoría, se mostrarán anuncios no personalizados o no se mostrarán anuncios, según corresponda. Para más información sobre cómo Google utiliza los datos, consulte la Política de Privacidad de Google disponible en https://policies.google.com/privacy. Los usuarios en el Espacio Económico Europeo (EEE), Reino Unido y Suiza tienen derechos adicionales en relación con la publicidad personalizada conforme al RGPD.',
+  },
+  {
     title: 'RECLAMACIONES',
     content:
       'Si el usuario considera que el tratamiento de sus datos personales infringe la normativa de protección de datos, puede presentar una reclamación ante la Agencia Española de Protección de Datos (AEPD), a través de su sede electrónica o en su dirección postal: Calle de Jorge Juan, 6, 28001 Madrid.',
@@ -75,6 +80,7 @@ const colombiaAnnex: AnnexSection[] = [
       'Los datos personales de ciudadanos colombianos serán tratados conforme a las finalidades descritas en esta Política de Privacidad. Los derechos ARCO (acceso, rectificación, cancelación y oposición) podrán ejercerse mediante comunicación dirigida a Ópera Prima a través de los canales habilitados en la plataforma.',
       'Ópera Prima podrá transferir datos personales de ciudadanos colombianos a países que no proporcionen niveles adecuados de protección de datos, únicamente cuando sea necesario para la ejecución de la relación contractual o cuando el titular haya otorgado su autorización expresa.',
       'La Superintendencia de Industria y Comercio (SIC) es la autoridad de control competente en materia de protección de datos en Colombia, ante quien los titulares pueden presentar quejas por infracciones a la normativa de protección de datos.',
+      'En relación con la publicidad, esta plataforma utiliza Google AdSense que puede recopilar datos de navegación para mostrar anuncios relevantes. Los usuarios colombianos pueden gestionar sus preferencias de publicidad a través del banner de cookies, aceptando o rechazando la categoría "Marketing / Publicidad". Para más información sobre el tratamiento de datos por parte de Google, consulte https://policies.google.com/privacy.',
     ],
   },
 ]

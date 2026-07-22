@@ -1,3 +1,4 @@
+import { AdUnit } from '@/components/ads/AdUnit'
 import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { DisclaimerSection } from '@/components/proyectos/DisclaimerSection'
@@ -26,12 +27,16 @@ export default function ProyectosPage() {
           fallback={
             <>
               <ProyectosLandingSection />
+              <AdUnit slot="tablero-landing-proyectos" format="horizontal" />
               <ProyectosSection />
+              <AdUnit slot="tablero-proyectos-destacados" format="horizontal" />
               <ProyectosDestacados />
               <DisclaimerSection />
+              <AdUnit slot="tablero-before-footer" format="horizontal" />
             </>
           }
         />
+        <AdUnit slot="tablero-post-db" format="horizontal" />
         <FloatingEditButton />
       </main>
       <Footer />

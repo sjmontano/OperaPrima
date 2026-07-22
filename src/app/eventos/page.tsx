@@ -1,3 +1,4 @@
+import { AdUnit } from '@/components/ads/AdUnit'
 import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { ComunidadEventsSection } from '@/components/comunidad/ComunidadEventsSection'
@@ -24,12 +25,15 @@ export default function EventosPage() {
           fallback={
             <>
               <EventsLandingSection />
+              <AdUnit slot="eventos-landing-list" format="horizontal" />
               <div id="proximos">
                 <MentorEventsSection />
               </div>
+              <AdUnit slot="eventos-before-footer" format="horizontal" />
             </>
           }
         />
+        <AdUnit slot="eventos-post-db" format="horizontal" />
         <FloatingEditButton />
       </main>
       <Footer />

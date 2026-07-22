@@ -1,3 +1,4 @@
+import { AdUnit } from '@/components/ads/AdUnit'
 import { ContentFrame } from '@/components/layout/ContentFrame'
 import { ProfileHeader } from '@/components/profile/ProfileHeader'
 import { Footer } from '@/components/layout/Footer'
@@ -136,6 +137,7 @@ export default async function PublicProfilePage({ params }: Props) {
               </section>
             )}
 
+            <AdUnit slot="publicperfil-gallery-testimonials" format="horizontal" />
             <Gallery userId={usuario.id} />
 
             <ProfileTestimonials

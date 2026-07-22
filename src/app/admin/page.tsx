@@ -6,6 +6,7 @@ import { createClient } from '@/lib/supabaseClient'
 import {
   LayoutDashboard,
   Calendar,
+  FolderKanban,
   Users,
   Image,
   Settings,
@@ -74,6 +75,12 @@ const sectionLinks = [
     description: 'Gestionar todos los eventos (CRUD completo)',
     icon: Calendar,
     href: '/admin/eventos',
+  },
+  {
+    title: 'Proyectos',
+    description: 'Gestionar proyectos (CRUD completo)',
+    icon: FolderKanban,
+    href: '/admin/proyectos',
   },
   {
     title: 'Testimonios',

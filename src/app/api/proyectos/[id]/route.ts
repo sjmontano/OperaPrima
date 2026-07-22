@@ -2,6 +2,36 @@ import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabaseClient'
 import { Rol } from '@prisma/client'
 
+export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  try {
+    const { id } = await params
+    const proyecto = await prisma.proyecto.findUnique({
+      where: { id },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            perfil: { select: { avatar: true } },
+          },
+        },
+      },
+    })
+
+    if (!proyecto) {
+      return Response.json({ error: 'Proyecto no encontrado' }, { status: 404 })
+    }
+
+    return Response.json({ proyecto })
+  } catch (error) {
+    console.error(error)
+    return Response.json({ error: 'Error al obtener proyecto' }, { status: 500 })
+  }
+}
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
     const { id } = await params
@@ -33,6 +63,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
         ...(body.disciplinas !== undefined && { disciplinas: body.disciplinas }),
         ...(body.ubicacion !== undefined && { ubicacion: body.ubicacion }),
         ...(body.fechaLimite !== undefined && { fechaLimite: new Date(body.fechaLimite) }),
+        ...(body.tipo !== undefined && { tipo: body.tipo }),
         ...(body.destacado !== undefined && { destacado: body.destacado }),
       },
     })

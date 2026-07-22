@@ -16,6 +16,7 @@ enum Rol {
 enum TipoEvento {
   OPEAR_PRIMA
   COMUNIDAD
+  PROYECTO
 }
 
 enum TipoProyecto {

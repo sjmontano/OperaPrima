@@ -1,14 +1,14 @@
 'use client'
 
+import { EditableImage } from '@/components/editor/EditableImage'
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { useEditMode } from '@/context/EditModeContext'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { TestimonialsWall, type Testimonial } from '@/components/shared/TestimonialsWall'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
-import { ArrowRight, Plus, Trash2 } from 'lucide-react'
+import { ArrowRight, Plus, Search, Trash2, X } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useRef, useState } from 'react'
@@ -260,6 +260,176 @@ function StatNumber({ end }: { end: number }) {
   return <span ref={ref}>{count}</span>
 }
 
+/* ── User linker for team members ── */
+function UserLinkEditor({
+  profilePath,
+  teamIndex,
+  onFieldChange,
+}: {
+  profilePath?: string
+  teamIndex: number
+  onFieldChange: (path: string, value: unknown) => void
+}) {
+  const [open, setOpen] = useState(false)
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<
+    Array<{
+      id: string
+      username: string
+      firstName: string
+      lastName: string
+      perfil: { artisticName?: string; avatar?: string; bio?: string } | null
+    }>
+  >([])
+  const [loading, setLoading] = useState(false)
+
+  useEffect(() => {
+    if (query.length < 2) return
+    const timer = setTimeout(async () => {
+      setLoading(true)
+      try {
+        const res = await fetch(`/api/usuarios?q=${encodeURIComponent(query)}`)
+        if (res.ok) {
+          const data = await res.json()
+          setResults(data.usuarios || [])
+        }
+      } catch {
+        // ignore
+      }
+      setLoading(false)
+    }, 300)
+    return () => clearTimeout(timer)
+  }, [query])
+
+  const handleSelect = (usuario: (typeof results)[number]) => {
+    const name = usuario.perfil?.artisticName || `${usuario.firstName} ${usuario.lastName}`
+    const bio = usuario.perfil?.bio || ''
+    const image = usuario.perfil?.avatar || ''
+
+    onFieldChange(`team.${teamIndex}.linkedUserId`, usuario.id)
+    onFieldChange(`team.${teamIndex}.profilePath`, `/perfil/${usuario.username}`)
+    onFieldChange(`team.${teamIndex}.name`, name)
+    onFieldChange(`team.${teamIndex}.bio`, bio)
+    if (image) onFieldChange(`team.${teamIndex}.image`, image)
+
+    setOpen(false)
+    setQuery('')
+    setResults([])
+  }
+
+  const handleUnlink = () => {
+    onFieldChange(`team.${teamIndex}.linkedUserId`, '')
+    onFieldChange(`team.${teamIndex}.profilePath`, '')
+  }
+
+  if (profilePath) {
+    return (
+      <div className="mt-2 flex items-center gap-2">
+        <span className="text-[10px] text-[#8ECAE6]">Vinculado a {profilePath}</span>
+        <button
+          type="button"
+          onClick={handleUnlink}
+          className="rounded-sm border border-zinc-700 px-2 py-0.5 text-[9px] font-bold tracking-wider text-zinc-400 uppercase transition hover:border-[#E63946] hover:text-[#E63946]"
+        >
+          Desvincular
+        </button>
+      </div>
+    )
+  }
+
+  return (
+    <div className="mt-2">
+      <button
+        type="button"
+        onClick={() => setOpen(true)}
+        className="inline-flex items-center gap-1.5 rounded-sm border border-dashed border-zinc-600 px-3 py-1 text-[10px] font-bold tracking-wider text-zinc-400 uppercase transition hover:border-[#8ECAE6] hover:text-[#8ECAE6]"
+      >
+        <Search size={11} />
+        Vincular perfil
+      </button>
+      {open && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+          onClick={() => {
+            setOpen(false)
+            setQuery('')
+            setResults([])
+          }}
+        >
+          <div
+            className="w-96 rounded-sm bg-[#1a1a1a] p-5 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between">
+              <p className="text-[10px] font-bold tracking-widest text-zinc-400 uppercase">
+                Vincular perfil
+              </p>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false)
+                  setQuery('')
+                  setResults([])
+                }}
+                className="rounded-sm p-1 text-zinc-500 hover:bg-zinc-800 hover:text-zinc-300"
+              >
+                <X size={14} />
+              </button>
+            </div>
+            <input
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Buscar por nombre o @username..."
+              className="mb-3 w-full border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-white outline-none focus:border-[#8ECAE6]"
+              autoFocus
+            />
+            {loading && (
+              <div className="flex items-center gap-2 py-2 text-xs text-zinc-500">
+                <div className="size-3 animate-spin rounded-full border-2 border-zinc-600 border-t-white" />
+                Buscando…
+              </div>
+            )}
+            <div className="max-h-60 space-y-1 overflow-y-auto">
+              {results.map((u) => (
+                <button
+                  key={u.id}
+                  type="button"
+                  onClick={() => handleSelect(u)}
+                  className="flex w-full items-center gap-3 px-3 py-2 text-left text-sm text-zinc-300 transition hover:bg-zinc-800"
+                >
+                  <img
+                    src={
+                      u.perfil?.avatar ||
+                      'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=40&h=40&fit=crop'
+                    }
+                    alt=""
+                    className="size-8 shrink-0 rounded-full object-cover"
+                  />
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-medium text-white">
+                      {u.perfil?.artisticName || `${u.firstName} ${u.lastName}`}
+                    </p>
+                    <p className="truncate text-xs text-zinc-500">@{u.username}</p>
+                  </div>
+                </button>
+              ))}
+              {!loading && query.length >= 2 && results.length === 0 && (
+                <p className="py-4 text-center text-xs text-zinc-500">Sin resultados</p>
+              )}
+              {query.length < 2 && !loading && (
+                <p className="py-4 text-center text-xs text-zinc-500">
+                  Escribe al menos 2 caracteres
+                </p>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export function SobreLandingSection({
   heroEyebrow = 'Sobre la plataforma',
   heroHeading = 'Ópera <span class="text-[#F65B7F]">Prima</span>',
@@ -308,7 +478,14 @@ export function SobreLandingSection({
   equipoTitle?: string
   servicios?: Array<{ eyebrow: string; title: string; desc: string }>
   valores?: Array<{ name: string; desc: string }>
-  team?: Array<{ name: string; role: string; bio: string; image: string }>
+  team?: Array<{
+    name: string
+    role: string
+    bio: string
+    image: string
+    linkedUserId?: string
+    profilePath?: string
+  }>
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -368,6 +545,8 @@ export function SobreLandingSection({
         bio: 'Biografía del miembro.',
         image:
           'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=400&h=400&auto=format&fit=crop&q=80',
+        linkedUserId: '',
+        profilePath: '',
       },
     ]
     setLocalTeam(next)
@@ -757,34 +936,19 @@ export function SobreLandingSection({
             </div>
           )}
           <div className="grid grid-cols-1 gap-12 lg:grid-cols-2 lg:gap-20">
-            {localTeam.map((member, i) => (
-              <div key={i} className="group relative">
-                {isEditMode && (
-                  <button
-                    type="button"
-                    onClick={() => handleDeleteTeam(i)}
-                    className="absolute -top-2 -right-2 z-20 flex size-7 items-center justify-center bg-white text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
-                    title="Eliminar miembro"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
-                <TimelineAnimation
-                  as="article"
-                  animationNum={18 + i}
-                  timelineRef={sectionRef}
-                  className="group flex flex-col gap-6 transition-all duration-200 sm:flex-row"
-                >
+            {localTeam.map((member, i) => {
+              const memberContent = (
+                <>
                   <div className="relative shrink-0 overflow-hidden border-2 border-white/10">
-                    <Image
+                    <EditableImage
                       src={member.image}
                       alt={member.name}
+                      onSave={(url) => __onFieldChange?.(`team.${i}.image`, url)}
+                      className="h-48 w-full object-cover transition-all duration-300 group-hover:scale-105 sm:h-52 sm:w-52"
                       width={200}
                       height={200}
-                      unoptimized
-                      className="h-48 w-full object-cover transition-all duration-300 group-hover:scale-105 sm:h-52 sm:w-52"
                     />
-                    <div className="absolute inset-0 transition-all duration-300 group-hover:bg-white/5" />
+                    <div className="pointer-events-none absolute inset-0 transition-all duration-300 group-hover:bg-white/5" />
                   </div>
                   <div className="flex flex-col justify-center">
                     <EditableText
@@ -805,10 +969,53 @@ export function SobreLandingSection({
                       className="mt-3 text-sm leading-relaxed text-white/65"
                       as="p"
                     />
+                    {isEditMode && (
+                      <UserLinkEditor
+                        profilePath={member.profilePath}
+                        teamIndex={i}
+                        onFieldChange={(path, val) => __onFieldChange?.(path, val)}
+                      />
+                    )}
                   </div>
-                </TimelineAnimation>
-              </div>
-            ))}
+                </>
+              )
+
+              return (
+                <div key={i} className="group relative">
+                  {isEditMode && (
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteTeam(i)}
+                      className="absolute -top-2 -right-2 z-20 flex size-7 items-center justify-center bg-white text-zinc-500 shadow-sm transition-all hover:bg-[#E63946] hover:text-white"
+                      title="Eliminar miembro"
+                    >
+                      <Trash2 size={13} />
+                    </button>
+                  )}
+                  {member.profilePath && !isEditMode ? (
+                    <Link href={member.profilePath} className="block">
+                      <TimelineAnimation
+                        as="article"
+                        animationNum={18 + i}
+                        timelineRef={sectionRef}
+                        className="group flex flex-col gap-6 transition-all duration-200 sm:flex-row"
+                      >
+                        {memberContent}
+                      </TimelineAnimation>
+                    </Link>
+                  ) : (
+                    <TimelineAnimation
+                      as="article"
+                      animationNum={18 + i}
+                      timelineRef={sectionRef}
+                      className="group flex flex-col gap-6 transition-all duration-200 sm:flex-row"
+                    >
+                      {memberContent}
+                    </TimelineAnimation>
+                  )}
+                </div>
+              )
+            })}
           </div>
         </div>
       </div>

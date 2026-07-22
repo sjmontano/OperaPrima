@@ -739,6 +739,8 @@ export const BLOCK_SCHEMAS: Record<string, BlockSchema> = {
           { key: 'role', label: 'Rol', type: 'text' },
           { key: 'bio', label: 'Biografía', type: 'richtext' },
           { key: 'image', label: 'Imagen', type: 'image' },
+          { key: 'linkedUserId', label: 'ID usuario vinculado', type: 'text' },
+          { key: 'profilePath', label: 'Ruta de perfil', type: 'text' },
         ],
       },
     ],

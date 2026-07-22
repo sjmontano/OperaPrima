@@ -21,7 +21,7 @@ const NAV_LINKS = [
   { label: 'Talleres y Eventos', href: '/eventos' },
   { label: 'Comunidad', href: '/comunidad' },
   { label: 'Tablero', href: '/tablero' },
-  { label: 'Contacto', href: '/contacto' },
+  { label: 'Contacto', href: `mailto:${FOOTER_CONFIG.email}` },
 ]
 
 const SOCIAL_LINKS = [
@@ -107,15 +107,16 @@ export function Footer() {
             >
               {FOOTER_CONFIG.tagline}
             </TimelineAnimation>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap gap-3">
               {SOCIAL_LINKS.map(({ label, href, icon: Icon }) => (
                 <a
                   key={label}
                   href={href}
                   aria-label={label}
-                  className="text-white/40 transition-colors hover:text-[#8ECAE6]"
+                  className="flex items-center gap-2 rounded-sm border border-white/10 px-3 py-2 text-xs font-bold tracking-wider text-white/50 uppercase transition-all hover:border-[#8ECAE6] hover:text-[#8ECAE6]"
                 >
-                  <Icon size={24} />
+                  <Icon size={14} />
+                  {label}
                 </a>
               ))}
             </div>
@@ -149,6 +150,12 @@ export function Footer() {
                 ))}
               </TimelineAnimation>
             </nav>
+            <a
+              href={`mailto:${FOOTER_CONFIG.email}`}
+              className="block text-xs text-white/30 transition-colors hover:text-[#8ECAE6]"
+            >
+              {FOOTER_CONFIG.email}
+            </a>
           </div>
 
           {/* -- Newsletter -- */}
@@ -220,7 +227,17 @@ export function Footer() {
               ))}
             </div>
           </div>
-          <span className="text-xs text-white/40">Hecho con intención · Colombia</span>
+          <span className="text-xs text-white/40">
+            Hecho con{' '}
+            <a
+              href="https://mipango.co"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline underline-offset-2 transition-colors hover:text-[#8ECAE6]"
+            >
+              mipango.co
+            </a>
+          </span>
         </TimelineAnimation>
       </div>
     </footer>

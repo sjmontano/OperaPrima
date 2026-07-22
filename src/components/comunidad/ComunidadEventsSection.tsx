@@ -11,7 +11,6 @@ import Image from 'next/image'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { ComunidadCreateEventModal, type EventFormData } from './ComunidadCreateEventModal'
-import type { Session } from '@supabase/supabase-js'
 import { EventModal } from '../events/EventModal'
 
 interface DbEvent {
@@ -111,14 +110,13 @@ export function ComunidadEventsSection({
   const sectionRef = useRef<HTMLElement>(null)
   const authModal = useAuthModal()
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+  const currentUser = authModal.currentUser as CurrentUser | null
   const [query, setQuery] = useState('')
   const [viewMode, setViewMode] = useState<'cards' | 'calendar'>('cards')
   const [showCreateModal, setShowCreateModal] = useState(false)
   const [editingEvent, setEditingEvent] = useState<DbEvent | null>(null)
   const [editData, setEditData] = useState<Partial<EventFormData> | undefined>(undefined)
   const [deleting, setDeleting] = useState(false)
-
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null)
 
   const events = useMemo(() => dbEvents.map(mapEvent), [dbEvents])
@@ -181,34 +179,6 @@ export function ComunidadEventsSection({
     }
 
     cargarEventos()
-  }, [])
-
-  useEffect(() => {
-    const supabase = createClient()
-    async function loadUser(session: Session | null) {
-      if (!session) {
-        setCurrentUser(null)
-        return
-      }
-      try {
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        })
-        if (!res.ok) {
-          setCurrentUser(null)
-          return
-        }
-        const data = await res.json()
-        setCurrentUser(data.usuario)
-      } catch {
-        setCurrentUser(null)
-      }
-    }
-    supabase.auth.getSession().then(({ data }) => loadUser(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => loadUser(session))
-    return () => {
-      listener.subscription.unsubscribe()
-    }
   }, [])
 
   async function createEvent(data: EventFormData) {

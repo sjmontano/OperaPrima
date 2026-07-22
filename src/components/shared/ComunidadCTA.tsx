@@ -70,7 +70,7 @@ export function ComunidadCTA({
   headline = 'Tu obra merece más público, más oportunidades.',
   description = 'Opera Prima conecta artistas emergentes con mentores, talleres, convocatorias y una comunidad que entiende lo que significa construir una carrera artística desde cero.',
   stats = DEFAULT_STATS,
-  primaryCta = { label: 'Comenzar gratis', href: '/registro' },
+  primaryCta = { label: 'Comenzar gratis', href: '/auth' },
   secondaryCta = { label: 'Conocer más', href: '/sobre' },
   isEditMode,
   __onFieldChange,

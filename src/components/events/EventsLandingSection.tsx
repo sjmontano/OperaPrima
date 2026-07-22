@@ -111,7 +111,7 @@ export function EventsLandingSection({
 }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { isEditMode } = useEditMode()
-  const { currentUser } = useAuthModal()
+  const { currentUser, open: openAuth } = useAuthModal()
   const router = useRouter()
   const visibleWord = useRotatingTypewriter(typewriterWords)
 
@@ -302,7 +302,7 @@ export function EventsLandingSection({
                 onClick={() => {
                   if (isEditMode) return
                   if (currentUser) router.push('/eventos')
-                  else router.push('/registro')
+                  else openAuth('registro')
                 }}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-7 py-3 text-xs font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >

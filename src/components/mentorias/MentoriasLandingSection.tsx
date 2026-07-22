@@ -172,6 +172,7 @@ export function MentoriasLandingSection({
   const mentores: MentorCard[] = mentorDBs.map((m) => ({
     id: m.id,
     usuarioId: m.usuarioId,
+    username: m.usuario?.username || null,
     name: m.name,
     title: m.title,
     location: m.location,

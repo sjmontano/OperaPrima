@@ -145,6 +145,7 @@ export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
                       height={24}
                       className="size-6 shrink-0 rounded-full object-cover"
                       unoptimized
+                      priority
                     />
                   ) : (
                     <span

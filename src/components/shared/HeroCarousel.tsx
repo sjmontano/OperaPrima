@@ -104,7 +104,13 @@ export function HeroCarousel({
 
   const getEffectiveCta = useCallback(
     (cta: { label: string; href: string }) => {
-      if (isEditMode || !currentUser) return cta
+      if (isEditMode) return cta
+      if (!currentUser) {
+        if (cta.href === '/registro' || cta.href === '/login') {
+          return { ...cta, href: '/auth' }
+        }
+        return cta
+      }
       const override = OVERRIDE_LABELS[cta.href as keyof typeof OVERRIDE_LABELS]
       return override ?? cta
     },

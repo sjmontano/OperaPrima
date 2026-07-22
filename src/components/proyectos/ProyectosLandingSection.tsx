@@ -53,7 +53,7 @@ export function ProyectosLandingSection({
 }) {
   const sectionRef = useRef<HTMLElement>(null)
   const { isEditMode } = useEditMode()
-  const { currentUser } = useAuthModal()
+  const { currentUser, open: openAuth } = useAuthModal()
   const router = useRouter()
 
   return (
@@ -153,7 +153,7 @@ export function ProyectosLandingSection({
                   onClick={() => {
                     if (isEditMode) return
                     if (currentUser) router.push('/comunidad?tab=proyectos')
-                    else router.push('/registro')
+                    else openAuth('registro')
                   }}
                   className="inline-flex items-center justify-center gap-2 border-2 border-white/20 bg-white/5 px-7 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-white"
                 >

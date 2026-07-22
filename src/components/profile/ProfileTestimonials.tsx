@@ -1,5 +1,6 @@
 'use client'
 
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { createClient } from '@/lib/supabaseClient'
 import { MessageCircle } from 'lucide-react'
 import Link from 'next/link'
@@ -19,6 +20,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
   const [submitting, setSubmitting] = useState(false)
   const [session, setSession] = useState<{ user: { id: string } } | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
+  const { open: openAuth } = useAuthModal()
   const router = useRouter()
 
   useEffect(() => {
@@ -52,7 +54,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
       data: { session: s },
     } = await supabase.auth.getSession()
     if (!s) {
-      router.push('/login')
+      openAuth('login')
       return
     }
 
@@ -116,7 +118,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
             <button
               onClick={() => {
                 if (!session) {
-                  router.push('/login')
+                  openAuth('login')
                   return
                 }
                 setShowForm(true)

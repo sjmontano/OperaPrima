@@ -1,7 +1,6 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
-import { ROUTES } from '@/constants'
 import { Pencil, X } from 'lucide-react'
 import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
@@ -9,6 +8,7 @@ import { useEffect, useRef, useState } from 'react'
 export interface MentorCard {
   id: string
   usuarioId: string | null
+  username: string | null
   name: string
   title: string
   location: string
@@ -79,28 +79,36 @@ export function ExpandingMentorsGallery({
 
   useEffect(() => {
     if (!activeMentorId) {
-      setSelectedImageIndex(0)
-      return
+      const id = requestAnimationFrame(() => setSelectedImageIndex(0))
+      return () => cancelAnimationFrame(id)
     }
     const mentor = mentors.find((m) => m.id === activeMentorId)
     const photos = mentor ? getMentorPhotos(mentor) : []
-    setSelectedImageIndex(0)
-    setImageVisible(true)
+    const id = requestAnimationFrame(() => {
+      setSelectedImageIndex(0)
+      setImageVisible(true)
+    })
 
-    if (photos.length <= 1) return
+    if (photos.length <= 1) return () => cancelAnimationFrame(id)
 
     const interval = window.setInterval(() => {
       setSelectedImageIndex((index) => (index + 1) % photos.length)
     }, 3500)
 
-    return () => window.clearInterval(interval)
+    return () => {
+      cancelAnimationFrame(id)
+      window.clearInterval(interval)
+    }
   }, [activeMentorId, mentors])
 
   useEffect(() => {
     if (!activeMentorId) return
-    setImageVisible(false)
+    const raf = requestAnimationFrame(() => setImageVisible(false))
     const timeout = window.setTimeout(() => setImageVisible(true), 50)
-    return () => window.clearTimeout(timeout)
+    return () => {
+      cancelAnimationFrame(raf)
+      window.clearTimeout(timeout)
+    }
   }, [activeMentorId, selectedImageIndex])
 
   const getColumnFlex = (mentorId: string) => {
@@ -392,13 +400,15 @@ export function ExpandingMentorsGallery({
                   >
                     Reservar mentoría
                   </button>
-                  <Link
-                    href={ROUTES.MENTOR_PROFILE(selectedMentor.usuarioId || selectedMentor.id)}
-                    onClick={handleCloseModal}
-                    className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
-                  >
-                    Ver perfil
-                  </Link>
+                  {selectedMentor.username ? (
+                    <Link
+                      href={`/perfil/${selectedMentor.username}`}
+                      onClick={handleCloseModal}
+                      className="inline-flex w-full items-center justify-center rounded-none border-2 border-white/20 bg-transparent px-6 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 ease-out hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#8ECAE6] hover:text-[#8ECAE6] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
+                    >
+                      Ver perfil
+                    </Link>
+                  ) : null}
                 </div>
               </div>
             </div>

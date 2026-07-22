@@ -5,14 +5,11 @@ import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { useEditMode } from '@/context/EditModeContext'
 import { useInlineCrud } from '@/lib/useInlineCrud'
-import { createClient } from '@/lib/supabaseClient'
-import { CalendarDays, Clock, MapPin, Plus, Search, Trash2, X } from 'lucide-react'
+import { Clock, MapPin, Plus, Search, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { ProyectosFormModal, type ProyectoFormData } from './ProyectosFormModal'
-import type { Session } from '@supabase/supabase-js'
 import ProyectoExpandido from './ProyectoExpandido'
-import ProyectoDetalleModal from './ProyectoExpandido'
 
 export interface DbProyecto {
   id: string
@@ -98,12 +95,10 @@ export function ProyectosSection({
   const { isEditMode } = useEditMode()
   const {
     items: proyectos,
-    loading,
     addItem: addProyecto,
     deleteItem: deleteProyecto,
   } = useInlineCrud<DbProyecto>({ endpoint: '/api/proyectos' })
-  const proyectosLoaded = !loading
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+  const currentUser = auth.currentUser as CurrentUser | null
   const [query, setQuery] = useState('')
   const [tipoFilter, setTipoFilter] = useState<string>('todas')
   const [showForm, setShowForm] = useState(false)
@@ -121,34 +116,6 @@ export function ProyectosSection({
       return matchQuery && matchTipo
     })
   }, [proyectos, query, tipoFilter])
-
-  useEffect(() => {
-    const supabase = createClient()
-    async function loadUser(session: Session | null) {
-      if (!session) {
-        setCurrentUser(null)
-        return
-      }
-      try {
-        const res = await fetch('/api/auth/me', {
-          headers: { Authorization: `Bearer ${session.access_token}` },
-        })
-        if (!res.ok) {
-          setCurrentUser(null)
-          return
-        }
-        const data = await res.json()
-        setCurrentUser(data.usuario)
-      } catch {
-        setCurrentUser(null)
-      }
-    }
-    supabase.auth.getSession().then(({ data }) => loadUser(data.session))
-    const { data: listener } = supabase.auth.onAuthStateChange((_, session) => loadUser(session))
-    return () => {
-      listener.subscription.unsubscribe()
-    }
-  }, [])
 
   const expandAfterAuthRef = useRef<string | null>(null)
 

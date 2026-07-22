@@ -4,6 +4,7 @@ import { EditableImage } from '@/components/editor/EditableImage'
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { createClient } from '@/lib/supabaseClient'
 import { MessageCircle, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
@@ -60,6 +61,7 @@ export function TestimonialsWall({
   const [submitting, setSubmitting] = useState(false)
   const [session, setSession] = useState<{ user: { id: string } } | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
+  const { open: openAuth } = useAuthModal()
   const router = useRouter()
 
   useEffect(() => {
@@ -116,7 +118,7 @@ export function TestimonialsWall({
       data: { session: s },
     } = await supabase.auth.getSession()
     if (!s) {
-      router.push('/login')
+      openAuth('login')
       return
     }
 
@@ -193,7 +195,7 @@ export function TestimonialsWall({
               <button
                 onClick={() => {
                   if (!session) {
-                    router.push('/login')
+                    openAuth('login')
                     return
                   }
                   setShowModal(true)

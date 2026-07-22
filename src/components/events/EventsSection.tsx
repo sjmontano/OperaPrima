@@ -12,11 +12,11 @@ import {
   Search,
   X,
 } from 'lucide-react'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import Image from 'next/image'
 import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
 import { CreateEventModal, EventFormData } from './CreateEventModal'
-import { Session } from '@supabase/supabase-js'
 import { EventModal } from './EventModal'
 
 // -- Types --
@@ -360,7 +360,7 @@ export function EventsSection() {
   const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null)
+  const { currentUser } = useAuthModal()
   const [showCreateModal, setShowCreateModal] = useState(false)
 
   const events = useMemo(() => dbEvents.map(mapEvent), [dbEvents])
@@ -451,51 +451,6 @@ export function EventsSection() {
 
   useEffect(() => {
     loadEvents()
-  }, [])
-
-  useEffect(() => {
-    const supabase = createClient()
-
-    async function loadCurrentUser(session: Session | null) {
-      if (!session) {
-        setCurrentUser(null)
-
-        return
-      }
-
-      try {
-        const response = await fetch('/api/auth/me', {
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-        })
-
-        if (!response.ok) {
-          setCurrentUser(null)
-          return
-        }
-
-        const data = await response.json()
-        setCurrentUser(data.usuario)
-      } catch (error: unknown) {
-        console.error(error)
-        setCurrentUser(null)
-      }
-    }
-
-    // Cargar la sesión actual al entrar a la página
-    supabase.auth.getSession().then(({ data }) => {
-      loadCurrentUser(data.session)
-    })
-
-    // Escuchar cambios de autenticación
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      loadCurrentUser(session)
-    })
-
-    return () => {
-      listener.subscription.unsubscribe()
-    }
   }, [])
 
   async function createEvent(data: EventFormData) {
@@ -637,7 +592,7 @@ export function EventsSection() {
   }
 
   return (
-    <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
+    <section ref={sectionRef} className="bg-background relative w-full border-b-2 border-zinc-200">
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         {selectedEvent && (
           <EventModal

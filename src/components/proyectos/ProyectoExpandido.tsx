@@ -64,7 +64,7 @@ export default function ProyectoDetalleModal({
                   <img
                     src={proyecto.imagen}
                     alt={proyecto.nombre}
-                    className="max-h-72 w-full border-2 border-zinc-200 object-cover"
+                    className="w-full border-2 border-zinc-200 object-cover"
                   />
                 )}
 

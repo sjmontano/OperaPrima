@@ -33,7 +33,7 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${poppins.variable} ${geistMono.variable} h-full antialiased${process.env.NEXT_PUBLIC_LINES === 'off' ? 'lines-off' : ''}`}
+      className={`${poppins.variable} ${geistMono.variable} relative h-full antialiased${process.env.NEXT_PUBLIC_LINES === 'off' ? 'lines-off' : ''}`}
     >
       <body className="relative flex min-h-full flex-col">
         <AdSenseScript />

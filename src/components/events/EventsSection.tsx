@@ -257,7 +257,6 @@ function EventCard({
   animationIndex?: number
   onClick?: () => void
 }) {
-  console.log(event)
   const c = CAT_STYLES[event.categoryVariant]
   const delay = (animationIndex % LOAD_MORE_STEP) * 0.07
 

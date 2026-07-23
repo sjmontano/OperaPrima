@@ -2,7 +2,7 @@
 
 import type { LocalUser } from '@/lib/localUsers'
 import { AnimatePresence, motion } from 'motion/react'
-import { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react'
 import { FlipAuthCard } from './FlipAuthCard'
 import { createClient } from '@/lib/supabaseClient'
 
@@ -38,6 +38,7 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   })
   const [currentUser, setCurrentUser] = useState<LocalUser | null>(null)
   const [ready, setReady] = useState(false)
+  const initialHandled = useRef(false)
 
   useEffect(() => {
     const stored = localStorage.getItem('user')
@@ -55,6 +56,14 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
     const supabase = createClient()
 
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
+      if (_event === 'INITIAL_SESSION') {
+        if (initialHandled.current) return
+        initialHandled.current = true
+        queueMicrotask(() => {
+          initialHandled.current = false
+        })
+      }
+
       if (!session) {
         setCurrentUser(null)
         setReady(true)

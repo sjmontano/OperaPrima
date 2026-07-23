@@ -4,6 +4,7 @@ import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { useApi } from '@/lib/useApi'
 import { ArrowRight, Globe, Palette, Users, type LucideIcon } from 'lucide-react'
 import { motion, useInView } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -86,40 +87,38 @@ export function ComunidadCTA({
 }) {
   const ref = useRef<HTMLElement>(null)
   const { currentUser } = useAuthModal()
-  const [liveStats, setLiveStats] = useState<CTAStat[] | null>(null)
+  const { data: statsData } = useApi<{
+    totalUsuarios?: number
+    totalEventos?: number
+    paises?: number
+  }>('stats-public', '/api/stats/public')
 
-  useEffect(() => {
-    fetch('/api/stats/public')
-      .then((r) => r.json())
-      .then((data) => {
-        if (data.totalUsuarios !== undefined) {
-          setLiveStats([
-            {
-              icon: 'Users',
-              end: data.totalUsuarios,
-              thousands: false,
-              suffix: '',
-              label: 'artistas registrados',
-            },
-            {
-              icon: 'Palette',
-              end: data.totalEventos,
-              thousands: false,
-              suffix: '',
-              label: 'eventos publicados',
-            },
-            {
-              icon: 'Globe',
-              end: data.paises,
-              thousands: false,
-              suffix: '',
-              label: 'países alcanzados',
-            },
-          ])
-        }
-      })
-      .catch(() => {})
-  }, [])
+  const liveStats: CTAStat[] | null = useMemo(() => {
+    if (!statsData || statsData.totalUsuarios === undefined) return null
+    return [
+      {
+        icon: 'Users',
+        end: statsData.totalUsuarios,
+        thousands: false,
+        suffix: '',
+        label: 'artistas registrados',
+      },
+      {
+        icon: 'Palette',
+        end: statsData.totalEventos ?? 0,
+        thousands: false,
+        suffix: '',
+        label: 'eventos publicados',
+      },
+      {
+        icon: 'Globe',
+        end: statsData.paises ?? 0,
+        thousands: false,
+        suffix: '',
+        label: 'países alcanzados',
+      },
+    ]
+  }, [statsData])
 
   const displayStats = liveStats ?? stats
 

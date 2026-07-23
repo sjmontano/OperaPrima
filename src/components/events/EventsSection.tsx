@@ -13,6 +13,8 @@ import {
   X,
 } from 'lucide-react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { useApi } from '@/lib/useApi'
+import { useQueryClient } from '@tanstack/react-query'
 import { AnimatePresence, motion, useScroll, useTransform } from 'motion/react'
 import Image from 'next/image'
 import { type ElementType, useEffect, useMemo, useRef, useState } from 'react'
@@ -357,8 +359,13 @@ export function EventsSection() {
 
   const [formError, setFormError] = useState('')
 
-  const [dbEvents, setDbEvents] = useState<DbEvent[]>([])
-  const [isLoading, setIsLoading] = useState(true)
+  const { data: apiData, isLoading } = useApi<{ eventos: DbEvent[] }>(
+    'eventos-mentor',
+    '/api/eventos?rol=MENTOR'
+  )
+  const queryClient = useQueryClient()
+
+  const dbEvents = apiData?.eventos ?? []
 
   const { currentUser } = useAuthModal()
   const [showCreateModal, setShowCreateModal] = useState(false)
@@ -430,28 +437,6 @@ export function EventsSection() {
     setQuery(val)
     setVisibleCount(INITIAL_VISIBLE)
   }
-
-  async function loadEvents() {
-    try {
-      const response = await fetch('/api/eventos?rol=MENTOR')
-
-      if (!response.ok) return
-
-      const data: {
-        eventos: DbEvent[]
-      } = await response.json()
-
-      setDbEvents(data.eventos)
-    } catch (error: unknown) {
-      console.error(error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
-
-  useEffect(() => {
-    loadEvents()
-  }, [])
 
   async function createEvent(data: EventFormData) {
     try {
@@ -583,7 +568,7 @@ export function EventsSection() {
 
       setShowCreateModal(false)
 
-      await loadEvents()
+      queryClient.invalidateQueries({ queryKey: ['eventos-mentor'] })
     } catch (error) {
       console.error(error)
 

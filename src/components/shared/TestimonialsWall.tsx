@@ -6,9 +6,10 @@ import { EditableText } from '@/components/editor/EditableText'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { createClient } from '@/lib/supabaseClient'
+import { useApi } from '@/lib/useApi'
 import { MessageCircle, X } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 export const TESTIMONIAL_WALL_CONFIG = {
   cardWidth: 320,
@@ -54,57 +55,44 @@ export function TestimonialsWall({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const [isCardHovered, setIsCardHovered] = useState(false)
-  const [dbTestimonials, setDbTestimonials] = useState<Testimonial[]>([])
-  const [loading, setLoading] = useState(true)
+  const { data: apiData, isLoading: loading } = useApi<{ testimonios: unknown[] }>(
+    'testimonios',
+    isEditMode ? null : '/api/testimonios'
+  )
   const [showModal, setShowModal] = useState(false)
   const [newText, setNewText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [session, setSession] = useState<{ user: { id: string } } | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
-  const { open: openAuth } = useAuthModal()
+  const { open: openAuth, currentUser } = useAuthModal()
   const router = useRouter()
 
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session as unknown as { user: { id: string } } | null)
-    })
-  }, [])
-
-  useEffect(() => {
-    if (isEditMode) return
-
-    fetch('/api/testimonios')
-      .then((r) => r.json())
-      .then((data) => {
-        const mapped: Testimonial[] = (data.testimonios || []).map(
-          (t: {
-            id: string
-            text: string
-            usuario: {
-              username: string
-              firstName: string
-              lastName?: string
-              perfil?: { artisticName?: string; avatar?: string } | null
-            }
-          }) => ({
-            id: t.id,
-            name:
-              t.usuario.perfil?.artisticName ||
-              `${t.usuario.firstName} ${t.usuario.lastName || ''}`.trim(),
-            handle: `@${t.usuario.username}`,
-            text: t.text,
-            avatar:
-              t.usuario.perfil?.avatar ||
-              `https://api.dicebear.com/10.x/lorelei/svg?seed=${t.usuario.username}`,
-            username: t.usuario.username,
-          })
-        )
-        setDbTestimonials(mapped)
-      })
-      .catch(() => {})
-      .finally(() => setLoading(false))
-  }, [isEditMode])
+  const dbTestimonials: Testimonial[] = useMemo(
+    () =>
+      (apiData?.testimonios ?? []).map(
+        (t: {
+          id: string
+          text: string
+          usuario: {
+            username: string
+            firstName: string
+            lastName?: string
+            perfil?: { artisticName?: string; avatar?: string } | null
+          }
+        }) => ({
+          id: t.id,
+          name:
+            t.usuario.perfil?.artisticName ||
+            `${t.usuario.firstName} ${t.usuario.lastName || ''}`.trim(),
+          handle: `@${t.usuario.username}`,
+          text: t.text,
+          avatar:
+            t.usuario.perfil?.avatar ||
+            `https://api.dicebear.com/10.x/lorelei/svg?seed=${t.usuario.username}`,
+          username: t.usuario.username,
+        })
+      ),
+    [apiData]
+  )
 
   const testimonials = isEditMode && propTestimonials ? propTestimonials : dbTestimonials
   const duplicated = [...testimonials, ...testimonials]
@@ -194,7 +182,7 @@ export function TestimonialsWall({
             <TimelineAnimation as="div" animationNum={2} timelineRef={sectionRef}>
               <button
                 onClick={() => {
-                  if (!session) {
+                  if (!currentUser) {
                     openAuth('login')
                     return
                   }

@@ -1,7 +1,6 @@
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabaseClient'
+import { verifyAdmin } from '@/lib/authApi'
 import cloudinary from '@/lib/cloudinary'
-import { Rol } from '@prisma/client'
 
 interface CloudinaryResource {
   public_id: string
@@ -54,42 +53,29 @@ function extractImageUrlsFromBlocks(blocks: unknown): string[] {
 
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return Response.json({ error: 'No autorizado' }, { status: 401 })
+    const autorizado = await verifyAdmin(req)
+    if (!autorizado) {
+      const token = req.headers.get('Authorization')
+      return Response.json({ error: 'No autorizado' }, { status: token ? 403 : 401 })
     }
 
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(token)
-    if (!user) {
-      return Response.json({ error: 'No autorizado' }, { status: 401 })
+    // Parse optional pagination params from query string
+    const { searchParams } = new URL(req.url)
+    const requestedCursor = searchParams.get('cursor') || undefined
+    const limit = Math.min(Number(searchParams.get('limit')) || 500, 500)
+
+    // Fetch Cloudinary resources
+    const result = (await cloudinary.api.resources({
+      type: 'upload',
+      prefix: 'opera-prima/',
+      max_results: limit,
+      next_cursor: requestedCursor,
+    })) as {
+      resources: CloudinaryResource[]
+      next_cursor?: string
     }
 
-    const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-    if (!usuario || usuario.rol !== Rol.ADMIN) {
-      return Response.json({ error: 'No autorizado' }, { status: 403 })
-    }
-
-    // Fetch all Cloudinary resources
-    const allResources: CloudinaryResource[] = []
-    let nextCursor: string | undefined
-
-    do {
-      const result = (await cloudinary.api.resources({
-        type: 'upload',
-        prefix: 'opera-prima/',
-        max_results: 500,
-        next_cursor: nextCursor,
-      })) as {
-        resources: CloudinaryResource[]
-        next_cursor?: string
-      }
-
-      allResources.push(...result.resources)
-      nextCursor = result.next_cursor
-    } while (nextCursor)
+    const allResources: CloudinaryResource[] = result.resources
 
     // Fetch all DB records that reference images
     const [eventos, proyectos, perfiles, galleryImages, mentores, pages] = await Promise.all([
@@ -265,6 +251,7 @@ export async function GET(req: Request) {
 
     return Response.json({
       images,
+      next_cursor: result.next_cursor ?? null,
       stats: {
         totalImages: images.length,
         totalBytes,

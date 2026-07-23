@@ -14,12 +14,16 @@ export async function POST(req: Request) {
 
     if (!exists) {
       const base = email.split('@')[0]
-      let username = base
-      let suffix = 1
-      while (await prisma.usuario.findUnique({ where: { username } })) {
-        username = `${base}${suffix}`
-        suffix++
-      }
+
+      const existing = await prisma.usuario.findMany({
+        where: { username: { startsWith: base } },
+        select: { username: true },
+      })
+      const maxSuffix = existing.reduce((max, u) => {
+        const s = u.username === base ? 0 : Number.parseInt(u.username.slice(base.length), 10)
+        return Number.isNaN(s) ? max : Math.max(max, s)
+      }, -1)
+      const username = maxSuffix === -1 ? base : `${base}${maxSuffix + 1}`
 
       await prisma.usuario.create({
         data: {

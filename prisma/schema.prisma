@@ -84,6 +84,9 @@ model Usuario {
   testimonios   Testimonial[]
 
   gallery       UserGallery[]
+
+  @@index([rol])
+  @@index([countryCode])
 }
 
 model Mentor {
@@ -183,6 +186,8 @@ model Social {
   handle    String
 
   href      String
+
+  @@index([perfilId])
 }
 
 model Evento {
@@ -229,6 +234,12 @@ model Evento {
   createdAt        DateTime @default(now())
 
   updatedAt        DateTime @updatedAt
+
+  @@index([usuarioId])
+  @@index([fecha])
+  @@index([tipo])
+  @@index([categoria])
+  @@index([agotado])
 }
 
 model Entrada {
@@ -255,6 +266,10 @@ model Entrada {
   createdAt  DateTime @default(now())
 
   updatedAt  DateTime @updatedAt
+
+  @@index([usuarioId])
+  @@index([eventoId])
+  @@index([pagoId])
 }
 
 
@@ -276,6 +291,8 @@ model Pago {
   createdAt               DateTime @default(now())
 
   updatedAt               DateTime @updatedAt
+
+  @@index([estado])
 }
 
 model DeletedEventBackup {
@@ -304,6 +321,10 @@ model Proyecto {
   usuario       Usuario?    @relation(fields: [usuarioId], references: [id])
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@index([usuarioId])
+  @@index([tipo])
+  @@index([destacado])
 }
 
 model PageContent {

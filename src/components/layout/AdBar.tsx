@@ -2,10 +2,11 @@
 
 import { useEditMode } from '@/context/EditModeContext'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { useApi } from '@/lib/useApi'
 import { EditableText } from '@/components/editor/EditableText'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 const ICON_OPTIONS = ['✦', '★', '◆', '●', '▸', '✧', '⬟', '♦']
 
@@ -20,19 +21,11 @@ export function AdBar() {
   const { isEditMode } = useEditMode()
   const { currentUser } = useAuthModal()
   const [dismissed, setDismissed] = useState(false)
-  const [config, setConfig] = useState(DEFAULT_CONFIG)
-  const [loaded, setLoaded] = useState(false)
   const [saving, setSaving] = useState(false)
+  const { data: adConfig, isLoading } = useApi<Record<string, string>>('adbar', '/api/config/adbar')
 
-  useEffect(() => {
-    fetch('/api/config/adbar')
-      .then((r) => r.json())
-      .then((data) => {
-        setConfig({ ...DEFAULT_CONFIG, ...data })
-        setLoaded(true)
-      })
-      .catch(() => setLoaded(true))
-  }, [])
+  const config = { ...DEFAULT_CONFIG, ...adConfig }
+  const loaded = !isLoading
 
   if (dismissed) return null
   if (!loaded) return null

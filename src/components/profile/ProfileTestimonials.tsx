@@ -18,17 +18,9 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
   const [showForm, setShowForm] = useState(false)
   const [newText, setNewText] = useState('')
   const [submitting, setSubmitting] = useState(false)
-  const [session, setSession] = useState<{ user: { id: string } } | null>(null)
   const sectionRef = useRef<HTMLElement>(null)
-  const { open: openAuth } = useAuthModal()
+  const { open: openAuth, currentUser } = useAuthModal()
   const router = useRouter()
-
-  useEffect(() => {
-    const supabase = createClient()
-    supabase.auth.getSession().then(({ data }) => {
-      setSession(data.session as unknown as { user: { id: string } } | null)
-    })
-  }, [])
 
   useEffect(() => {
     fetch('/api/testimonios')
@@ -117,7 +109,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
           {!showForm && (
             <button
               onClick={() => {
-                if (!session) {
+                if (!currentUser) {
                   openAuth('login')
                   return
                 }
@@ -127,7 +119,7 @@ export function ProfileTestimonials({ username, artisticName }: ProfileTestimoni
               style={{ color: '#023047' }}
             >
               <MessageCircle size={12} />
-              {session ? 'Dejar testimonio' : 'Inicia sesión para dejar testimonio'}
+              {currentUser ? 'Dejar testimonio' : 'Inicia sesión para dejar testimonio'}
             </button>
           )}
           {showForm && (

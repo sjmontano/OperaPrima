@@ -3,6 +3,7 @@ import { AuthModalProvider } from '@/components/auth/AuthModalProvider'
 import { CookieConsentBanner } from '@/components/cookies/CookieConsentBanner'
 import { DevLoginToolbar } from '@/components/dev/DevLoginToolbar'
 import { EditModeProvider } from '@/context/EditModeContext'
+import { QueryProvider } from '@/components/providers/QueryProvider'
 import type { Metadata } from 'next'
 import { Geist_Mono, Poppins } from 'next/font/google'
 import './globals.css'
@@ -36,13 +37,15 @@ export default function RootLayout({
     >
       <body className="relative flex min-h-full flex-col">
         <AdSenseScript />
-        <AuthModalProvider>
-          <EditModeProvider>
-            {children}
-            <CookieConsentBanner />
-            <DevLoginToolbar />
-          </EditModeProvider>
-        </AuthModalProvider>
+        <QueryProvider>
+          <AuthModalProvider>
+            <EditModeProvider>
+              {children}
+              <CookieConsentBanner />
+              <DevLoginToolbar />
+            </EditModeProvider>
+          </AuthModalProvider>
+        </QueryProvider>
       </body>
     </html>
   )

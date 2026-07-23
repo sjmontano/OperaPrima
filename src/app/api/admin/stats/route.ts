@@ -1,25 +1,12 @@
 import { prisma } from '@/lib/prisma'
-import { createClient } from '@/lib/supabaseClient'
-import { Rol } from '@prisma/client'
+import { verifyAdmin } from '@/lib/authApi'
 
 export async function GET(req: Request) {
   try {
-    const token = req.headers.get('Authorization')?.replace('Bearer ', '')
-    if (!token) {
-      return Response.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
-    const supabase = await createClient()
-    const {
-      data: { user },
-    } = await supabase.auth.getUser(token)
-    if (!user) {
-      return Response.json({ error: 'No autorizado' }, { status: 401 })
-    }
-
-    const usuario = await prisma.usuario.findUnique({ where: { supabaseId: user.id } })
-    if (!usuario || usuario.rol !== Rol.ADMIN) {
-      return Response.json({ error: 'No autorizado' }, { status: 403 })
+    const autorizado = await verifyAdmin(req)
+    if (!autorizado) {
+      const token = req.headers.get('Authorization')
+      return Response.json({ error: 'No autorizado' }, { status: token ? 403 : 401 })
     }
     const [
       totalUsuarios,

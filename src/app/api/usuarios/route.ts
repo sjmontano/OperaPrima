@@ -22,21 +22,42 @@ export async function GET(req: Request) {
     const where: Record<string, unknown> = {}
 
     if (search) {
+      const clean = search.replace(/^@/, '')
       where.OR = [
-        { username: { startsWith: search, mode: 'insensitive' } },
-        { firstName: { contains: search, mode: 'insensitive' } },
-        { lastName: { contains: search, mode: 'insensitive' } },
+        { username: { startsWith: clean, mode: 'insensitive' } },
+        { firstName: { contains: clean, mode: 'insensitive' } },
+        { lastName: { contains: clean, mode: 'insensitive' } },
+        { email: { contains: clean, mode: 'insensitive' } },
+        { perfil: { artisticName: { contains: clean, mode: 'insensitive' } } },
       ]
     }
 
     const usuarios = await prisma.usuario.findMany({
       where: where as Parameters<typeof prisma.usuario.findMany>[0]['where'],
-      include: { perfil: true },
-      orderBy: { createdAt: 'desc' },
-      take: 20,
+      include: {
+        perfil: true,
+        gallery: { select: { id: true } },
+      },
+      take: 50,
     })
 
-    return Response.json({ usuarios })
+    const scored = usuarios
+      .map((u) => {
+        const score =
+          (u.perfil?.avatar ? 3 : 0) +
+          (u.perfil?.bio ? 2 : 0) +
+          ((u.perfil?.tags?.length ?? 0) > 0 ? 2 : 0) +
+          (u.perfil?.artisticName ? 1 : 0) +
+          ((u.perfil?.interests?.length ?? 0) > 0 ? 1 : 0) +
+          Math.min(u.gallery.length, 3)
+        return { ...u, score }
+      })
+      .sort((a, b) => {
+        if (a.destacado !== b.destacado) return a.destacado ? -1 : 1
+        return b.score - a.score
+      })
+
+    return Response.json({ usuarios: scored })
   } catch (error) {
     console.error(error)
     return Response.json({ error: 'Error al obtener usuarios' }, { status: 500 })

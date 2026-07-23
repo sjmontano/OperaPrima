@@ -1,29 +1,43 @@
 ﻿'use client'
 
-import { Search, ChevronDown } from 'lucide-react'
+import { Search, ChevronDown, Star } from 'lucide-react'
 import { useState } from 'react'
 
 export interface Member {
+  id: string
   name: string
   discipline: string
   location: string
   image: string
   href?: string
+  destacado: boolean
 }
 
 interface MemberGridProps {
   members: Member[]
   disciplines: string[]
+  isEditMode?: boolean
+  onToggleDestacado?: (id: string, current: boolean) => void
 }
 
 const ITEMS_PER_PAGE = 12
 
-export function MemberGrid({ members, disciplines }: MemberGridProps) {
+export function MemberGrid({
+  members,
+  disciplines,
+  isEditMode,
+  onToggleDestacado,
+}: MemberGridProps) {
   const [active, setActive] = useState('Todos')
   const [query, setQuery] = useState('')
   const [visibleCount, setVisibleCount] = useState(ITEMS_PER_PAGE)
 
-  const filtered = members.filter((m) => {
+  const sorted = [...members].sort((a, b) => {
+    if (a.destacado !== b.destacado) return a.destacado ? -1 : 1
+    return 0
+  })
+
+  const filtered = sorted.filter((m) => {
     const matchDiscipline = active === 'Todos' || m.discipline === active
     const q = query.toLowerCase().trim()
     const matchSearch =
@@ -95,7 +109,12 @@ export function MemberGrid({ members, disciplines }: MemberGridProps) {
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 md:grid-cols-4 lg:grid-cols-5">
         {visible.map((member, idx) => (
-          <MemberCard key={`${member.name}-${idx}`} member={member} />
+          <MemberCard
+            key={member.id || `${member.name}-${idx}`}
+            member={member}
+            isEditMode={isEditMode}
+            onToggleDestacado={onToggleDestacado}
+          />
         ))}
       </div>
 
@@ -123,17 +142,50 @@ export function MemberGrid({ members, disciplines }: MemberGridProps) {
   )
 }
 
-function MemberCard({ member }: { member: Member }) {
+function MemberCard({
+  member,
+  isEditMode,
+  onToggleDestacado,
+}: {
+  member: Member
+  isEditMode?: boolean
+  onToggleDestacado?: (id: string, current: boolean) => void
+}) {
   const [hovered, setHovered] = useState(false)
   const initial = member.name.charAt(0).toUpperCase()
 
   return (
     <a
-      href={member.href ?? '#'}
+      href={!isEditMode ? (member.href ?? '#') : undefined}
       className="group relative flex flex-col overflow-hidden border-2 border-zinc-200 bg-white transition-all hover:-translate-y-0.5 hover:border-[#023047] hover:shadow-[3px_3px_0_#353535]"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
+      {/* Destacado badge (always visible) */}
+      {member.destacado && (
+        <div className="absolute top-2 left-2 z-10 flex size-6 items-center justify-center rounded-full bg-[#FFB703] shadow-sm">
+          <Star size={10} className="text-white" fill="white" />
+        </div>
+      )}
+
+      {/* Edit mode toggle */}
+      {isEditMode && onToggleDestacado && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.preventDefault()
+            e.stopPropagation()
+            onToggleDestacado(member.id, member.destacado)
+          }}
+          className={`absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#FFB703] hover:text-white ${
+            member.destacado ? 'text-[#FFB703] opacity-100' : 'text-zinc-500'
+          }`}
+          title={member.destacado ? 'Quitar destacado' : 'Marcar como destacado'}
+        >
+          <Star size={13} fill={member.destacado ? 'currentColor' : 'none'} />
+        </button>
+      )}
+
       {/* Image */}
       <div className="relative aspect-square overflow-hidden bg-zinc-100">
         {member.image ? (

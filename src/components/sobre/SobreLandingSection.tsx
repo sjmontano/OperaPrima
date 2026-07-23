@@ -292,9 +292,11 @@ function UserLinkEditor({
         if (res.ok) {
           const data = await res.json()
           setResults(data.usuarios || [])
+        } else {
+          setResults([])
         }
       } catch {
-        // ignore
+        setResults([])
       }
       setLoading(false)
     }, 300)
@@ -497,7 +499,7 @@ export function SobreLandingSection({
   const [stats, setStats] = useState<Record<string, number> | null>(null)
   const [localValores, setLocalValores] = useState(valores)
   const [localServicios, setLocalServicios] = useState(servicios)
-  const [localTeam, setLocalTeam] = useState(team)
+  const [localTeam, setLocalTeam] = useState(() => (Array.isArray(team) ? team : DEFAULT_TEAM))
 
   useEffect(() => {
     setLocalValores(valores)
@@ -506,7 +508,7 @@ export function SobreLandingSection({
     setLocalServicios(servicios)
   }, [servicios])
   useEffect(() => {
-    setLocalTeam(team)
+    setLocalTeam(Array.isArray(team) ? team : DEFAULT_TEAM)
   }, [team])
 
   const handleAddValor = () => {

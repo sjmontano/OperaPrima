@@ -649,14 +649,16 @@ export function PageRenderer({ blocks: initialBlocks, slug }: { blocks: Block[];
 
   const handleFieldChange = useCallback(
     (blockIndex: number, fieldPath: string, value: unknown) => {
-      const updated = blocks.map((b, i) => {
-        if (i !== blockIndex) return b
-        return { ...b, props: deepSet(b.props, fieldPath, value) }
+      setBlocks((prev) => {
+        const updated = prev.map((b, i) => {
+          if (i !== blockIndex) return b
+          return { ...b, props: deepSet(b.props, fieldPath, value) }
+        })
+        pushHistory(updated)
+        return updated
       })
-      setBlocks(updated)
-      pushHistory(updated)
     },
-    [blocks, pushHistory]
+    [pushHistory]
   )
 
   const handleSave = useCallback(async () => {

@@ -1,9 +1,9 @@
 'use client'
 
-import { TimelineAnimation } from '@/components/ui/timeline-animation'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { useEditMode } from '@/context/EditModeContext'
 import { MemberGrid, type Member } from '@/components/profile/MemberGrid'
-import { Star } from 'lucide-react'
-import Image from 'next/image'
+import { createClient } from '@/lib/supabaseClient'
 import { useEffect, useRef, useState } from 'react'
 
 const DISCIPLINES = [
@@ -44,6 +44,9 @@ export function ComunidadArtistsSection() {
   const sectionRef = useRef<HTMLElement>(null)
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
+  const auth = useAuthModal()
+  const { isEditMode } = useEditMode()
+  const currentUser = auth.currentUser as { id: string; rol: string } | null
 
   useEffect(() => {
     fetch('/api/usuarios')
@@ -52,9 +55,11 @@ export function ComunidadArtistsSection() {
         const data = await r.json()
         const mapped: Member[] = (data.usuarios || []).map(
           (u: {
+            id: string
             username: string
             firstName: string
             lastName?: string
+            destacado: boolean
             perfil?: {
               artisticName?: string
               avatar?: string
@@ -62,12 +67,14 @@ export function ComunidadArtistsSection() {
               bio?: string
             } | null
           }) => ({
+            id: u.id,
             name: u.perfil?.artisticName || `${u.firstName} ${u.lastName || ''}`.trim(),
             discipline: mapDiscipline(u.perfil?.tags || []),
             location: 'Colombia',
             image:
               u.perfil?.avatar || `https://api.dicebear.com/10.x/lorelei/svg?seed=${u.username}`,
             href: `/perfil/${u.username}`,
+            destacado: u.destacado,
           })
         )
         setMembers(mapped)
@@ -77,6 +84,27 @@ export function ComunidadArtistsSection() {
       })
       .finally(() => setLoading(false))
   }, [])
+
+  const handleToggleDestacado = async (id: string, current: boolean) => {
+    const supabase = createClient()
+    const {
+      data: { session },
+    } = await supabase.auth.getSession()
+    if (!session?.access_token) return
+
+    const res = await fetch(`/api/usuarios/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+      },
+      body: JSON.stringify({ destacado: !current }),
+    })
+
+    if (res.ok) {
+      setMembers((prev) => prev.map((m) => (m.id === id ? { ...m, destacado: !current } : m)))
+    }
+  }
 
   if (loading) {
     return (
@@ -90,82 +118,33 @@ export function ComunidadArtistsSection() {
     )
   }
 
-  const featuredArtist = members.length > 0 ? members[0] : null
-
   return (
     <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
-        {featuredArtist && (
-          <div className="border-b-2 border-zinc-200 px-8 pt-20 pb-16">
-            <TimelineAnimation as="div" animationNum={0} timelineRef={sectionRef}>
-              <div className="mb-2 flex items-center gap-2">
-                <Star size={14} className="fill-[#E63946] text-[#E63946]" />
-                <p className="text-[0.6rem] font-bold tracking-[0.25em] text-zinc-400 uppercase">
-                  Artista destacado del mes
-                </p>
-              </div>
-            </TimelineAnimation>
-
-            <div className="grid gap-10 lg:grid-cols-[1fr_1.2fr] lg:items-center">
-              <TimelineAnimation as="div" animationNum={1} timelineRef={sectionRef}>
-                <a
-                  href={featuredArtist.href ?? '#'}
-                  className="relative block aspect-[4/5] overflow-hidden border-2 border-zinc-200"
-                >
-                  <Image
-                    src={featuredArtist.image}
-                    alt={featuredArtist.name}
-                    fill
-                    className="object-cover"
-                    unoptimized
-                  />
-                  <div className="absolute inset-0 flex flex-col justify-end bg-linear-to-t from-zinc-950/85 via-transparent to-transparent p-5">
-                    <p className="text-lg font-bold text-white">{featuredArtist.name}</p>
-                    <p className="text-sm text-white/70">{featuredArtist.discipline}</p>
-                  </div>
-                </a>
-              </TimelineAnimation>
-
-              <TimelineAnimation as="div" animationNum={2} timelineRef={sectionRef}>
-                <div className="space-y-4">
-                  <h3 className="text-2xl font-extrabold tracking-tight text-zinc-900 sm:text-3xl">
-                    {featuredArtist.name}
-                  </h3>
-                  <p className="text-sm leading-relaxed text-zinc-500">
-                    Artista destacado del mes por su trayectoria y contribución a la comunidad de
-                    {featuredArtist.discipline.toLowerCase()} en Colombia. Su trabajo ha inspirado a
-                    otros miembros y representa los valores de Ópera Prima.
-                  </p>
-                  <div className="flex flex-wrap gap-2 pt-2">
-                    {['Obra reciente', 'Entrevista', 'Galería'].map((label) => (
-                      <span
-                        key={label}
-                        className="border-2 border-zinc-200 px-3 py-1.5 text-[0.55rem] font-bold tracking-widest text-zinc-500 uppercase transition hover:border-[#023047] hover:text-[#023047]"
-                      >
-                        {label}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </TimelineAnimation>
-            </div>
-          </div>
-        )}
-
         <div className="px-8 py-14">
-          <TimelineAnimation as="div" animationNum={3} timelineRef={sectionRef}>
-            <div className="mb-6">
-              <h2 className="text-lg font-bold tracking-wide text-zinc-800 uppercase">
-                Descubre a otros miembros
-              </h2>
-              <p className="mt-1 text-sm text-zinc-500">
-                Artistas de tu comunidad — filtra por disciplina
+          <div className="mb-6">
+            <h2 className="text-lg font-bold tracking-wide text-zinc-800 uppercase">
+              Descubre a otros miembros
+            </h2>
+            <p className="mt-1 text-sm text-zinc-500">
+              Artistas de tu comunidad — filtra por disciplina
+            </p>
+          </div>
+
+          {isEditMode && currentUser?.rol === 'ADMIN' && (
+            <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4">
+              <p className="text-xs font-bold tracking-widest text-[#E63946] uppercase">
+                Modo edición — Miembros
               </p>
             </div>
-          </TimelineAnimation>
-          <TimelineAnimation as="div" animationNum={4} timelineRef={sectionRef}>
-            <MemberGrid members={members} disciplines={DISCIPLINES} />
-          </TimelineAnimation>
+          )}
+
+          <MemberGrid
+            members={members}
+            disciplines={DISCIPLINES}
+            isEditMode={isEditMode && currentUser?.rol === 'ADMIN'}
+            onToggleDestacado={handleToggleDestacado}
+          />
         </div>
       </div>
     </section>

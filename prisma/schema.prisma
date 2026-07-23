@@ -67,6 +67,8 @@ model Usuario {
 
   newsletter  Boolean @default(false)
 
+  destacado   Boolean @default(false)
+
   createdAt   DateTime @default(now())
 
   updatedAt   DateTime @updatedAt
@@ -87,6 +89,7 @@ model Usuario {
 
   @@index([rol])
   @@index([countryCode])
+  @@index([destacado])
 }
 
 model Mentor {

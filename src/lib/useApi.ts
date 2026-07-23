@@ -4,8 +4,8 @@ import { useQuery, type UseQueryOptions } from '@tanstack/react-query'
 
 type ApiOptions<T> = Omit<UseQueryOptions<T>, 'queryKey' | 'queryFn'>
 
-async function apiFetch<T>(url: string, signal?: AbortSignal): Promise<T> {
-  const res = await fetch(url, { signal })
+async function apiFetch<T>(url: string, _signal?: AbortSignal): Promise<T> {
+  const res = await fetch(url)
   if (!res.ok) throw new Error(`API ${res.status}: ${url}`)
   return res.json()
 }

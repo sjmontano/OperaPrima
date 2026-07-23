@@ -2,10 +2,28 @@ import { prisma } from '@/lib/prisma'
 import { createClient } from '@/lib/supabaseClient'
 import { Rol } from '@prisma/client'
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
+    const { searchParams } = new URL(req.url)
+    const destacado = searchParams.get('destacado')
+
+    const where = destacado === 'true' ? { destacado: true } : {}
+
     const proyectos = await prisma.proyecto.findMany({
+      where,
       orderBy: { createdAt: 'desc' },
+      include: {
+        usuario: {
+          select: {
+            id: true,
+            username: true,
+            email: true,
+            firstName: true,
+            lastName: true,
+            perfil: { select: { avatar: true } },
+          },
+        },
+      },
     })
     return Response.json({ proyectos })
   } catch (error) {

@@ -5,7 +5,7 @@ import { EditableText } from '@/components/editor/EditableText'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { useEditMode } from '@/context/EditModeContext'
 import { useInlineCrud } from '@/lib/useInlineCrud'
-import { Clock, MapPin, Plus, Search, Trash2, X } from 'lucide-react'
+import { Clock, MapPin, Plus, Search, Star, Trash2, X } from 'lucide-react'
 import { AnimatePresence, motion } from 'motion/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ProyectosFormModal, type ProyectoFormData } from './ProyectosFormModal'
@@ -96,6 +96,7 @@ export function ProyectosSection({
   const {
     items: proyectos,
     addItem: addProyecto,
+    updateItem: updateProyecto,
     deleteItem: deleteProyecto,
   } = useInlineCrud<DbProyecto>({ endpoint: '/api/proyectos' })
   const currentUser = auth.currentUser as CurrentUser | null
@@ -325,22 +326,40 @@ export function ProyectosSection({
                         style={{ borderTop: `3px solid ${accent}` }}
                       >
                         {isEditMode && currentUser?.rol === 'ADMIN' && (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              if (
-                                !window.confirm(
-                                  `¿Eliminar "${proyecto.nombre}"? Esta acción no se puede deshacer.`
+                          <>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                await updateProyecto(proyecto.id, {
+                                  destacado: !proyecto.destacado,
+                                })
+                              }}
+                              className={`absolute top-2 left-2 z-10 flex size-7 items-center justify-center bg-white/90 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#FFB703] hover:text-white ${
+                                proyecto.destacado ? 'text-[#FFB703] opacity-100' : 'text-zinc-500'
+                              }`}
+                              title={
+                                proyecto.destacado ? 'Quitar destacado' : 'Marcar como destacado'
+                              }
+                            >
+                              <Star size={13} fill={proyecto.destacado ? 'currentColor' : 'none'} />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (
+                                  !window.confirm(
+                                    `¿Eliminar "${proyecto.nombre}"? Esta acción no se puede deshacer.`
+                                  )
                                 )
-                              )
-                                return
-                              await deleteProyecto(proyecto.id)
-                            }}
-                            className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#E63946] hover:text-white"
-                            title="Eliminar proyecto"
-                          >
-                            <Trash2 size={13} />
-                          </button>
+                                  return
+                                await deleteProyecto(proyecto.id)
+                              }}
+                              className="absolute top-2 right-2 z-10 flex size-7 items-center justify-center bg-white/90 text-zinc-500 opacity-0 shadow-sm transition-all group-hover:opacity-100 hover:bg-[#E63946] hover:text-white"
+                              title="Eliminar proyecto"
+                            >
+                              <Trash2 size={13} />
+                            </button>
+                          </>
                         )}
                         {proyecto.imagen && (
                           <div className="relative h-40 overflow-hidden">

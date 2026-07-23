@@ -54,30 +54,10 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const supabase = createClient()
 
-    // Fetch inicial: ver si hay sesión activa al montar
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (!session) {
-        setReady(true)
-        return
-      }
-
-      fetch('/api/auth/me', {
-        headers: { Authorization: `Bearer ${session.access_token}` },
-      })
-        .then((r) => (r.ok ? r.json() : null))
-        .then((data) => {
-          if (data?.usuario) {
-            setCurrentUser(data.usuario)
-            localStorage.setItem('user', JSON.stringify(data.usuario))
-          }
-        })
-        .catch(() => {})
-        .finally(() => setReady(true))
-    })
-
     const { data: listener } = supabase.auth.onAuthStateChange(async (_event, session) => {
       if (!session) {
         setCurrentUser(null)
+        setReady(true)
         return
       }
 
@@ -87,12 +67,16 @@ export function AuthModalProvider({ children }: { children: React.ReactNode }) {
         },
       })
 
-      if (!response.ok) return
+      if (!response.ok) {
+        setReady(true)
+        return
+      }
 
       const data = await response.json()
 
       setCurrentUser(data.usuario)
       localStorage.setItem('user', JSON.stringify(data.usuario))
+      setReady(true)
     })
 
     return () => {

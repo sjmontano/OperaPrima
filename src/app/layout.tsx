@@ -34,7 +34,7 @@ export default function RootLayout({
       lang="en"
       className={`${poppins.variable} ${geistMono.variable} h-full antialiased${process.env.NEXT_PUBLIC_LINES === 'off' ? 'lines-off' : ''}`}
     >
-      <body className="flex min-h-full flex-col">
+      <body className="relative flex min-h-full flex-col">
         <AdSenseScript />
         <AuthModalProvider>
           <EditModeProvider>

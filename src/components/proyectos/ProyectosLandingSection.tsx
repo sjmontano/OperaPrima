@@ -148,6 +148,7 @@ export function ProyectosLandingSection({
                   />
                   <ArrowRight size={16} />
                 </a>
+                {/*
                 <button
                   type="button"
                   onClick={() => {
@@ -167,6 +168,7 @@ export function ProyectosLandingSection({
                     singleLine
                   />
                 </button>
+                 */}
               </div>
             </TimelineAnimation>
           </div>

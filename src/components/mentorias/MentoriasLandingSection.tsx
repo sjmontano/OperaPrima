@@ -275,11 +275,12 @@ export function MentoriasLandingSection({
                   </p>
                 </div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-                  <button
+                  <a
+                    href="#mentores"
                     type="button"
                     onClick={() => {
                       if (isEditMode) return
-                      if (currentUser) router.push('/mentorias')
+                      if (currentUser) router.push('/mentorias#mentores')
                       else authModal.open('registro')
                     }}
                     className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-7 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
@@ -293,12 +294,12 @@ export function MentoriasLandingSection({
                       singleLine
                     />
                     <ArrowRight size={16} />
-                  </button>
+                  </a>
                   <button
                     type="button"
                     onClick={() => {
                       if (isEditMode) return
-                      if (currentUser) router.push('/comunidad')
+                      if (currentUser) router.push('/comunidad#artistas')
                       else authModal.open('login')
                     }}
                     className="inline-flex items-center justify-center gap-2 border-2 border-white/20 bg-white/5 px-7 py-3 text-sm font-bold tracking-widest text-white/85 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-[#F65B7F] hover:text-white"
@@ -462,11 +463,12 @@ export function MentoriasLandingSection({
               timelineRef={sectionRef}
               className="mt-12 text-center"
             >
-              <button
+              <a
+                href="#mentores"
                 type="button"
                 onClick={() => {
                   if (isEditMode) return
-                  if (currentUser) router.push('/mentorias')
+                  if (currentUser) router.push('/mentorias#mentores')
                   else authModal.open('registro')
                 }}
                 className="inline-flex items-center justify-center gap-2 border-2 border-[#F65B7F] bg-[#F65B7F] px-8 py-3 text-sm font-bold tracking-widest text-white uppercase transition-all duration-150 hover:bg-transparent hover:text-[#F65B7F] hover:shadow-[4px_4px_0_#353535] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
@@ -480,7 +482,7 @@ export function MentoriasLandingSection({
                   singleLine
                 />
                 <ArrowRight size={16} />
-              </button>
+              </a>
             </TimelineAnimation>
           </div>
         </div>
@@ -508,11 +510,12 @@ export function MentoriasLandingSection({
                 className="mx-auto mt-6 max-w-lg text-lg leading-relaxed text-[#023047]"
                 as="p"
               />
-              <button
+              <a
+                href="#mentores"
                 type="button"
                 onClick={() => {
                   if (isEditMode) return
-                  if (currentUser) router.push('/mentorias')
+                  if (currentUser) router.push('/mentorias#mentores')
                   else authModal.open('registro')
                 }}
                 className="mt-8 inline-flex items-center justify-center gap-2 border-2 border-white bg-white px-8 py-3 text-sm font-bold tracking-widest text-[#023047] uppercase shadow-[4px_4px_0_rgba(0,0,0,0.12)] transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:shadow-[6px_6px_0_rgba(0,0,0,0.2)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
@@ -526,14 +529,15 @@ export function MentoriasLandingSection({
                   singleLine
                 />
                 <ArrowRight size={16} />
-              </button>
+              </a>
             </TimelineAnimation>
           </div>
         </div>
       </section>
 
       {/* ═══════════════ MENTORES ═══════════════ */}
-      <section className="relative w-full overflow-hidden bg-white">
+      <div></div>
+      <section id="mentores" className="relative w-full overflow-hidden bg-white">
         <div className="mx-[100px] px-4 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2 sm:px-6">
           <div className="px-4 py-24 sm:px-2 lg:py-28">
             <TimelineAnimation

@@ -92,7 +92,7 @@ export function EventsLandingSection({
   calendarText = 'Talleres presenciales y online. Próxima agenda disponible en el calendario.',
   ctaText = 'Ver eventos',
   guestCtaText = 'Comenzar gratis',
-  secondaryCtaText = 'Ver próximos talleres',
+  secondaryCtaText = 'Ver eventos de comunidad',
   bottomDescription = 'Todo los talleres están diseñados para darte contexto, método y comunidad real. No es solo formación, es el empujón que necesitabas.',
   __onFieldChange,
 }: {
@@ -297,7 +297,8 @@ export function EventsLandingSection({
               timelineRef={sectionRef}
               className="flex shrink-0 flex-col gap-3 sm:flex-row"
             >
-              <button
+              <a
+                href="#eventos"
                 type="button"
                 onClick={() => {
                   if (isEditMode) return
@@ -313,10 +314,10 @@ export function EventsLandingSection({
                   singleLine
                 />
                 <ArrowRight size={16} />
-              </button>
+              </a>
 
               <a
-                href="#proximos"
+                href="/comunidad#eventos"
                 onClick={(e) => isEditMode && e.preventDefault()}
                 className="inline-flex items-center justify-center border-2 border-white/20 px-7 py-3 text-xs font-bold tracking-widest text-white/70 uppercase transition-all duration-150 hover:-translate-x-0.5 hover:-translate-y-0.5 hover:border-white/50 hover:text-white hover:shadow-[4px_4px_0_rgba(255,255,255,0.1)] active:translate-x-0.5 active:translate-y-0.5 active:shadow-none"
               >

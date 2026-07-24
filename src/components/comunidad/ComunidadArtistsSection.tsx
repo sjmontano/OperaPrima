@@ -108,7 +108,11 @@ export function ComunidadArtistsSection() {
 
   if (loading) {
     return (
-      <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
+      <section
+        ref={sectionRef}
+        id="artistas"
+        className="bg-background w-full border-b-2 border-zinc-200"
+      >
         <div className="mx-[100px] max-lg:mx-[48px] max-md:mx-[18px]">
           <div className="flex justify-center py-24">
             <div className="h-6 w-6 animate-spin rounded-full border-2 border-[#023047] border-t-transparent" />
@@ -119,7 +123,11 @@ export function ComunidadArtistsSection() {
   }
 
   return (
-    <section ref={sectionRef} className="bg-background w-full border-b-2 border-zinc-200">
+    <section
+      ref={sectionRef}
+      id="artistas"
+      className="bg-background w-full border-b-2 border-zinc-200"
+    >
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="px-8 py-14">
           <div className="mb-6">

@@ -124,7 +124,11 @@ export function ProyectosLandingSection({
                       <span className="text-sm text-white/75">
                         <EditableText
                           value={item}
-                          onSave={(v) => __onFieldChange?.(`listItems.${i}`, v)}
+                          onSave={(v) => {
+                            const updated = [...listItems]
+                            updated[i] = v
+                            __onFieldChange?.('listItems', updated)
+                          }}
                           as="span"
                           singleLine
                         />
@@ -196,7 +200,11 @@ export function ProyectosLandingSection({
                     <span className="text-sm text-white/75">
                       <EditableText
                         value={item}
-                        onSave={(v) => __onFieldChange?.(`asideItems.${i}`, v)}
+                        onSave={(v) => {
+                          const updated = [...asideItems]
+                          updated[i] = v
+                          __onFieldChange?.('asideItems', updated)
+                        }}
                         as="span"
                         singleLine
                       />

@@ -533,7 +533,14 @@ function deepSet(
     const idx = Number(key)
     const k = String(idx) !== key ? key : idx
     const next = (current as Record<string, unknown>)[k]
-    current[k] = Array.isArray(next) ? [...next] : { ...(next as Record<string, unknown>) }
+    const nextKey = parts[i + 1]
+    const nextIsNumeric = String(Number(nextKey)) === nextKey
+    current[k] =
+      next == null && nextIsNumeric
+        ? []
+        : Array.isArray(next)
+          ? [...next]
+          : { ...(next as Record<string, unknown>) }
     current = current[k] as Record<string, unknown> | unknown[]
   }
   const lastKey = parts[parts.length - 1]

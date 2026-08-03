@@ -3,14 +3,22 @@
 import { useEditMode } from '@/context/EditModeContext'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { useApi } from '@/lib/useApi'
+import { useQueryClient } from '@tanstack/react-query'
 import { EditableText } from '@/components/editor/EditableText'
 import { Check, X } from 'lucide-react'
 import Link from 'next/link'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 const ICON_OPTIONS = ['✦', '★', '◆', '●', '▸', '✧', '⬟', '♦']
 
-const DEFAULT_CONFIG = {
+interface AdConfig {
+  icon: string
+  text: string
+  href: string
+  bgColor: string
+}
+
+const DEFAULT_CONFIG: AdConfig = {
   icon: '✦',
   text: 'Convocatoria abierta — Residencia artística Mayo 2026',
   href: '/eventos',
@@ -22,10 +30,16 @@ export function AdBar() {
   const { currentUser } = useAuthModal()
   const [dismissed, setDismissed] = useState(false)
   const [saving, setSaving] = useState(false)
-  const { data: adConfig, isLoading } = useApi<Record<string, string>>('adbar', '/api/config/adbar')
+  const queryClient = useQueryClient()
+  const { data: adConfig, isLoading } = useApi<AdConfig>('adbar', '/api/config/adbar')
+  const [draft, setDraft] = useState<AdConfig>(DEFAULT_CONFIG)
 
   const config = { ...DEFAULT_CONFIG, ...adConfig }
   const loaded = !isLoading
+
+  useEffect(() => {
+    if (loaded) setDraft({ ...DEFAULT_CONFIG, ...adConfig })
+  }, [loaded, adConfig])
 
   if (dismissed) return null
   if (!loaded) return null
@@ -44,9 +58,10 @@ export function AdBar() {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(config),
+        body: JSON.stringify(draft),
       })
       if (!res.ok) throw new Error('Error al guardar')
+      queryClient.setQueryData(['adbar', '/api/config/adbar'], draft)
     } finally {
       setSaving(false)
     }
@@ -57,8 +72,8 @@ export function AdBar() {
       <div className="mx-[100px] flex items-center justify-center gap-3 px-8 py-2.5 max-lg:mx-[48px] max-md:mx-[18px]">
         {isEditMode ? (
           <select
-            value={config.icon}
-            onChange={(e) => setConfig({ ...config, icon: e.target.value })}
+            value={draft.icon}
+            onChange={(e) => setDraft({ ...draft, icon: e.target.value })}
             className="border border-white/30 bg-white/10 px-1 py-0.5 text-[0.6rem] font-bold tracking-widest text-white uppercase"
           >
             {ICON_OPTIONS.map((ic) => (
@@ -75,8 +90,8 @@ export function AdBar() {
 
         {isEditMode ? (
           <EditableText
-            value={config.text}
-            onSave={(v) => setConfig({ ...config, text: v })}
+            value={draft.text}
+            onSave={(v) => setDraft({ ...draft, text: v })}
             className="text-center text-[0.62rem] font-bold tracking-widest text-white uppercase"
             as="p"
             singleLine
@@ -93,9 +108,9 @@ export function AdBar() {
               Link:
             </span>
             <EditableText
-              value={config.href}
-              onSave={(v) => setConfig({ ...config, href: v })}
-              className="text-[0.62rem] font-bold tracking-widest text-white/80 uppercase underline underline-offset-2"
+              value={draft.href}
+              onSave={(v) => setDraft({ ...draft, href: v.toLowerCase() })}
+              className="text-[0.62rem] font-bold tracking-widest text-white/80 underline underline-offset-2"
               as="span"
               singleLine
             />
@@ -117,8 +132,8 @@ export function AdBar() {
               </span>
               <input
                 type="color"
-                value={config.bgColor}
-                onChange={(e) => setConfig({ ...config, bgColor: e.target.value })}
+                value={draft.bgColor}
+                onChange={(e) => setDraft({ ...draft, bgColor: e.target.value })}
                 className="size-5 cursor-pointer border-0 bg-transparent"
               />
             </label>

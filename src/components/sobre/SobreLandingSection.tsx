@@ -830,7 +830,11 @@ export function SobreLandingSection({
                         <Trash2 size={13} />
                       </button>
                     )}
-                    <Link href={href} onClick={(e) => isEditMode && e.preventDefault()}>
+                    <Link
+                      href={href}
+                      onClick={(e) => isEditMode && e.preventDefault()}
+                      onClickCapture={(e) => isEditMode && e.preventDefault()}
+                    >
                       <TimelineAnimation
                         as="article"
                         animationNum={10 + i}

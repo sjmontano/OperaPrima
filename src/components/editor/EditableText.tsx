@@ -56,6 +56,7 @@ export function EditableText({
       dangerouslySetInnerHTML={{ __html: value }}
       onClick={(e) => {
         if (editing) return
+        e.preventDefault()
         e.stopPropagation()
         setEditing(true)
       }}

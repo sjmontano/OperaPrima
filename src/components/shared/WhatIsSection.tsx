@@ -2,6 +2,7 @@
 
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
+import { useEditMode } from '@/context/EditModeContext'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, CalendarDays, Compass, Globe, Users, type LucideIcon } from 'lucide-react'
 import Link from 'next/link'
@@ -78,6 +79,7 @@ export function WhatIsSection({
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const ref = useRef<HTMLElement>(null)
+  const { isEditMode } = useEditMode()
 
   return (
     <section ref={ref} className="bg-background w-full border-b-2 border-zinc-200">
@@ -193,6 +195,7 @@ export function WhatIsSection({
                 href={s.href}
                 animationNum={i + 6}
                 timelineRef={ref}
+                onClick={(e) => isEditMode && e.preventDefault()}
                 className={`group relative flex flex-col gap-6 bg-white px-8 py-12 transition-all duration-300 hover:z-10 hover:-translate-y-1 hover:shadow-lg ${i % 2 === 0 ? 'md:border-r md:border-zinc-200' : ''} ${i < 2 ? 'border-b border-zinc-200 md:border-b-0' : ''}`}
                 style={{
                   borderBottom: i >= 2 ? '1px solid' : undefined,

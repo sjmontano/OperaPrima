@@ -719,6 +719,7 @@ export function EditableRichText({
       className={`${className} cursor-text rounded-sm transition-all hover:ring-1 hover:ring-[#8ECAE6]/50`}
       dangerouslySetInnerHTML={{ __html: value }}
       onClick={(e) => {
+        e.preventDefault()
         e.stopPropagation()
         setEditing(true)
       }}

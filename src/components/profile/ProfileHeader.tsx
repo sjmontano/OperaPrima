@@ -2,6 +2,8 @@
 
 import { generateBannerUrl } from '@/lib/banner'
 import { DefaultAvatar } from '@/components/shared/DefaultAvatar'
+import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { createClient } from '@/lib/supabaseClient'
 import { Camera, ImageIcon } from 'lucide-react'
 import Image from 'next/image'
 import { useRef, useState } from 'react'
@@ -25,11 +27,19 @@ async function uploadImage(file: File) {
 }
 
 async function updateProfile(data: { avatar?: string; banner?: string }) {
-  await fetch('/api/perfil', {
+  const supabase = createClient()
+  const {
+    data: { session },
+  } = await supabase.auth.getSession()
+  const res = await fetch('/api/perfil', {
     method: 'PATCH',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      ...(session?.access_token ? { Authorization: `Bearer ${session.access_token}` } : {}),
+    },
     body: JSON.stringify(data),
   })
+  if (!res.ok) throw new Error('Error al guardar perfil')
 }
 
 export function ProfileHeader({
@@ -48,6 +58,7 @@ export function ProfileHeader({
   const [bannerHover, setBannerHover] = useState(false)
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
+  const { refreshUser } = useAuthModal()
 
   const bannerUrl = bannerSrc || generateBannerUrl(username)
 
@@ -97,6 +108,7 @@ export function ProfileHeader({
                 setBannerSrc(url)
                 await updateProfile({ banner: url })
                 onBannerChange?.(url)
+                refreshUser()
                 e.target.value = ''
               }}
             />
@@ -140,6 +152,7 @@ export function ProfileHeader({
                     setAvatarSrc(url)
                     await updateProfile({ avatar: url })
                     onAvatarChange?.(url)
+                    refreshUser()
                     e.target.value = ''
                   }}
                 />

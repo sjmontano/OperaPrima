@@ -83,6 +83,7 @@ export default function EditarPerfilPage() {
   const [perfilId, setPerfilId] = useState<string | null>(null)
   const [username, setUsername] = useState('')
   const [newsletter, setNewsletter] = useState(false)
+  const [removedSocialIds, setRemovedSocialIds] = useState<string[]>([])
   const avatarInputRef = useRef<HTMLInputElement>(null)
   const bannerInputRef = useRef<HTMLInputElement>(null)
   const [avatarConfig, setAvatarConfig] = useState<AvatarConfig>({ style: 'lorelei', seed: '' })
@@ -202,6 +203,10 @@ export default function EditarPerfilPage() {
   }
 
   const removeSocial = (index: number) => {
+    const removed = form.socials[index]
+    if (removed?.id) {
+      setRemovedSocialIds((prev) => [...prev, removed.id!])
+    }
     setForm((f) => ({
       ...f,
       socials: f.socials.filter((_, i) => i !== index),
@@ -327,6 +332,11 @@ export default function EditarPerfilPage() {
         }
       }
 
+      // Delete removed social links
+      for (const id of removedSocialIds) {
+        await fetch(`/api/perfil/social/${id}`, { method: 'DELETE', headers })
+      }
+
       // Save newsletter preference
       const newsRes = await fetch('/api/auth/newsletter', {
         method: 'PATCH',
@@ -343,6 +353,7 @@ export default function EditarPerfilPage() {
       }
 
       setSaved(true)
+      setRemovedSocialIds([])
       refreshUser()
       setTimeout(() => setSaved(false), 3000)
     } catch (err: unknown) {

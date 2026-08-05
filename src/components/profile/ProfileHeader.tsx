@@ -12,6 +12,8 @@ interface ProfileHeaderProps {
   artisticName: string
   realName?: string
   username: string
+  /** Nombre a mostrar tras la @; si viene vacío se usa username */
+  handle?: string
   avatar: string | null
   banner: string | null
   isOwner?: boolean
@@ -46,6 +48,7 @@ export function ProfileHeader({
   artisticName,
   realName,
   username,
+  handle,
   avatar,
   banner,
   isOwner = false,
@@ -172,7 +175,7 @@ export function ProfileHeader({
               </p>
             )}
             <p className="text-sm font-semibold" style={{ color: '#F65B7F' }}>
-              @{username}
+              @{handle?.trim() || username}
             </p>
           </div>
         </div>

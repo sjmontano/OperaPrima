@@ -132,6 +132,7 @@ export default function PerfilPage() {
             artisticName={user.artisticName}
             realName={user.realName}
             username={user.username}
+            handle={user.artisticName || undefined}
             avatar={user.avatar}
             banner={user.banner}
             isOwner
@@ -155,7 +156,7 @@ export default function PerfilPage() {
                   className="mb-3 text-xs font-bold tracking-[0.18em] uppercase"
                   style={{ color: 'oklch(0.40 0.008 350)' }}
                 >
-                  Sobre @{user.username}
+                  Sobre @{user.artisticName || user.username}
                 </p>
                 <p className="text-sm leading-relaxed" style={{ color: 'oklch(0.40 0.008 350)' }}>
                   {user.bio}

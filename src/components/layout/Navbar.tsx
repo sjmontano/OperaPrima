@@ -41,6 +41,7 @@ export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
   const isAdmin = (currentUser as unknown as { rol?: string })?.rol === 'ADMIN'
 
   const userAvatarUrl = (currentUser as unknown as { perfil?: { avatar?: string } })?.perfil?.avatar
+  const userHandle = currentUser?.perfil?.artisticName?.trim() || currentUser?.username || ''
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > NAVBAR_CONFIG.scrollThreshold)
@@ -183,7 +184,7 @@ export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
                           Sesión activa
                         </p>
                         <p className="mt-0.5 truncate text-xs font-semibold text-zinc-800">
-                          @{currentUser.username}
+                          @{userHandle}
                         </p>
                       </div>
                       <Link
@@ -347,7 +348,7 @@ export function Navbar({ accentColor = '#023047' }: { accentColor?: string }) {
                           {currentUser.firstName} {currentUser.lastName}
                         </p>
                         <p className="text-[10px]" style={{ color: '#8ECAE6' }}>
-                          @{currentUser.username}
+                          @{userHandle}
                         </p>
                       </div>
                     </div>

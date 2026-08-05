@@ -46,6 +46,7 @@ export default async function PublicProfilePage({ params }: Props) {
             artisticName={perfil?.artisticName || `${usuario.firstName} ${usuario.lastName}`}
             realName={perfil?.realName}
             username={usuario.username}
+            handle={perfil?.artisticName ?? undefined}
             avatar={perfil?.avatar ?? null}
             banner={perfil?.banner ?? null}
             isOwner={false}

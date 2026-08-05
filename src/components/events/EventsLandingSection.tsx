@@ -78,6 +78,15 @@ function useRotatingTypewriter(words: readonly string[]) {
   return words[wordIndex]?.slice(0, charIndex) ?? ''
 }
 
+function TypewriterWord({ words }: { words: readonly string[] }) {
+  const visibleWord = useRotatingTypewriter(words)
+  return (
+    <span aria-hidden className="min-h-[1.2em] font-semibold text-white">
+      {visibleWord}
+    </span>
+  )
+}
+
 const ICON_MAP: Record<string, typeof BookOpen> = { BookOpen, Users }
 
 const HIGHLIGHT_COLORS = ['#F65B7F', '#8ECAE6', '#1A4A3C'] as const
@@ -113,7 +122,6 @@ export function EventsLandingSection({
   const { isEditMode } = useEditMode()
   const { currentUser, open: openAuth } = useAuthModal()
   const router = useRouter()
-  const visibleWord = useRotatingTypewriter(typewriterWords)
 
   return (
     <section
@@ -193,9 +201,7 @@ export function EventsLandingSection({
                 </div>
                 <div className="flex flex-wrap items-baseline gap-3 text-3xl tracking-[-0.04em] text-white sm:text-4xl lg:text-5xl">
                   <span className="sr-only">Cómo {typewriterWords.join('. Cómo ')}.</span>
-                  <span aria-hidden className="min-h-[1.2em] font-semibold text-white">
-                    {visibleWord}
-                  </span>
+                  <TypewriterWord words={typewriterWords} />
                   <span
                     aria-hidden="true"
                     className="inline-block h-[1em] w-[3px] animate-pulse bg-[#F65B7F] align-middle"

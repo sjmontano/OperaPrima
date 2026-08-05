@@ -1,7 +1,8 @@
 'use client'
 
+import { EditorInline } from '@/components/editor/EditableRichText'
 import { useEditMode } from '@/context/EditModeContext'
-import { useCallback, useRef, useState } from 'react'
+import { useCallback, useState } from 'react'
 
 interface EditableTextProps {
   value: string
@@ -9,6 +10,15 @@ interface EditableTextProps {
   className?: string
   as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'div'
   singleLine?: boolean
+}
+
+function isEmptyText(html: string): boolean {
+  return (
+    html
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;|&#160;/gi, '')
+      .trim() === ''
+  )
 }
 
 export function EditableText({
@@ -20,48 +30,45 @@ export function EditableText({
 }: EditableTextProps) {
   const { isEditMode } = useEditMode()
   const [editing, setEditing] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
 
-  const handleBlur = useCallback(() => {
-    if (!ref.current) return
-    const newValue = singleLine ? ref.current.innerText : ref.current.innerHTML
-    if (newValue !== value) onSave(newValue)
-    setEditing(false)
-  }, [onSave, singleLine, value])
-
-  const handleKeyDown = useCallback(
-    (e: React.KeyboardEvent) => {
-      if (e.key === 'Escape') {
-        if (ref.current) ref.current.innerHTML = value
-        setEditing(false)
-      }
-      if (e.key === 'Enter' && singleLine) {
-        e.preventDefault()
-        ref.current?.blur()
-      }
+  const handleSave = useCallback(
+    (html: string) => {
+      onSave(html)
+      setEditing(false)
     },
-    [singleLine, value]
+    [onSave]
   )
+
+  const handleCancel = useCallback(() => setEditing(false), [])
 
   if (!isEditMode) {
     return <Tag className={className} dangerouslySetInnerHTML={{ __html: value }} />
   }
 
+  if (editing) {
+    return (
+      <EditorInline
+        content={value}
+        onSave={handleSave}
+        onCancel={handleCancel}
+        singleLine={singleLine}
+      />
+    )
+  }
+
+  const showPlaceholder = isEmptyText(value)
+
   return (
     <Tag
-      ref={ref}
       className={`${className} editable-text-ring cursor-text`}
-      contentEditable={editing}
-      suppressContentEditableWarning
-      dangerouslySetInnerHTML={{ __html: value }}
+      dangerouslySetInnerHTML={{
+        __html: showPlaceholder ? '<span class="text-zinc-400">escribe aquí</span>' : value,
+      }}
       onClick={(e) => {
-        if (editing) return
         e.preventDefault()
         e.stopPropagation()
         setEditing(true)
       }}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
     />
   )
 }

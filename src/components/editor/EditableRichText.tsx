@@ -2,7 +2,7 @@
 
 import { useEditMode } from '@/context/EditModeContext'
 import { FontSize } from '@/lib/tiptap-font-size'
-import { useEditor, EditorContent } from '@tiptap/react'
+import { useEditor, EditorContent, type Editor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import { TextAlign } from '@tiptap/extension-text-align'
 import { TextStyle } from '@tiptap/extension-text-style'
@@ -93,6 +93,15 @@ interface EditableRichTextProps {
   className?: string
   as?: 'span' | 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'div'
   placeholder?: string
+}
+
+function isEmptyRichText(html: string): boolean {
+  return (
+    html
+      .replace(/<[^>]*>/g, '')
+      .replace(/&nbsp;|&#160;/gi, '')
+      .trim() === ''
+  )
 }
 
 function ColorPopup({
@@ -333,22 +342,30 @@ function ToolBtn({
   )
 }
 
-function EditorInline({
+export function EditorInline({
   content,
   onSave,
   onCancel,
   placeholder,
+  singleLine = false,
 }: {
   content: string
   onSave: (html: string) => void
   onCancel: () => void
   placeholder?: string
+  singleLine?: boolean
 }) {
   const [linkUrl, setLinkUrl] = useState('')
   const [showLinkInput, setShowLinkInput] = useState(false)
   const [showColorPicker, setShowColorPicker] = useState(false)
   const wrapperRef = useRef<HTMLDivElement>(null)
   const bubbleRef = useRef<HTMLDivElement>(null)
+  const editorRef = useRef<Editor | null>(null)
+  const onSaveRef = useRef(onSave)
+
+  useEffect(() => {
+    onSaveRef.current = onSave
+  }, [onSave])
 
   const editor = useEditor({
     extensions: [
@@ -379,9 +396,25 @@ function EditorInline({
         class:
           'focus:outline-none [&_.is-editor-empty]:before:text-zinc-400 [&_.is-editor-empty]:before:content-[attr(data-placeholder)] [&_.is-editor-empty]:before:pointer-events-none [&_.is-editor-empty]:before:float-left [&_.is-editor-empty]:before:h-0',
       },
+      ...(singleLine
+        ? {
+            handleKeyDown: (_view, event) => {
+              if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault()
+                onSaveRef.current(editorRef.current?.getHTML() ?? '')
+                return true
+              }
+              return false
+            },
+          }
+        : {}),
     },
     onUpdate: () => {},
   })
+
+  useEffect(() => {
+    editorRef.current = editor
+  }, [editor])
 
   useEffect(() => {
     if (editor) {
@@ -709,15 +742,20 @@ export function EditableRichText({
         onSave={handleSave}
         onCancel={handleCancel}
         placeholder={placeholder}
-        className={className}
       />
     )
   }
 
+  const isEmpty = isEmptyRichText(value)
+
   return (
     <Tag
       className={`${className} cursor-text rounded-sm transition-all hover:ring-1 hover:ring-[#8ECAE6]/50`}
-      dangerouslySetInnerHTML={{ __html: value }}
+      dangerouslySetInnerHTML={{
+        __html: isEmpty
+          ? `<span class="text-zinc-400">${placeholder || 'escribe aquí'}</span>`
+          : value,
+      }}
       onClick={(e) => {
         e.preventDefault()
         e.stopPropagation()

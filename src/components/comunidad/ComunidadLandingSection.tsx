@@ -3,10 +3,12 @@
 import { EditableRichText } from '@/components/editor/EditableRichText'
 import { EditableText } from '@/components/editor/EditableText'
 import { useEditMode } from '@/context/EditModeContext'
+import { useApi } from '@/lib/useApi'
 import { TimelineAnimation } from '@/components/ui/timeline-animation'
 import { ArrowRight, ChevronRight, Sparkles } from 'lucide-react'
+import { useInView } from 'motion/react'
 import { useRouter } from 'next/navigation'
-import { useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
 
 const DEFAULT_LIST_ITEMS = [
@@ -21,6 +23,29 @@ const DEFAULT_STATS = [
   { number: '+30', label: 'eventos realizados', accent: '#8ECAE6' },
   { number: '+12', label: 'países alcanzados', accent: '#023047' },
 ]
+
+function StatNumber({ end }: { end: number }) {
+  const ref = useRef<HTMLSpanElement>(null)
+  const inView = useInView(ref, { once: true, margin: '-60px' })
+  const [count, setCount] = useState(0)
+
+  useEffect(() => {
+    if (!inView) return
+    const DURATION = 1600
+    const startTime = performance.now()
+    const tick = (now: number) => {
+      const progress = Math.min((now - startTime) / DURATION, 1)
+      const eased = 1 - Math.pow(1 - progress, 3)
+      const current = Math.floor(eased * end)
+      setCount(current)
+      if (progress < 1) requestAnimationFrame(tick)
+      else setCount(end)
+    }
+    requestAnimationFrame(tick)
+  }, [inView, end])
+
+  return <span ref={ref}>{count}</span>
+}
 
 export function ComunidadLandingSection({
   eyebrow = 'Comunidad',
@@ -53,6 +78,21 @@ export function ComunidadLandingSection({
   const { isEditMode } = useEditMode()
   const { currentUser, open: openAuth } = useAuthModal()
   const router = useRouter()
+
+  const { data: statsData } = useApi<{
+    totalUsuarios?: number
+    totalEventos?: number
+    paises?: number
+  }>('stats-public', '/api/stats/public')
+
+  const realStatNumber = (label: string): number | null => {
+    if (!statsData) return null
+    const l = label.toLowerCase()
+    if (l.includes('artista')) return statsData.totalUsuarios ?? null
+    if (l.includes('evento')) return statsData.totalEventos ?? null
+    if (l.includes('país') || l.includes('pais')) return statsData.paises ?? null
+    return null
+  }
 
   return (
     <section ref={sectionRef} className="relative w-full overflow-hidden bg-[#0f0f0f]">
@@ -187,26 +227,39 @@ export function ComunidadLandingSection({
                 />
               </p>
               <div className="mt-6 flex flex-col gap-6">
-                {stats.map((stat, i) => (
-                  <div key={i} className="flex items-baseline gap-3">
-                    <span className="text-2xl font-bold text-white" style={{ color: stat.accent }}>
-                      <EditableText
-                        value={stat.number}
-                        onSave={(v) => __onFieldChange?.(`stats.${i}.number`, v)}
-                        as="span"
-                        singleLine
-                      />
-                    </span>
-                    <span className="text-sm text-white/50">
-                      <EditableText
-                        value={stat.label}
-                        onSave={(v) => __onFieldChange?.(`stats.${i}.label`, v)}
-                        as="span"
-                        singleLine
-                      />
-                    </span>
-                  </div>
-                ))}
+                {stats.map((stat, i) => {
+                  const real = realStatNumber(stat.label)
+                  return (
+                    <div key={i} className="flex items-baseline gap-3">
+                      <span
+                        className="text-2xl font-bold text-white"
+                        style={{ color: stat.accent }}
+                      >
+                        {real != null ? (
+                          <>
+                            <StatNumber end={real} />
+                            {real >= 100 ? '+' : ''}
+                          </>
+                        ) : (
+                          <EditableText
+                            value={stat.number}
+                            onSave={(v) => __onFieldChange?.(`stats.${i}.number`, v)}
+                            as="span"
+                            singleLine
+                          />
+                        )}
+                      </span>
+                      <span className="text-sm text-white/50">
+                        <EditableText
+                          value={stat.label}
+                          onSave={(v) => __onFieldChange?.(`stats.${i}.label`, v)}
+                          as="span"
+                          singleLine
+                        />
+                      </span>
+                    </div>
+                  )
+                })}
               </div>
             </TimelineAnimation>
           </div>

@@ -17,6 +17,8 @@ export function EventModal({
   currentUser: CurrentUser | null
 }) {
   const isSoldOut = (event.cuposDisponibles ? event.cuposDisponibles : 0) <= 0
+  const [now] = useState(() => Date.now())
+  const isPast = event.eventDate.getTime() < now
   const [showPurchaseModal, setShowPurchaseModal] = useState(false)
 
   const authModal = useAuthModal()
@@ -129,7 +131,20 @@ export function EventModal({
 
           {tipo == 'MENTOR' && (
             <>
-              {isSoldOut ? (
+              {isPast ? (
+                <div className="pt-2">
+                  <button
+                    disabled
+                    className="w-full cursor-not-allowed border-2 border-zinc-300 bg-zinc-100 py-3 text-xs font-bold text-zinc-400 uppercase"
+                  >
+                    Evento finalizado
+                  </button>
+
+                  <p className="mt-2 text-center text-xs font-bold text-red-500">
+                    Este evento ya ha pasado
+                  </p>
+                </div>
+              ) : isSoldOut ? (
                 <div className="pt-2">
                   <button
                     disabled

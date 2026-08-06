@@ -1,6 +1,7 @@
 'use client'
 
 import { useAuthModal } from '@/components/auth/AuthModalProvider'
+import { EditableText } from '@/components/editor/EditableText'
 import { useEditMode } from '@/context/EditModeContext'
 import { MemberGrid, type Member } from '@/components/profile/MemberGrid'
 import { createClient } from '@/lib/supabaseClient'
@@ -53,9 +54,22 @@ interface CommunityUser {
   destacado: boolean
 }
 
-function UsuarioDelMesBanner({ user }: { user: CommunityUser }) {
+function UsuarioDelMesBanner({
+  user,
+  label,
+  bgColor,
+  onLabelChange,
+}: {
+  user: CommunityUser
+  label: string
+  bgColor: string
+  onLabelChange?: (value: string) => void
+}) {
   return (
-    <div className="mb-10 border-2 border-[#023047] bg-[#023047] shadow-[4px_4px_0_#353535]">
+    <div
+      className="mb-10 border-2 shadow-[4px_4px_0_#353535] transition-colors duration-150"
+      style={{ backgroundColor: bgColor, borderColor: bgColor }}
+    >
       <div className="flex flex-wrap items-center gap-4 px-5 py-4 sm:px-7">
         <div className="flex items-center gap-3.5">
           <div className="relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-[#8ECAE6]">
@@ -72,7 +86,7 @@ function UsuarioDelMesBanner({ user }: { user: CommunityUser }) {
         <div className="min-w-0 flex-1">
           <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.25em] text-[#F65B7F] uppercase">
             <Award size={11} />
-            Usuario del mes
+            <EditableText value={label} onSave={(v) => onLabelChange?.(v)} as="span" singleLine />
           </p>
           <Link
             href={user.href}
@@ -95,9 +109,13 @@ function UsuarioDelMesBanner({ user }: { user: CommunityUser }) {
 
 export function ComunidadArtistsSection({
   usuarioDelMes,
+  bannerLabel = 'Usuario del mes',
+  bannerBgColor = '#023047',
   __onFieldChange,
 }: {
   usuarioDelMes?: string
+  bannerLabel?: string
+  bannerBgColor?: string
   __onFieldChange?: (path: string, value: unknown) => void
 }) {
   const sectionRef = useRef<HTMLElement>(null)
@@ -204,7 +222,14 @@ export function ComunidadArtistsSection({
     >
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="px-8 py-14">
-          {selectedUser && <UsuarioDelMesBanner user={selectedUser} />}
+          {selectedUser && (
+            <UsuarioDelMesBanner
+              user={selectedUser}
+              label={bannerLabel}
+              bgColor={bannerBgColor}
+              onLabelChange={(v) => __onFieldChange?.('bannerLabel', v)}
+            />
+          )}
 
           <div className="mb-6">
             <h2 className="text-lg font-bold tracking-wide text-zinc-800 uppercase">
@@ -216,27 +241,54 @@ export function ComunidadArtistsSection({
           </div>
 
           {isEditMode && currentUser?.rol === 'ADMIN' && (
-            <div className="mb-6 flex flex-col gap-4 border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
+            <div className="mb-6 flex flex-col gap-4 border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4 lg:flex-row lg:items-start lg:justify-between">
               <p className="text-xs font-bold tracking-widest text-[#E63946] uppercase">
                 Modo edición — Miembros
               </p>
-              <label className="flex flex-col gap-1.5">
-                <span className="text-[10px] font-bold tracking-widest text-[#E63946] uppercase">
-                  Usuario del mes
-                </span>
-                <select
-                  value={usuarioDelMes || ''}
-                  onChange={(e) => __onFieldChange?.('usuarioDelMes', e.target.value)}
-                  className="w-full border-2 border-zinc-300 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-[#023047] lg:w-64"
-                >
-                  <option value="">— Sin seleccionar —</option>
-                  {users.map((u) => (
-                    <option key={u.id} value={u.username}>
-                      {u.name} (@{u.username})
-                    </option>
-                  ))}
-                </select>
-              </label>
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:gap-6">
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold tracking-widest text-[#E63946] uppercase">
+                    Usuario del mes
+                  </span>
+                  <select
+                    value={usuarioDelMes || ''}
+                    onChange={(e) => __onFieldChange?.('usuarioDelMes', e.target.value)}
+                    className="w-full border-2 border-zinc-300 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-[#023047] lg:w-64"
+                  >
+                    <option value="">— Sin seleccionar —</option>
+                    {users.map((u) => (
+                      <option key={u.id} value={u.username}>
+                        {u.name} (@{u.username})
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex flex-col gap-1.5">
+                  <span className="text-[10px] font-bold tracking-widest text-[#E63946] uppercase">
+                    Color de fondo del banner
+                  </span>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="color"
+                      value={bannerBgColor || '#023047'}
+                      onChange={(e) => __onFieldChange?.('bannerBgColor', e.target.value)}
+                      className="h-8 w-8 cursor-pointer border border-zinc-300"
+                      title="Color de fondo del banner"
+                    />
+                    <input
+                      type="text"
+                      value={bannerBgColor || ''}
+                      onChange={(e) => __onFieldChange?.('bannerBgColor', e.target.value)}
+                      placeholder="#HEX"
+                      className="w-28 border-2 border-zinc-300 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-[#023047]"
+                    />
+                  </div>
+                </label>
+              </div>
+              <p className="max-w-48 text-[10px] leading-snug text-[#E63946]/80">
+                El título del banner se edita haciendo clic sobre él (texto, color y tamaño de
+                letra).
+              </p>
             </div>
           )}
 

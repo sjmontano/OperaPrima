@@ -388,8 +388,20 @@ export const BLOCK_SCHEMAS: Record<string, BlockSchema> = {
         type: 'text',
         placeholder: 'username del artista seleccionado',
       },
+      {
+        key: 'bannerLabel',
+        label: 'Título del banner',
+        type: 'text',
+        default: 'Usuario del mes',
+      },
+      {
+        key: 'bannerBgColor',
+        label: 'Color de fondo del banner',
+        type: 'color',
+        default: '#023047',
+      },
     ],
-    defaultProps: { usuarioDelMes: '' },
+    defaultProps: { usuarioDelMes: '', bannerLabel: 'Usuario del mes', bannerBgColor: '#023047' },
   },
 
   'mentorias-landing': {

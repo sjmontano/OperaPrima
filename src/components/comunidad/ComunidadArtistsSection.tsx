@@ -4,6 +4,9 @@ import { useAuthModal } from '@/components/auth/AuthModalProvider'
 import { useEditMode } from '@/context/EditModeContext'
 import { MemberGrid, type Member } from '@/components/profile/MemberGrid'
 import { createClient } from '@/lib/supabaseClient'
+import { Award } from 'lucide-react'
+import Image from 'next/image'
+import Link from 'next/link'
 import { useEffect, useRef, useState } from 'react'
 
 const DISCIPLINES = [
@@ -40,8 +43,65 @@ function mapDiscipline(tags: string[]): string {
   return 'Artes'
 }
 
-export function ComunidadArtistsSection() {
+interface CommunityUser {
+  id: string
+  username: string
+  name: string
+  discipline: string
+  avatar: string
+  href: string
+  destacado: boolean
+}
+
+function UsuarioDelMesBanner({ user }: { user: CommunityUser }) {
+  return (
+    <div className="mb-10 border-2 border-[#023047] bg-[#023047] shadow-[4px_4px_0_#353535]">
+      <div className="flex flex-wrap items-center gap-4 px-5 py-4 sm:px-7">
+        <div className="flex items-center gap-3.5">
+          <div className="relative size-14 shrink-0 overflow-hidden rounded-full border-2 border-[#8ECAE6]">
+            <Image
+              src={user.avatar}
+              alt={user.name}
+              width={56}
+              height={56}
+              unoptimized
+              className="h-full w-full object-cover"
+            />
+          </div>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="flex items-center gap-1.5 text-[10px] font-bold tracking-[0.25em] text-[#F65B7F] uppercase">
+            <Award size={11} />
+            Usuario del mes
+          </p>
+          <Link
+            href={user.href}
+            className="mt-0.5 block truncate text-lg font-bold tracking-tight text-white uppercase transition-colors hover:text-[#8ECAE6]"
+          >
+            {user.name}
+          </Link>
+          <p className="truncate text-xs text-white/55">@{user.username}</p>
+        </div>
+        <Link
+          href={user.href}
+          className="border-2 border-white/70 px-3.5 py-2 text-[10px] font-bold tracking-widest text-white uppercase transition-all hover:bg-white hover:text-[#023047]"
+        >
+          Ver perfil
+        </Link>
+      </div>
+    </div>
+  )
+}
+
+export function ComunidadArtistsSection({
+  usuarioDelMes,
+  __onFieldChange,
+}: {
+  usuarioDelMes?: string
+  __onFieldChange?: (path: string, value: unknown) => void
+}) {
   const sectionRef = useRef<HTMLElement>(null)
+  const [users, setUsers] = useState<CommunityUser[]>([])
   const [members, setMembers] = useState<Member[]>([])
   const [loading, setLoading] = useState(true)
   const auth = useAuthModal()
@@ -53,7 +113,7 @@ export function ComunidadArtistsSection() {
       .then(async (r) => {
         if (!r.ok) throw new Error('Error ' + r.status)
         const data = await r.json()
-        const mapped: Member[] = (data.usuarios || []).map(
+        const mapped: CommunityUser[] = (data.usuarios || []).map(
           (u: {
             id: string
             username: string
@@ -64,26 +124,40 @@ export function ComunidadArtistsSection() {
               artisticName?: string
               avatar?: string
               tags?: string[]
-              bio?: string
             } | null
           }) => ({
             id: u.id,
+            username: u.username,
             name: u.perfil?.artisticName || `${u.firstName} ${u.lastName || ''}`.trim(),
             discipline: mapDiscipline(u.perfil?.tags || []),
-            location: 'Colombia',
-            image:
+            avatar:
               u.perfil?.avatar || `https://api.dicebear.com/10.x/lorelei/svg?seed=${u.username}`,
             href: `/perfil/${u.username}`,
             destacado: u.destacado,
           })
         )
-        setMembers(mapped)
+        setUsers(mapped)
+        setMembers(
+          mapped.map((u) => ({
+            id: u.id,
+            name: u.name,
+            discipline: u.discipline,
+            location: 'Colombia',
+            image: u.avatar,
+            href: u.href,
+            destacado: u.destacado,
+          }))
+        )
       })
       .catch((err) => {
         console.error('Error fetching usuarios:', err)
       })
       .finally(() => setLoading(false))
   }, [])
+
+  const selectedUser = users.find(
+    (u) => u.username.toLowerCase() === (usuarioDelMes || '').trim().toLowerCase()
+  )
 
   const handleToggleDestacado = async (id: string, current: boolean) => {
     const supabase = createClient()
@@ -130,6 +204,8 @@ export function ComunidadArtistsSection() {
     >
       <div className="mx-[100px] border-zinc-200 max-lg:mx-[48px] max-md:mx-[18px] max-md:border-x-2 min-[620px]:border-x-2">
         <div className="px-8 py-14">
+          {selectedUser && <UsuarioDelMesBanner user={selectedUser} />}
+
           <div className="mb-6">
             <h2 className="text-lg font-bold tracking-wide text-zinc-800 uppercase">
               Descubre a otros miembros
@@ -140,10 +216,27 @@ export function ComunidadArtistsSection() {
           </div>
 
           {isEditMode && currentUser?.rol === 'ADMIN' && (
-            <div className="mb-6 flex items-center justify-between border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4">
+            <div className="mb-6 flex flex-col gap-4 border-2 border-dashed border-[#E63946] bg-[#E63946]/10 px-6 py-4 lg:flex-row lg:items-center lg:justify-between">
               <p className="text-xs font-bold tracking-widest text-[#E63946] uppercase">
                 Modo edición — Miembros
               </p>
+              <label className="flex flex-col gap-1.5">
+                <span className="text-[10px] font-bold tracking-widest text-[#E63946] uppercase">
+                  Usuario del mes
+                </span>
+                <select
+                  value={usuarioDelMes || ''}
+                  onChange={(e) => __onFieldChange?.('usuarioDelMes', e.target.value)}
+                  className="w-full border-2 border-zinc-300 bg-white px-2 py-1.5 text-xs text-zinc-700 outline-none focus:border-[#023047] lg:w-64"
+                >
+                  <option value="">— Sin seleccionar —</option>
+                  {users.map((u) => (
+                    <option key={u.id} value={u.username}>
+                      {u.name} (@{u.username})
+                    </option>
+                  ))}
+                </select>
+              </label>
             </div>
           )}
 

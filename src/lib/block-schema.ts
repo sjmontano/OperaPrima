@@ -381,8 +381,15 @@ export const BLOCK_SCHEMAS: Record<string, BlockSchema> = {
     type: 'community-artists',
     label: 'Artistas Comunidad',
     category: 'Section',
-    fields: [],
-    defaultProps: {},
+    fields: [
+      {
+        key: 'usuarioDelMes',
+        label: 'Usuario del mes (username)',
+        type: 'text',
+        placeholder: 'username del artista seleccionado',
+      },
+    ],
+    defaultProps: { usuarioDelMes: '' },
   },
 
   'mentorias-landing': {

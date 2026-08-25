@@ -1,3 +1,4 @@
+import { AdUnit } from '@/components/ads/AdUnit'
 import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { ComunidadArtistsSection } from '@/components/comunidad/ComunidadArtistsSection'
@@ -27,9 +28,11 @@ export default function ComunidadPage() {
               <ComunidadLandingSection />
               <ComunidadEventsSection />
               <ComunidadArtistsSection />
+              <AdUnit slot="1390814692" format="auto" />
             </>
           }
         />
+        <AdUnit slot="1390814692" format="auto" />
         <FloatingEditButton />
       </main>
       <Footer />

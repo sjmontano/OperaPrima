@@ -19,8 +19,8 @@ export function AdUnit({ slot, format = 'auto', className, style }: AdUnitProps)
 
     const personalized = consentFor('marketing')
     ;(window.adsbygoogle = window.adsbygoogle || []).requestNonPersonalizedAds = personalized
-      ? '0'
-      : '1'
+      ? 0
+      : 1
 
     try {
       ;(window.adsbygoogle = window.adsbygoogle || []).push({})
@@ -44,7 +44,7 @@ export function AdUnit({ slot, format = 'auto', className, style }: AdUnitProps)
         style={sizeStyles}
         data-ad-client="ca-pub-6819564886386658"
         data-ad-slot={slot}
-        data-ad-format={format === 'auto' ? 'auto' : 'rectangle'}
+        data-ad-format={format}
         data-full-width-responsive="true"
       />
     </div>

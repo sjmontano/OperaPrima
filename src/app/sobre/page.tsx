@@ -1,3 +1,4 @@
+import { AdUnit } from '@/components/ads/AdUnit'
 import { FloatingEditButton } from '@/components/editor/FloatingEditButton'
 import { DbPageServer } from '@/components/shared/DbPageServer'
 import { Footer } from '@/components/layout/Footer'
@@ -25,9 +26,11 @@ export default function SobrePage() {
             <>
               <SobreLandingSection />
               <PartnersStrip />
+              <AdUnit slot="1390814692" format="auto" />
             </>
           }
         />
+        <AdUnit slot="1390814692" format="auto" />
         <FloatingEditButton />
       </main>
       <Footer />

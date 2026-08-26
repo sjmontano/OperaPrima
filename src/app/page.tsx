@@ -24,7 +24,6 @@ export default function Home() {
           fallback={
             <>
               <HeroCarousel />
-              <AdUnit slot="home-hero-whatis" format="horizontal" />
               <WhatIsSection />
               <EventsSection />
               <AdUnit slot="home-events-cta" format="horizontal" />
@@ -39,6 +38,7 @@ export default function Home() {
         <FloatingEditButton />
       </main>
       <Footer />
+      <AdUnit slot="home-hero-whatis" format="horizontal" />
     </>
   )
 }

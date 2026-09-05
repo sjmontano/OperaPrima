@@ -28,9 +28,21 @@ export default function MyTickets() {
 
   const [selected, setSelected] = useState<{
     qr: string
-    evento: string
     usada: boolean
     usadaEn: string | null
+    createdAt: string
+    evento: {
+      titulo: string
+      descripcion: string
+      fecha: string
+      ubicacion: string
+      precio: number
+      categoria: string
+      disciplinas: string[]
+      imagen: string | null
+      cuposTotales: number
+      cuposDisponibles: number
+    }
   } | null>(null)
 
   useEffect(() => {
@@ -150,7 +162,7 @@ export default function MyTickets() {
                     onClick={() => showQr(ticket.id)}
                     className="border-2 border-[#111111] bg-[#E63946] px-5 py-2 text-xs font-bold tracking-wider text-white uppercase transition hover:bg-white hover:text-[#E63946]"
                   >
-                    Ver QR
+                    Ver
                   </button>
                 </div>
               </div>
@@ -163,9 +175,23 @@ export default function MyTickets() {
         open={open}
         onClose={() => setOpen(false)}
         qr={selected?.qr ?? null}
-        evento={selected?.evento ?? ''}
         usada={selected?.usada ?? false}
         usadaEn={selected?.usadaEn ?? null}
+        createdAt={selected?.createdAt ?? ''}
+        evento={
+          selected?.evento ?? {
+            titulo: '',
+            descripcion: '',
+            fecha: '',
+            ubicacion: '',
+            precio: 0,
+            categoria: '',
+            disciplinas: [],
+            imagen: null,
+            cuposTotales: 0,
+            cuposDisponibles: 0,
+          }
+        }
       />
     </>
   )

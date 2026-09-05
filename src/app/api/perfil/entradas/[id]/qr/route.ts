@@ -54,9 +54,21 @@ export async function GET(request: Request, { params }: { params: Promise<{ id: 
 
     return NextResponse.json({
       qr,
-      evento: entrada.evento.titulo,
       usada: entrada.usada,
       usadaEn: entrada.usadaEn,
+      createdAt: entrada.createdAt,
+      evento: {
+        titulo: entrada.evento.titulo,
+        descripcion: entrada.evento.descripcion,
+        fecha: entrada.evento.fecha,
+        ubicacion: entrada.evento.ubicacion,
+        precio: entrada.evento.precio,
+        categoria: entrada.evento.categoria,
+        disciplinas: entrada.evento.disciplinas,
+        imagen: entrada.evento.imagen,
+        cuposTotales: entrada.evento.cuposTotales,
+        cuposDisponibles: entrada.evento.cuposDisponibles,
+      },
     })
   } catch (error) {
     console.error(error)
